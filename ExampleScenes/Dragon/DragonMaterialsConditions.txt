@@ -1,5 +1,0 @@
-groupName
-matteGroup
-metalGroup
-plasticGroup
-glassGroup

@@ -1,4 +1,0 @@
-distance	eyePos	fov	width	height	
-76.400000	-3.200000	50	21	13	
-76.400000	3.200000	50	21	13	
-

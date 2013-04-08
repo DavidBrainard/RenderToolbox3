@@ -10,6 +10,6 @@ var searchData=
   ['convertmaterial',['ConvertMaterial',['../group___collada_to_p_b_r_t.html#ga3f346e4d761520aceaf0ef2f36fd7f4c',1,'ConvertMaterial.m']]],
   ['convertnode',['ConvertNode',['../group___collada_to_p_b_r_t.html#ga16c313e0d6042f2950401e24232d638d',1,'ConvertNode.m']]],
   ['convertreferences',['ConvertReferences',['../group___collada_to_p_b_r_t.html#ga259bbcf0dffa627c508bdcb84fce22a8',1,'ConvertReferences.m']]],
-  ['createelementchild',['CreateElementChild',['../group___scene_d_o_m.html#gaf11ee3e5f66a703991514233801c4b81',1,'CreateElementChild.m']]],
+  ['createelementchild',['CreateElementChild',['../group___scene_d_o_m.html#gac6eadc7ec17e780767927372b426d8f0',1,'CreateElementChild.m']]],
   ['createstubdom',['CreateStubDOM',['../group___collada_to_p_b_r_t.html#gad79fc1dc83f4ef7e6a199f53819bcf0b',1,'CreateStubDOM.m']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['xyztosrgb',['XYZToSRGB',['../group___utilities.html#ga7376fbb099c960527699d99d0c9dad4c',1,'XYZToSRGB.m']]]
+  ['xyztosrgb',['XYZToSRGB',['../group___utilities.html#ga2b55d3b495580178e7753e3fb06f2db7',1,'XYZToSRGB.m']]]
 ];
