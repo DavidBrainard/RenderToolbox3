@@ -6,7 +6,7 @@
 %   @param id
 %   @param stubIDMap
 %   @param colladaIDMap
-%   @param hints
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Cherry pick from a Collada "light" node in the Collada document
@@ -85,6 +85,11 @@ elseif isSpot
     % get the angle of the main part of the light code
     colladaPath = {id, ':technique_common', ':spot', ':falloff_angle'};
     cone = GetSceneValue(colladaIDMap, colladaPath);
+    if isempty(cone)
+        coneNum = 45;
+    else
+        coneNum = StringToVector(cone)/2;
+    end
     
     % get the exponent of falloff outside the main part of the light cone
     %   Collada uses an exponential falloff from the cone where PBRT uses a
@@ -97,7 +102,7 @@ elseif isSpot
     AddParameter(stubIDMap, id, 'I', 'rgb', color);
     AddParameter(stubIDMap, id, 'from', 'point', fromPoint);
     AddParameter(stubIDMap, id, 'to', 'point', toPoint);
-    AddParameter(stubIDMap, id, 'coneangle', 'float', cone);
+    AddParameter(stubIDMap, id, 'coneangle', 'float', coneNum);
     %AddParameter(stubIDMap, id, 'conedeltaangle', 'float', coneDelta);
     
 elseif isAmbient
@@ -105,7 +110,7 @@ elseif isAmbient
     SetType(stubIDMap, id, 'LightSource', 'infinite');
     
     % get the light color
-    colladaPath = {id, ':technique_common', ':spot', ':color'};
+    colladaPath = {id, ':technique_common', ':ambient', ':color'};
     color = GetSceneValue(colladaIDMap, colladaPath);
     
     % create L parameter

@@ -5,7 +5,7 @@
 % Convert a "node" node from a Collada document to a PBRT-XML document.
 %   @param PBRTFile
 %   @param PBRTXMLFile
-%   @param hints
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Write an new .pbrt text scene file with the given @a PBRTFile name, based
@@ -77,6 +77,12 @@ end
 % open the "world" declaration
 fprintf(pbrtFID, 'WorldBegin\n\n');
 
+% decalre named textures
+textureNodeIDs = getNodesByIdentifier(idMap, 'Texture');
+for ii = 1:numel(textureNodeIDs)
+    writeTexture(pbrtFID, idMap, textureNodeIDs{ii}, hints);
+end
+
 % declare named materials
 materialNodeIDs = getNodesByIdentifier(idMap, 'Material');
 for ii = 1:numel(materialNodeIDs)
@@ -86,7 +92,10 @@ end
 % declare named objects
 shapeNodeIDs = getNodesByIdentifier(idMap, 'Shape');
 for ii = 1:numel(shapeNodeIDs)
+    % declare a new named object
+    fprintf(pbrtFID, 'ObjectBegin "%s"\n', shapeNodeIDs{ii});
     writeObject(pbrtFID, idMap, shapeNodeIDs{ii}, hints);
+    fprintf(pbrtFID, 'ObjectEnd\n\n');
 end
 
 % declare an Attribute block for each "Attribute" node
@@ -291,6 +300,32 @@ PrintPBRTStatement(fid, identifier, type, internalParams);
 fprintf(fid, '\n');
 
 
+function writeTexture(fid, idMap, textureNodeID, hints)
+fprintf(fid, '# texture %s\n', textureNodeID);
+
+textureNode = idMap(textureNodeID);
+
+% "type" attribute acts as the PBRT "class", such as imagemap
+[identifier, class] = getIdentifierAndType(textureNode);
+params = getParameters(textureNode);
+
+% "dataType" parameter acts as the PBRT "type", such as float or spectrum
+isType = strcmp('dataType', {params.name});
+if any(isType)
+    % extract the type parameter as a special keyword
+    type = params(isType).value;
+    params = params(~isType);
+    
+else
+    % default to float texture
+    type = 'float';
+end
+
+nameTypeClass = sprintf('%s" "%s" "%s', textureNodeID, type, class);
+PrintPBRTStatement(fid, 'Texture', nameTypeClass, params);
+fprintf(fid, '\n');
+
+
 function writeMaterial(fid, idMap, materialNodeID, hints)
 fprintf(fid, '# material %s\n', materialNodeID);
 
@@ -310,24 +345,31 @@ fprintf(fid, '# object %s\n', objectNodeID);
 % objects refer to named materials and mesh data files
 objectNode = idMap(objectNodeID);
 refs = getReferences(objectNode);
-isMaterial = strcmp({refs.type}, 'Material');
-isInclude = strcmp({refs.type}, 'Include');
+nRefs = numel(refs);
 
-% declare a new object
-fprintf(fid, 'ObjectBegin "%s"\n', objectNodeID);
-
-% set the object material
-for ii = find(isMaterial)
-    fprintf(fid, 'NamedMaterial "%s"\n', refs(ii).value);
+% write out references, preserving node order
+isIncluded = false;
+for ii = 1:nRefs
+    if strcmp('Material', refs(ii).type)
+        % set current material
+        fprintf(fid, 'NamedMaterial "%s"\n', refs(ii).value);
+        
+    elseif strcmp('Include', refs(ii).type)
+        % include some geometry
+        isIncluded = true;
+        fprintf(fid, 'Include "%s"\n', refs(ii).value);
+        
+    end
 end
 
-% include the object mesh data
-for ii = find(isInclude)
-    fprintf(fid, 'Include "%s"\n', refs(ii).value);
+% if no geometry included, write out a PBRT shape statement
+if ~isIncluded
+    % write out a statement
+    [identifier, type] = getIdentifierAndType(objectNode);
+    params = getParameters(objectNode);
+    PrintPBRTStatement(fid, identifier, type, params);
 end
 
-% close the new object
-fprintf(fid, 'ObjectEnd\n', objectNodeID);
 fprintf(fid, '\n');
 
 
@@ -355,18 +397,57 @@ fprintf(fid, 'AttributeBegin\n');
 % apply transformations, using TransformBegin for each
 writeTransformations(fid, attribTrans, true);
 
-% follow references to lights and objects
-for ii = 1:numel(attribRefs)
-    a = attribRefs(ii);
-    switch a.type
-        case 'LightSource'
-            % fully write out light sources
-            writeLightSource(fid, idMap, attribRefs(ii).value, hints);
-            
-        case 'Object'
-            % refer to named objects by name
-            fprintf(fid, 'ObjectInstance "%s"\n', attribRefs(ii).value);
+% locate attribute nodes by type
+types = {attribRefs.type};
+isLight = strcmp('LightSource', types) | strcmp('AreaLightSource', types);
+isObject = strcmp('Object', types);
+isShape = strcmp('Shape', types);
+
+% write regular out light sources
+for ii = find(isLight)
+    writeLightSource(fid, idMap, attribRefs(ii).value, hints);
+end
+
+% write out area light sources or invoke named objects
+for ii = find(isObject)
+    % is the object an area light?
+    objectID = attribRefs(ii).value;
+    objectNode = idMap(objectID);
+    objectRefs = getReferences(objectNode);
+    isAreaLight = strcmp('AreaLightSource', {objectRefs.type});
+    if any(isAreaLight)
+        % ara lights cannot use instanced objects!
+        %   write out the light sources and the object directly
+        for jj = find(isAreaLight)
+            writeLightSource(fid, idMap, objectRefs(jj).value, hints);
+        end
+        writeObject(fid, idMap, attribRefs(ii).value, hints)
+        
+    else
+        % non-light objects can use object instances
+        fprintf(fid, 'ObjectInstance "%s"\n', attribRefs(ii).value);
     end
+end
+
+% write out shapes
+for ii = find(isShape)
+    % is this an area light?
+    objectID = attribRefs(ii).value;
+    objectNode = idMap(objectID);
+    objectRefs = getReferences(objectNode);
+    isAreaLight = strcmp('AreaLightSource', {objectRefs.type});
+    if any(isAreaLight)
+        % write out the light sources
+        for jj = find(isAreaLight)
+            writeLightSource(fid, idMap, objectRefs(jj).value, hints);
+        end
+    end
+    
+    % write out the shape
+    objectNode = idMap(attribRefs(ii).value);
+    [identifier, type] = getIdentifierAndType(objectNode);
+    params = getParameters(objectNode);
+    PrintPBRTStatement(fid, identifier, type, params);
 end
 
 % finish transformations with TransformEnd

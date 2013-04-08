@@ -5,19 +5,17 @@ Collada {
 
 % specify wall, floor, and lights for all conditions, all renderers
 Generic {
+    % make area lights with daylight spectrum
+    LightX-mesh:light:area
+    LightX-mesh:intensity.spectrum = D65.spd
+    LightY-mesh:light:area
+    LightY-mesh:intensity.spectrum = D65.spd
+
     % make gray walls and floor
     WallMaterial-material:material:matte
     WallMaterial-material:diffuseReflectance.spectrum = 300:0.75 800:0.75
     FloorMaterial-material:material:matte
     FloorMaterial-material:diffuseReflectance.spectrum = 300:0.5 800:0.5
-
-    % use daylight
-    SunX-light:light:directional
-    SunX-light:intensity.spectrum = D65.spd
-    SunY-light:light:directional
-    SunY-light:intensity.spectrum = D65.spd
-    SunZ-light:light:directional
-    SunZ-light:intensity.spectrum = D65.spd
 }
 
 % material for the matte condition
@@ -37,7 +35,7 @@ Generic metalGroup {
 Mitsuba glassGroup {
     % choose integrator and sampler to work with glass
     integrator:integrator:bdpt
-    Camera-camera_sampler:sampleCount.integer = 64
+    Camera-camera_sampler:sampleCount.integer = 512
 
     DragonMaterial-material:bsdf:dielectric
     DragonMaterial-material:intIOR.float = 1.5

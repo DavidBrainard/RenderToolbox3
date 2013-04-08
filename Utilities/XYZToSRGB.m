@@ -22,14 +22,16 @@
 % If @a isScale is true, the gamma-corrected image will be scaled to use
 % the gamma-corrected maximum.
 %
-% Returns a matrix of size [height width n] with sRGB color data.
+% Returns a matrix of size [height width n] with gamma corrected sRGB color
+% data.  Also returns a matrix of the same size with uncorrected sRGB color
+% data.
 %
 % @details
 % Usage:
-%   SRGBImage = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
+%   [gammaImage, rawImage] = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
 %
 % @ingroup Utilities
-function SRGBImage = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
+function [gammaImage, rawImage] = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
 
 %% parameters
 if nargin < 2
@@ -76,4 +78,5 @@ SRGBPrimaryCalFormat = XYZToSRGBPrimary(XYZCalFormat);
 SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat,isScale);
 
 % Back to image plane format
-SRGBImage = CalFormatToImage(SRGBCalFormat,m,n);
+rawImage = CalFormatToImage(SRGBPrimaryCalFormat,m,n);
+gammaImage = CalFormatToImage(SRGBCalFormat,m,n);

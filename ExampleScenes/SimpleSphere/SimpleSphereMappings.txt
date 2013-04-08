@@ -1,42 +1,39 @@
 Collada {
-    % swap camera handedness from Blender's Collada output
+    % flip handedness to match Blender-Collada output to Mitsuba and PBRT
     Camera:scale|sid=scale = -1 1 1
-
-    % make sure the point light behaves with inverse-square attenuation
-    Point-light:technique_common:point:constant_attenuation = 1
-    Point-light:technique_common:point:linear_attenuation = 0
-    Point-light:technique_common:point:quadratic_attenuation = 1
 }
 
-% specify generic scene elements under the "matteGroup" condition
-Generic matteGroup {
-    % generic matte sphere material
-    Material-material:material:matte
+Mitsuba-path {
+    % Mitsuba does not convert scale factor for orthogonal cameras!
+    %   use Scene DOM paths to replace the camera's transformations
+    Camera-camera$ = merge   
+    Camera-camera:transform|name=toWorld:scale.x = [Camera-camera:optics:technique_common:orthographic:xmag]
+    Camera-camera:transform|name=toWorld:scale.x /= 2
+    Camera-camera:transform|name=toWorld:scale.y = [Camera-camera:optics:technique_common:orthographic:xmag]
+    Camera-camera:transform|name=toWorld:scale.y /= 2
 
-    % make it red
-    Material-material:diffuseReflectance.spectrum = mccBabel-11.spd
+    % override the default film
+    %   to reign in the pixel filter
+    Camera-camera_film$ = merge
+    Camera-camera_film:rfilter|type=gaussian:float|name=stddev.value = 0.25
 }
 
-% specify generic scene elements under the "wardGroup" condition
-Generic wardGroup {
-    % generic anisotropic ward sphere material
+PBRT-path {
+    % reign in the pixel filter
+    filter:parameter|name=alpha = 4
+    filter:parameter|name=xwidth = 1
+    filter:parameter|name=ywidth = 1
+}
+
+Generic {
+    % square color conditiond file
     Material-material:material:anisoward
-    Material-material:alphaU.float = 0.2
-    Material-material:alphaV.float = 0.2
+    Material-material:diffuseReflectance.spectrum = mccBabel-2.spd
+    Material-material:specularReflectance.spectrum = 300:0.07 800:0.07
+    Material-material:alphaU.float = 0.05
+    Material-material:alphaV.float = 0.05
 
-    % make it green
-    Material-material:diffuseReflectance.spectrum = mccBabel-7.spd
-}
-
-% specify generic scene elements under the "metalGroup" condition
-Generic metalGroup {
-    % generic metal sphere material
-    Material-material:material:metal
-
-    % make the surface somewhat rough
-    Material-material:roughness.float = 0.4
-
-    % make it out of gold!
-    Material-material:eta.spectrum = Au.eta.spd
-    Material-material:k.spectrum = Au.k.spd
+    % daylight sun spectrum
+    Lamp-light:light:point
+    Lamp-light:intensity.spectrum = D65.spd
 }

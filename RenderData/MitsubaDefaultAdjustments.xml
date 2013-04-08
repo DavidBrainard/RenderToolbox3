@@ -2,21 +2,25 @@
 
 <!-- basic renderer properties that Collada doesn't know about -->
 
-<scene version="0.3.1">
+<scene version="0.4.1">
 
     <integrator id="integrator" type="direct">
-        <integer name="shadingSamples" value="100"/>
+        <integer name="shadingSamples" value="32"/>
     </integrator>
     
     <sampler id="Camera-camera_sampler" type="ldsampler">
-        <integer name="sampleCount" value="4"/>
+        <integer name="sampleCount" value="8"/>
     </sampler>
     
-    <append id="Camera-camera_film" type="hdrfilm">
+    <merge id="Camera-camera_film" type="hdrfilm">
         <string name="fileFormat" value="openexr"/>
         <string name="pixelFormat" value="spectrum"/>
         <string name="componentFormat" value="float16"/>
         <boolean name="banner" value="false"/>
-    </append>
+        
+        <rfilter type="gaussian">
+            <float name="stddev" value="0.5"/>
+        </rfilter>
+    </merge>
     
 </scene>

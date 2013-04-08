@@ -4,6 +4,7 @@
 %
 % Read a scene XML document from file.
 %   @param sceneFile file name or path to read
+%   @param excludePattern regular expression to filter document elements
 %
 % @details
 % Read the given XML @a sceneFile (.dae or .xml).  The @a sceneFile should
@@ -21,17 +22,23 @@
 %
 % @details
 % Also returns an "id map" that represent the document in terms of elements
-% that have unique identifiers.
+% that have unique identifiers.  If @a excludePattern is provided, it must
+% be a regular expression to match against element node names.  Elements
+% whose names match @a excludePattern will not be added to the id map.
 %
 % @details
 % Usage:
-%   [docNode, idMap] = ReadSceneDOM(sceneFile)
+%   [docNode, idMap] = ReadSceneDOM(sceneFile, excludePattern)
 %
 % @ingroup SceneDOM
-function [docNode, idMap] = ReadSceneDOM(sceneFile)
+function [docNode, idMap] = ReadSceneDOM(sceneFile, excludePattern)
+
+if nargin < 2
+    excludePattern = '';
+end
 
 % open the file for parsing
 docNode = xmlread(sceneFile);
 
 % scan the document for nodes that have ids
-idMap = GenerateSceneIDMap(docNode);
+idMap = GenerateSceneIDMap(docNode, excludePattern);

@@ -1,4 +1,0 @@
-imageName		groupName
-simpleSphereMatte	matteGroup
-simpleSphereWard	wardGroup
-simpleSphereMetal	metalGroup

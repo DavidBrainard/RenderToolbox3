@@ -1,0 +1,42 @@
+Collada {
+    % swap camera handedness from Blender's Collada output
+    Camera:scale|sid=scale = -1 1 1
+
+    % make sure the point light behaves with inverse-square attenuation
+    Point-light:technique_common:point:constant_attenuation = 1
+    Point-light:technique_common:point:linear_attenuation = 0
+    Point-light:technique_common:point:quadratic_attenuation = 1
+}
+
+% specify generic scene elements under the "matteGroup" condition
+Generic matteGroup {
+    % generic matte sphere material
+    Material-material:material:matte
+
+    % make it red
+    Material-material:diffuseReflectance.spectrum = mccBabel-11.spd
+}
+
+% specify generic scene elements under the "wardGroup" condition
+Generic wardGroup {
+    % generic anisotropic ward sphere material
+    Material-material:material:anisoward
+    Material-material:alphaU.float = 0.2
+    Material-material:alphaV.float = 0.2
+
+    % make it green
+    Material-material:diffuseReflectance.spectrum = mccBabel-7.spd
+}
+
+% specify generic scene elements under the "metalGroup" condition
+Generic metalGroup {
+    % generic metal sphere material
+    Material-material:material:metal
+
+    % make the surface somewhat rough
+    Material-material:roughness.float = 0.4
+
+    % make it out of gold!
+    Material-material:eta.spectrum = Au.eta.spd
+    Material-material:k.spectrum = Au.k.spd
+}

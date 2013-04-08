@@ -6,7 +6,7 @@
 %   @param colladaFile input Collada file name or path
 %   @param mitsubaFile output Mitsuba file name or path (optional)
 %   @param adjustmentsFile adjustments file name or path (optional)
-%   @param hints struct of hints from GetDefaultHints() (optional)
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Converts the given @a colladaFile ('.dae' or '.xml') to a mitsuba .xml
@@ -19,22 +19,34 @@
 % matching "id" attributes.
 %
 % @details
+% Note that RenderToolbox3 uses a custom mechanism for applying adjustments
+% to Mitsuba scenes, instead of the built-in Mitusba mechanism.  This
+% allows finer-grained adjustments to scene elements.
+%
+% @details
 % @a hints may be a struct with additional parameters for the converter.
 % See GetDefaultHints() for more about batch renderer hints.
 %
 % @details
+% Returns the file name of the new Mitsuba file, which might be the same as
+% the given @a mitsubaFile.  Also returns an XML Document Object Model
+% (DOM) document node that represenets the Mitsuba file.
+%
+% @details
 % Usage:
-%   ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
+%   [mitsubaFile, mitsubaDoc] = ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
 %
 % @ingroup Utilities
-function ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
+function [mitsubaFile, mitsubaDoc] = ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
 
 %% Parameters
 [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
 
 if nargin < 2 || isempty(mitsubaFile)
-    mitsubaFile = [colladaBase '.xml'];
+    mitsubaFile = fullfile(colladaPath, [colladaBase '.xml']);
 end
+[mitsubaPath, mitsubaBase, mitsubaExt] = fileparts(mitsubaFile);
+unadjustedFile = fullfile(mitsubaPath, [mitsubaBase 'Unadjusted.xml']);
 
 if nargin < 3 || isempty(adjustmentsFile)
     adjustmentsFile = getpref('Mitsuba', 'adjustmentsFile');
@@ -53,35 +65,39 @@ else
     filmType = hints.filmType;
 end
 
-%% Change the dynamic library path, which can interfere with Mitsuba.
-libPathName = getpref('Mitsuba', 'libPathName');
-libPath = getpref('Mitsuba', 'libPath');
-MatlabLibPath = getenv(libPathName);
-setenv(libPathName, libPath);
-
 %% Invoke the Mitsuba importer.
-fprintf('Converting %s\n  to %s.\n', colladaFile, mitsubaFile);
+% set the dynamic library search path
+[newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
 
+% find the Mitsuba importer
+%   don't pass the adjustments file to the converter
 importer = fullfile( ...
     getpref('Mitsuba', 'app'), ...
     getpref('Mitsuba', 'importer'));
-importCommand = sprintf('%s -r %dx%d -l %s %s %s %s', ...
+fprintf('Converting %s\n  to %s.\n', colladaFile, mitsubaFile);
+importCommand = sprintf('%s -r %dx%d -l %s %s %s', ...
     importer, ...
     hints.imageWidth, hints.imageHeight, ...
     filmType, ...
-    [colladaBase colladaExt], mitsubaFile, adjustmentsFile);
+    [colladaBase colladaExt], unadjustedFile);
+
+% run in the destination folder to capture all ouput there
+originalFolder = pwd();
+cd(mitsubaPath);
 [status, result] = unix(importCommand);
+cd(originalFolder)
 if status ~= 0
     error('Mitsuba file conversion failed\n  %s\n  %s\n', ...
         colladaFile, result);
 end
 
-%% Restore the dynamic library path for Matlab.
-setenv(libPathName, MatlabLibPath);
+% restore the library search path
+setenv(libPathName, originalLibPath);
 
-%% Clean up.
-% Mitsuba importer creates a "textures" folder, even when unnecessary.
-textureDir = fullfile(colladaPath, 'textures');
-if isempty(ls(textureDir))
-    rmdir(textureDir);
-end
+%% Apply adjustments using the RenderToolbox3 custom mechanism.
+%   Mitsuba nodes named "ref" have "id" attrubutes, but are not "id" nodes
+excludePattern = '^ref$';
+mitsubaDoc = ReadSceneDOM(unadjustedFile, excludePattern);
+adjustmentsDoc = ReadSceneDOM(adjustmentsFile, excludePattern);
+MergeAdjustments(mitsubaDoc, adjustmentsDoc, excludePattern);
+WriteSceneDOM(mitsubaFile, mitsubaDoc);

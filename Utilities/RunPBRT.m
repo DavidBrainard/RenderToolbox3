@@ -4,6 +4,7 @@
 %
 % Invoke the PBRT renderer.
 %   @param sceneFile filename or path of a .pbrt scene file.
+%   @param isShow whether or not to display the output image in a figure
 %
 % @details
 % Invoke the PBRT renderer on the given .pbrt @a sceneFile.  This function
@@ -11,14 +12,22 @@
 % command.
 %
 % @details
+% if @a isShow is provided and true, displays an sRGB representation of the
+% output image in a new figure.
+%
+% @details
 % Returns the numeric status code and text output from the unix() command.
 % Also returns the name of the expected output file from PBRT.
 %
 % Usage:
-%   [status, result, output] = RunPBRT(sceneFile)
+%   [status, result, output] = RunPBRT(sceneFile, isShow)
 %
 % @ingroup Utilities
-function [status, result, output] = RunPBRT(sceneFile)
+function [status, result, output] = RunPBRT(sceneFile, isShow)
+
+if nargin < 2 || isempty(isShow)
+    isShow = false;
+end
 
 InitializeRenderToolbox();
 
@@ -27,11 +36,33 @@ InitializeRenderToolbox();
 output = fullfile(scenePath, [sceneBase '.dat']);
 
 %% Invoke PBRT.
+% set the dynamic library search path
+[newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
+
+% find the PBRT executable
 pbrt = getpref('PBRT', 'executable');
 renderCommand = sprintf('%s --outfile %s %s', pbrt, output, sceneFile);
 fprintf('%s\n', renderCommand);
+
+% run PBRT in the destination folder to capture all ouput there
+originalFolder = pwd();
+cd(scenePath);
 [status, result] = unix(renderCommand);
+cd(originalFolder)
+
+% restore the library search path
+setenv(libPathName, originalLibPath);
+
+%% Show a warning or figure?
 if status ~= 0
     warning(result)
     warning('Could not render scene "%s".', sceneBase)
+    
+elseif isShow
+    multispectral = ReadDAT(output);
+    S = getpref('PBRT', 'S');
+    toneMapFactor = 10;
+    isScale = true;
+    sRGB = MultispectralToSRGB(multispectral, S, toneMapFactor, isScale);
+    ShowXYZAndSRGB([], sRGB, sceneBase);
 end

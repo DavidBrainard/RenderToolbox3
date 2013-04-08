@@ -5,15 +5,22 @@
 % Make a Scene DOM path for an XML document element or attribute.
 %   @param node XML document element or attribute object
 %   @param checkName name of attribute to include in the path
+%   @param childPattern regular expression to force child node behavior
 %
 % @details
 % Create a Scene DOM path for the given XML document element or attribute.
 %
 % @details
-% By default, crates a Scene DOM path that only uses element names.  If
+% By default, creates a Scene DOM path that only uses element names.  If
 % @a checkName is provided, it must the string name of an attribute to
 % "check".  For elements in the path that have an attribute with the given
 % @a checkName, the name and value will be included in the path.
+%
+% @details
+% Also by default, stops creating a Scene DOM path at the first node that
+% has an "id" attribute.  If @a childPattern is provided, it must be a
+% regular expression to compare to node names.  Nodes whose names match @a
+% childPattern will allow path creation to continue.
 %
 % @details
 % Returns a Scene DOM path cell array for the given node.
@@ -25,13 +32,17 @@
 %
 % @details
 % Usage:
-%   nodePath = GetNodePath(node, checkName)
+%   nodePath = GetNodePath(node, checkName, childPattern)
 %
 % @ingroup SceneDOM
-function nodePath = GetNodePath(node, checkName)
+function nodePath = GetNodePath(node, checkName, childPattern)
 
 if nargin < 2
     checkName = '';
+end
+
+if nargin < 3
+    childPattern = '';
 end
 
 % ignore nodes that store raw node text
@@ -60,15 +71,20 @@ end
 %   or reaching the top of the document graph
 ancestorID = 'document';
 while isjava(node) && ~strcmp('#document', char(node.getNodeName()))
+    % convert the node name from Java to Matlab
+    name = char(node.getNodeName());
+    
+    % some nodes must behave like child nodes,
+    %   even if they have an "id" attribute, for example referencces
+    isForcedChild = ~isempty(childPattern) ...
+        && ~isempty(regexp(name, childPattern, 'once'));
+    
     % does this node have a proper id?
-    [attribute, name, value] = GetElementAttributes(node, 'id');
-    if ~isempty(attribute)
+    [attribute, attribName, value] = GetElementAttributes(node, 'id');
+    if ~isForcedChild && ~isempty(attribute)
         ancestorID = value;
         break;
     end
-    
-    % convert the node name from Java to Matlab
-    name = char(node.getNodeName());
     
     % append a plain or decorated path part
     if isempty(checkName)

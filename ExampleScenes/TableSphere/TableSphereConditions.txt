@@ -1,0 +1,5 @@
+lightColor		imageName
+300:10 800:100		reddish
+D65.spd			daylight
+300:100 800:10		blueish
+

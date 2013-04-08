@@ -3,9 +3,10 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Get many XML document nodes and Scene DOM paths.
-%   @param docNode XML document node object 
+%   @param docNode XML document node object
 %   @param checkName name of attribute to include in the path
 %   @param filterPattern regular expression to filter document nodes
+%   @param childPattern regular expression to force child node behavior
 %
 % @details
 % Traverses the XML document represented by @a docNode, finding elements
@@ -16,6 +17,12 @@
 % Returns a "path map" that represents the same document as @a docNode.  A
 % path map is a containers.Map of all document elements and attributtes,
 % with Scene DOM path strings as map keys.
+%
+% @details
+% Also returns a cell array of path strings in depth first order.  This is
+% the order in which elements and attributes are encountered during
+% document traversal.  This should also be the top-down order of elements
+% as the appear in the XML text file.
 %
 % @details
 % By default, the Scene DOM paths refer only to element node names.
@@ -36,11 +43,17 @@
 % match the @a filterPattern will be included in the path map.
 %
 % @details
+% Also by default, stops creating each Scene DOM path at the first node
+% that has an "id" attribute.  If @a childPattern is provided, it must be a
+% regular expression to compare to node names.  Nodes whose names match @a
+% childPattern will allow path creation to continue.
+%
+% @details
 % Usage:
-%   GenerateScenePathMap(docNode, checkName, filterPattern)
+%   [pathMap, sortedKeys] = GenerateScenePathMap(docNode, checkName, filterPattern, childPattern)
 %
 % @ingroup SceneDOM
-function pathMap = GenerateScenePathMap(docNode, checkName, filterPattern)
+function [pathMap, sortedKeys] = GenerateScenePathMap(docNode, checkName, filterPattern, childPattern)
 
 if nargin < 2
     checkName = '';
@@ -50,22 +63,33 @@ if nargin < 3
     filterPattern = '';
 end
 
+if nargin < 4
+    childPattern = '';
+end
+
 % create the container for path strings and nodes
 pathMap = containers.Map('KeyType', 'char', 'ValueType', 'any');
+depthMap = containers.Map('KeyType', 'uint64', 'ValueType', 'char');
 
 % traverse the DOM!
-traverseElements(docNode, pathMap, checkName, filterPattern);
+traverseElements(docNode, pathMap, depthMap, checkName, filterPattern, childPattern);
 
+% return sorted keys as a cell array
+sortedKeys = depthMap.values();
 
 %% Iterate attributes and child elements
-function traverseElements(element, pathMap, checkName, filterPattern)
+function traverseElements(element, pathMap, depthMap, checkName, filterPattern, childPattern)
 % get a path for the element itself
 %   add this element to the path map
-elementPath = GetNodePath(element, checkName);
+elementPath = GetNodePath(element, checkName, childPattern);
 if ~isempty(elementPath)
     pathString = PathCellToString(elementPath);
     if isempty(filterPattern) || ~isempty(regexp(pathString, filterPattern))
+        % add element to the path map
         pathMap(pathString) = element;
+        
+        % add key to the sorded keys
+        depthMap(depthMap.Count + 1) = pathString;
     end
 end
 
@@ -74,15 +98,19 @@ end
 [attributes, names, values] = GetElementAttributes(element);
 nAttributes = numel(attributes);
 for ii = 1:nAttributes
-    attribPath = GetNodePath(attributes{ii}, checkName);
+    attribPath = GetNodePath(attributes{ii}, checkName, childPattern);
     pathString = PathCellToString(attribPath);
     if isempty(filterPattern) || ~isempty(regexp(pathString, filterPattern))
+        % add attribute to the path map
         pathMap(pathString) = attributes{ii};
+        
+        % add key to the sorded keys
+        depthMap(depthMap.Count + 1) = pathString;
     end
 end
 
-% recur: get paths for each child
+% recur: get paths for each child element
 children = GetElementChildren(element);
 for ii = 1:numel(children)
-    traverseElements(children{ii}, pathMap, checkName, filterPattern);
+    traverseElements(children{ii}, pathMap, depthMap, checkName, filterPattern, childPattern);
 end

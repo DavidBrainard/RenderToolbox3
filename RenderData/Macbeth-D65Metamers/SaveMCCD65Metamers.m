@@ -24,9 +24,9 @@ outDir = fullfile(RenderToolboxRoot(), 'RenderData', 'Macbeth-D65Metamers');
 if ~exist(outDir, 'dir')
     mkdir(outDir);
 end
-matName = 'sur_mccD65Metamer.mat';
-matFile = fullfile(outDir, matName);
+name = 'sur_mccD65Metamer';
+matFile = fullfile(outDir, [name '.mat']);
 save(matFile, 'sur_mccD65Metamer', 'S_mccD65Metamer');
 
 % generate .spd files
-ColorimetricMatToTextFiles(matFile, outDir);
+ImportPsychColorimetricMatFile(matFile, [name '.spd']);

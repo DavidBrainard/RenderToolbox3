@@ -6,7 +6,7 @@
 %   @param colladaFile input Collada file name or path
 %   @param pbrtFile output PBRT file name or path (optional)
 %   @param adjustmentsFile adjustments file name or path (optional)
-%   @param hints struct of hints from GetDefaultHints() (optional)
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Converts the given @a colladaFile ('.dae' or '.xml') to a PBRT .pbrt
@@ -23,11 +23,16 @@
 % See GetDefaultHints() for more about batch renderer hints.
 %
 % @details
+% Returns the file name of the new PBRT file, which might be the same as
+% the given @a pbrtFile.  Also returns the PBRT-XML Document Object Model
+% (DOM) document node from which the PBRT file was generated.
+%
+% @details
 % Usage:
-%   ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
+%   [pbrtFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
 %
 % @ingroup Utilities
-function ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
+function [pbrtFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
 
 %% Parameters
 [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
@@ -56,21 +61,27 @@ end
 %% Invoke several Collada to PBRT utilities.
 fprintf('Converting %s\n  to %s.\n', colladaFile, pbrtFile);
 
+% run in the destination folder to capture all ouput there
+originalFolder = pwd();
+cd(pbrtPath);
+
 % read the collada file
 [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
 
 % create a new PBRT-XML file
 %   merge in nodes from the adjustments file
 [pbrtDoc, pbrtIDMap] = CreateStubDOM(colladaIDMap, 'pbrt_xml');
-[adjustmentsDoc, adjustmentsIDMap] = ReadSceneDOM(adjustmentsFile);
+adjustmentsDoc = ReadSceneDOM(adjustmentsFile);
 PopulateStubDOM(pbrtIDMap, colladaIDMap, hints);
-MergeAdjustments(pbrtIDMap, adjustmentsIDMap);
+MergeAdjustments(pbrtDoc, adjustmentsDoc);
 WriteSceneDOM(xmlFile, pbrtDoc);
 
 % dump the PBRT-XML file into a .pbrt text file
 WritePBRTFile(pbrtFile, xmlFile, hints);
 
+cd(originalFolder)
+
 % clean up the intermediate PBRT-XML file
-if hints.isDeleteIntermediates
+if hints.isDeleteTemp
     delete(xmlFile);
 end

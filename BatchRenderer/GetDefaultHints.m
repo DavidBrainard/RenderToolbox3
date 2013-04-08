@@ -3,7 +3,7 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Get default hints to pass to the batch renderer.
-%   @param hints partial struct of batch renderer options (optional)
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Creates a struct of options for the batch renderer to use, or fills in
@@ -15,7 +15,27 @@
 % If provided, @a hints should be a struct of renderer options with option
 % names as fields.  Fills in any missing options with default values.  If
 % @a hints is missing or not a struct, creates a new struct with all
-% default  values.
+% default values.
+%
+% @details
+% Default hint values can be set with Matlab's setpref() function.  For
+% example:
+% @code
+%   % default renderer to use
+%   setpref('RenderToolbox3', 'renderer', 'Mitsuba');
+%   % or
+%   setpref('RenderToolbox3', 'renderer', 'PBRT');
+%
+%   % default ouput image dimensions
+%   setpref('RenderToolbox3', 'imageHeight', 480);
+%   setpref('RenderToolbox3', 'imageWidth', 640);
+%
+%   % delete temporary files by default?
+%   setpref('RenderToolbox3', 'isDeleteTemp', false);
+%
+%   % review all the hints
+%   hints = GetDefaultHints()
+% @endcode
 %
 % @details
 % Returns a new or modified struct of batch renderer options.
@@ -25,6 +45,14 @@
 % Usage:
 %   hints = GetDefaultHints(hints)
 %
+% Usage examples:
+% @code
+%   hints = GetDefaultHints(hints);
+%   hints.whichConditions = [1 3 5];
+%   BatchRender(..., hints);
+%   MakeMontage(..., hints);
+% @endcode
+%
 % @ingroup BatchRender
 function hints = GetDefaultHints(hints)
 
@@ -32,41 +60,15 @@ if nargin < 1 || ~isstruct(hints)
     hints = struct();
 end
 
-% the default renderer is Mitsuba
-if ~IsStructFieldPresent(hints, 'renderer')
-    hints.renderer = 'Mitsuba';
-end
+InitializeRenderToolbox();
 
-% the default film type is up to the scene file converter
-if ~IsStructFieldPresent(hints, 'filmType')
-    hints.filmType = '';
-end
-
-% the default adjustments file is up to the scene file converter
-if ~IsStructFieldPresent(hints, 'adjustmentsFile')
-    hints.adjustmentsFile = '';
-end
-
-% by default, delete intermediate files
-if ~IsStructFieldPresent(hints, 'isDeleteIntermediates')
-    hints.isDeleteIntermediates = true;
-end
-
-% the default rendering output folder is the current folder
-if ~IsStructFieldPresent(hints, 'outputFolder')
-    hints.outputFolder = pwd();
-end
-
-% the default output image is 320 wide x 240 tall
-if ~IsStructFieldPresent(hints, 'imageWidth')
-    hints.imageWidth = 320;
-end
-
-if ~IsStructFieldPresent(hints, 'imageHeight')
-    hints.imageHeight = 240;
-end
-
-% by default, render all conditions
-if ~IsStructFieldPresent(hints, 'whichConditions')
-    hints.whichConditions = [];
+% supplement given hints with default hints
+RenderToolbox3 = getpref('RenderToolbox3');
+hintNames = fieldnames(RenderToolbox3);
+for ii = 1:numel(hintNames)
+    name = hintNames{ii};
+    if ~IsStructFieldPresent(hints, name)
+        % hint is missing, fill in the default
+        hints.(name) = getpref('RenderToolbox3', name);
+    end
 end

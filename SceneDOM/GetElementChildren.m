@@ -65,17 +65,19 @@ if isjava(element) && element.hasChildNodes()
         
         if isempty(name)
             % get all children
+            %   except XML comments
             children{ii} = child;
             names{ii} = childName;
-            isMatch(ii) = true;
+            isMatch(ii) = ~strcmp(name, '#comment');
             
         elseif strcmp(name, childName)
             % get matching children
             if isempty(checkName) || isempty(checkValue)
                 % match any child by name
+                %   except XML comments
                 children{ii} = child;
                 names{ii} = childName;
-                isMatch(ii) = true;
+                isMatch(ii) = ~strcmp(name, '#comment');;
                 
             else
                 % match one child by name and attribute value

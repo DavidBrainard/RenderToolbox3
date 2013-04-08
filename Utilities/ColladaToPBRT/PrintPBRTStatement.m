@@ -61,25 +61,33 @@ for ii = 1:numel(params)
     
     % param, like "float fov" [90]
     fprintf(fid, '"%s %s" ', p.type, p.name);
-    if strcmp(p.type, 'string')
-        fprintf(fid, '"%s" ', p.value);
-        
-    elseif strcmp(p.type, 'spectrum')
-        % spectrum may be numeric or string
-        if 0 == numel(StringToVector(p.value))
+    switch p.type
+        case {'string', 'texture'}
             fprintf(fid, '"%s" ', p.value);
-        else
+            
+        case 'spectrum'
+            % spectrum may be numeric or string
+            if 0 == numel(StringToVector(p.value))
+                fprintf(fid, '"%s" ', p.value);
+            else
+                % numeric spectrum should use space, not colon delimiters
+                p.value(':' == p.value) = ' ';
+                fprintf(fid, '[%s] ', p.value);
+            end
+            
+        case 'bool'
+            if islogical(p.value) || isnumeric(p.value)
+                if p.value
+                    fprintf(fid, '"true" ');
+                else
+                    fprintf(fid, '"false" ');
+                end
+            else
+                fprintf(fid, '"%s" ', p.value);
+            end
+            
+        otherwise
             fprintf(fid, '[%s] ', p.value);
-        end
-        
-    elseif strcmp(p.type, 'bool')
-        if p.type
-            fprintf(fid, '"true" ');
-        else
-            fprintf(fid, '"false" ');
-        end
-    else
-        fprintf(fid, '[%s] ', p.value);
     end
 end
 fprintf(fid, '\n');

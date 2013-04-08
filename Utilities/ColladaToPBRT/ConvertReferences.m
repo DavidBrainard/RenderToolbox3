@@ -6,7 +6,7 @@
 %   @param id
 %   @param stubIDMap
 %   @param colladaIDMap
-%   @param hints
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Cherry pick from Collada node s that refer to "instances" of other nodes,

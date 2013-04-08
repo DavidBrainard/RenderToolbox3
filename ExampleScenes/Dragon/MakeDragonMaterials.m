@@ -2,17 +2,12 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Render the Dragon Materials scene.
-%
-
-%%
+%% Render a dragon in several materials.
 clear;
 clc;
-working = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'Dragon');
-batchOutputs = fullfile(working, 'outputMaterials');
-cd(working);
 
-%% Choose files to work with.
+%% Choose example files, make sure they're on the Matlab path.
+AddWorkingPath(mfilename('fullpath'));
 sceneFile = 'Dragon.dae';
 conditionsFile = 'DragonMaterialsConditions.txt';
 mappingsFile = 'DragonMaterialsMappings.txt';
@@ -21,23 +16,17 @@ mappingsFile = 'DragonMaterialsMappings.txt';
 hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
-hints.isDeleteIntermediates = true;
-hints.outputFolder = batchOutputs;
+hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT.
-toneMapFactor = 2.5;
+toneMapFactor = 10;
 isScale = true;
-for renderer = {'Mitsuba', 'PBRT'}
+for renderer = {'PBRT', 'Mitsuba'}
     hints.renderer = renderer{1};
     outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
     montageName = sprintf('%s (%s)', 'DragonMaterials', hints.renderer);
-    montageFile = [montageName '.tiff'];
+    montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScale);
+        MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
-end
-
-%% Clean up the batch render outputs.
-if hints.isDeleteIntermediates
-    rmdir(batchOutputs, 's')
 end

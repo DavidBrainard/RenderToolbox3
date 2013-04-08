@@ -31,7 +31,7 @@
 % corresponding values, as returned from ParseConditions().
 %
 % @details
-% @a hints should be a struct with renderer opotions.  @a hints.renderer
+% @a hints should be a struct with renderer options.  @a hints.renderer
 % should be the name of a renderer, either 'Mitsuba', or 'PBRT'.
 %
 % @details
@@ -74,11 +74,12 @@ mappedScene = fullfile(workingPath, [name sceneExt]);
 if isempty(originalAdjust)
     mappedAdjust = '';
 else
-    mappedAdjust = fullfile(workingPath, [name 'Adjust' adjustExt]);
+    mappedAdjust = fullfile(workingPath, [name 'Adjustments' adjustExt]);
 end
 
 %% Copy and modify the original scene and adjustments XML documents.
 % get original documents into memory
+
 [sceneDoc, sceneIDMap] = ReadSceneDOM(originalScene);
 if ~isempty(originalAdjust)
     [adjustDoc, adjustIDMap] = ReadSceneDOM(originalAdjust);
@@ -92,9 +93,9 @@ else
     groupName = '';
 end
 
-% scan each mapping:
-%   replace (varName) syntax with real values
-%   add the full file path for files on the Matlab path
+%% Resolve the value for each mapping:
+%   replace (varName) syntax with corresponding varValue values
+%   resolve the full file path for files on the Matlab path
 %   filter mappings by group name
 isInGroup = true(1, numel(mappings));
 for mm = 1:numel(mappings)
@@ -102,8 +103,10 @@ for mm = 1:numel(mappings)
     map = mappings(mm);
     for nn = 1:numel(varNames);
         varPattern = ['\(' varNames{nn} '\)'];
-        map.left.value = regexprep(map.left.value, varPattern, varValues{nn});
-        map.right.value = regexprep(map.right.value, varPattern, varValues{nn});
+        map.left.value = ...
+            regexprep(map.left.value, varPattern, varValues{nn});
+        map.right.value = ...
+            regexprep(map.right.value, varPattern, varValues{nn});
     end
     
     % right-hand value may be a scene path or just a string
@@ -134,39 +137,50 @@ for mm = 1:numel(mappings)
     mappings(mm) = map;
 end
 
-%% Apply mappings by block.
+%% Apply mappings separately for each block.
+blockNums = [mappings.blockNumber];
+rendererName = hints.renderer;
+rendererPathName = [rendererName '-path'];
 if ~isempty(mappings) && any(isInGroup)
-    % "Collada" blocks modify the input Collada document
-    isCollada = isInGroup & strcmp('Collada', {mappings.block});
-    for ii = find(isCollada)
-        % apply mapping directly to the Collada document
-        ApplyScenePathMapping(sceneIDMap, mappings(ii));
-    end
-    
-    % "Generic" blocks modify the adjustments file in
-    %   they use generic names, types, and values
-    %   convert generic syntax and convert names, types, and values
-    isGeneric = isInGroup & strcmp('Generic', {mappings.block});
-    nativeMaps = SceneTargetsToDOMPaths(mappings(isGeneric), hints);
-    for ii = 1:numel(nativeMaps)
-        ApplyScenePathMapping(adjustIDMap, nativeMaps(ii));
-    end
-    
-    % blocks named for the current renderer modify the adjustments file
-    %   they use renderer-native names, types, and values
-    isRenderer = isInGroup & strcmp(hints.renderer, {mappings.block});
-    for ii = find(isRenderer)
-        if strcmp('<>', map.left.enclosing)
-            % apply mapping directly to the adjustments document
-            ApplyScenePathMapping(adjustIDMap, mappings(ii));
-            
-        else
-            % convert generic syntax to native adjustments syntax
-            %   but don't convert native names, types, and values
-            mappingInfo = ParseSceneTarget(mappings(ii));
-            nativeMappings = MakeNativePathMappings(mappingInfo, hints);
-            for jj = 1:numel(nativeMappings)
-                ApplyScenePathMapping(adjustIDMap, nativeMappings(jj));
+    for bb = unique(blockNums)
+        isBlock = isInGroup & bb == blockNums;
+        if any(isBlock)
+            blockMaps = mappings(isBlock);
+            switch blockMaps(1).blockType
+                case 'Collada'
+                    % scene DOM paths for the Collada document
+                    ApplySceneDOMPaths(sceneIDMap, blockMaps);
+                    
+                case 'Generic'
+                    % generic scene targets for the adjustments document
+                    objects = MappingsToObjects(blockMaps);
+                    objects = SupplementGenericObjects(objects);
+                    
+                    % convert generic names and values to native and apply
+                    switch rendererName
+                        case 'PBRT'
+                            objects = GenericObjectsToPBRT(objects);
+                            ApplyPBRTObjects(adjustIDMap, objects);
+                            
+                        case 'Mitsuba'
+                            objects = GenericObjectsToMitsuba(objects);
+                            ApplyMitsubaObjects(adjustIDMap, objects);
+                    end
+                    
+                case rendererName
+                    % native scene targets for the adjustments document
+                    objects = MappingsToObjects(blockMaps);
+                    switch rendererName
+                        case 'PBRT'
+                            ApplyPBRTObjects(adjustIDMap, objects);
+                            
+                        case 'Mitsuba'
+                            ApplyMitsubaObjects(adjustIDMap, objects);
+                    end
+                    
+                case rendererPathName
+                    % scene DOM paths for the adjustments document
+                    ApplySceneDOMPaths(adjustIDMap, blockMaps);
             end
         end
     end

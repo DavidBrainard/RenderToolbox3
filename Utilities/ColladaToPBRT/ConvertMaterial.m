@@ -6,7 +6,7 @@
 %   @param id
 %   @param stubIDMap
 %   @param colladaIDMap
-%   @param hints
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Cherry pick from Collada "material" and "effect" nodes in the Collada
@@ -63,8 +63,14 @@ else
     % get diffuse color and index of refraction
     colladaPath = cat(2, materialPath, {':diffuse', ':color'});
     diffuse = GetSceneValue(colladaIDMap, colladaPath);
+    if isempty(diffuse)
+        diffuse = '0.5 0.5 0.5';
+    end
     colladaPath = cat(2, materialPath, {':index_of_refraction', ':float'});
     refractIndex = GetSceneValue(colladaIDMap, colladaPath);
+    if isempty(refractIndex)
+        refractIndex = '1.0';
+    end
 end
 
 % convert 4-element color to RGB

@@ -1,0 +1,16 @@
+dragonColor
+GradedSpectrum-1.spd
+GradedSpectrum-2.spd
+GradedSpectrum-3.spd
+GradedSpectrum-4.spd
+GradedSpectrum-5.spd
+GradedSpectrum-6.spd
+GradedSpectrum-7.spd
+GradedSpectrum-8.spd
+GradedSpectrum-9.spd
+GradedSpectrum-10.spd
+GradedSpectrum-11.spd
+GradedSpectrum-12.spd
+GradedSpectrum-13.spd
+GradedSpectrum-14.spd
+GradedSpectrum-15.spd

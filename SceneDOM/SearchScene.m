@@ -63,6 +63,7 @@ for ii = 2:nParts
                     doc = node.getOwnerDocument();
                     attribute = doc.createAttribute(name);
                     node.setAttributeNode(attribute);
+
                 else
                     % path does not exist
                     node = [];
@@ -80,7 +81,7 @@ for ii = 2:nParts
             if isempty(child)
                 if isCreate
                     % fill in the missing child
-                    child = CreateElementChild(node, name);
+                    child = CreateElementChild(node, name, [], isCreate);
                     
                     if ~isempty(checkName) && ~isempty(checkValue)
                         % add a "check" attribute to the child

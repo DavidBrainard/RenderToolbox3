@@ -30,18 +30,18 @@
 % href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Scene-DOM-Paths">Scene
 % DOM Paths</a>.
 %
-% @defgroup SceneTargets Scene Targets
-% Access scene elements with handy syntax.
+% @defgroup MappingsObjects Mappings Objects
+% Process mappings and apply them to the scene.
 % @details
-% These function are for accessing scene elements by using <a
-% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Mappings-Syntax">Scene
-% Target</a> syntax.  Scene Target syntax is nicer than <a
-% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Scene-DOM-Paths">Scene
-% DOM Path</a> syntax.
+% These functions process the mappings from the <a
+% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Mappings-File-Format">mappings
+% file</a>.  In particular, they supplement <a
+% https://github.com/DavidBrainard/RenderToolbox3/wiki/Generic-Scene-Elements">generic
+% scene elements with default property values and convert them to
+% renderer-native formats.
 % @details
-% Theses functions are part of the RenderToolbox3 batch renderer.  Users
-% should not use these functions directly.  Just use the BatchRender()
-% function.
+% Users should not use these functions directly.  Just use the
+% BatchRender() function.
 %
 % @defgroup Mex
 % Build Mex-functions from source.

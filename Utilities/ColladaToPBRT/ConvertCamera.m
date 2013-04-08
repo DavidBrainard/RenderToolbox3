@@ -6,7 +6,7 @@
 %   @param id
 %   @param stubIDMap
 %   @param colladaIDMap
-%   @param hints
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Cherry pick from a Collada "camera" node in the Collada document
@@ -75,7 +75,7 @@ elseif isOrthographic
     % get the x-magnification
     colladaPath = {id, ':optics', ':technique_common', ...
         ':orthographic', ':xmag'};
-    xmag = str2double(GetSceneValue(colladaIDMap, colladaPath));
+    xmag = str2double(GetSceneValue(colladaIDMap, colladaPath))/2;
     
     % PBRT ortho camera uses x and y scale factors in screenwindow
     ymag = xmag/aspect;

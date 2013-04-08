@@ -14,6 +14,10 @@
 % full, absolute path names.
 %
 % @details
+% By default, only returns file names, not folder names.  If @a isFolders
+% is provided and true, returns folder names as well as file names.
+%
+% @details
 % Ignores subfolders that contain '.'.  Ignores files that start with '.'
 % or end with "~" or "ASV".
 %
@@ -23,17 +27,22 @@
 %
 % @details
 % Usage:
-%   fileList = FindFiles(folder, fileFilter)
+%   fileList = FindFiles(folder, fileFilter, isFolders)
 %
 % @ingroup Utilities
-function fileList = FindFiles(folder, fileFilter)
+function fileList = FindFiles(folder, fileFilter, isFolders)
+
+if nargin < 3 || isempty(isFolders)
+    isFolders = false;
+end
 
 if nargin < 2
     fileFilter = '';
 end
 
-if nargin < 1
+if nargin < 1 || isempty(folder)
     folder = pwd();
+    
 else
     % convert relative folder to absolute path
     initalFolder = pwd();
@@ -42,13 +51,21 @@ else
     cd(initalFolder);
 end
 
+% find all files in the present folder
 d = dir(folder);
 isSubfolder = [d.isdir];
 files = {d(~isSubfolder).name};
 subfolders = {d(isSubfolder).name};
 
+% include the present folder itself?
+if isFolders && (isempty(fileFilter) ...
+        || ~isempty(regexp(folder, fileFilter, 'once')))
+    fileList = {folder};
+else
+    fileList = {};
+end
+
 % append files from the present folder
-fileList = {};
 for ii = 1:numel(files)
     f = files{ii};
     if ~isempty(f) ...
@@ -69,6 +86,7 @@ for ii = 1:numel(subfolders)
     sf = subfolders{ii};
     if ~isempty(sf) && ~any(sf=='.')
         absSubfolder = fullfile(folder, sf);
-        fileList = cat(2, fileList, FindFiles(absSubfolder, fileFilter));
+        fileList = cat(2, fileList, ...
+            FindFiles(absSubfolder, fileFilter, isFolders));
     end
 end

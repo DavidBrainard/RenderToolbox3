@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Get hyperspectral image data out of a .mif file from Stanford.
+% Get multispectral image data out of a .mif file from Stanford.
 %   @param filename string file name (path optional) of the .mif file
 %
 % @details
@@ -12,12 +12,12 @@
 % http://white.stanford.edu/pdcwiki/index.php/PBRTFileFormat
 %
 % @details
-% Returns a matrix of hyperspectral image data, with size [height width n],
+% Returns a matrix of multispectral image data, with size [height width n],
 % where height and width are image size in pixels, and n is the number of
 % spectral planes.
 %
 % @details
-% Also returns the hyperspectral image dimensions [height width n].  Also
+% Also returns the multispectral image dimensions [height width n].  Also
 % returns a matrix of length n that lists the wavelengths of all spectral
 % planes in nanometers.
 %

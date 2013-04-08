@@ -2,63 +2,29 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render the SimpleSphere scene with 3 materials.
-
+% Render a Ward sphere under a point light and orthogonal optics.
 clear;
 clc;
 
-%% Create new files in the same folder as these example files.
-working = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'SimpleSphere');
-cd(working);
-
-%% Choose example files.
+%% Choose example files, make sure they're on the Matlab path.
+AddWorkingPath(mfilename('fullpath'));
 sceneFile = 'SimpleSphere.dae';
-conditionsFile = 'SimpleSphereConditions.txt';
 mappingsFile = 'SimpleSphereMappings.txt';
 
 %% Choose batch renderer options.
+hints.imageWidth = 201;
+hints.imageHeight = 201;
+hints.isDeleteTemp = true;
 
-% which materials to use, [] means all 3
-hints.whichConditions = [];
-
-% pixel size of each rendering
-hints.imageWidth = 200;
-hints.imageHeight = 160;
-
-% automatically clean up batch renderer intermediate files?
-hints.isDeleteIntermediates = true;
-
-% put multi-spectral renderings in a subfolder
-batchOutputs = fullfile(working, 'outputs');
-hints.outputFolder = batchOutputs;
-
-%% Render with Mitsuba and PBRT.
-
-% how to convert multi-spectral images to sRGB
-toneMapFactor = 100;
-isScaleGamma = true;
-
-% make a montage with each renderer
+%% Render with Mitsuba and PBRT
+toneMapFactor = 10;
+isScale = true;
 for renderer = {'Mitsuba', 'PBRT'}
-    
-    % choose one renderer
     hints.renderer = renderer{1};
-    
-    % make 3 multi-spectral renderings, saved in .mat files
-    outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
-    
-    % condense multi-spectral renderings into one sRGB montage,
-    %   saved in a .tiff file
+    outFiles = BatchRender(sceneFile, '', mappingsFile, hints);
     montageName = sprintf('%s (%s)', 'SimpleSphere', hints.renderer);
-    montageFile = [montageName '.tiff'];
+    montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma);
-    
-    % display the sRGB montage
+        MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
-end
-
-% automatically clean up multi-spectral renderings?
-if hints.isDeleteIntermediates
-    rmdir(batchOutputs, 's')
 end

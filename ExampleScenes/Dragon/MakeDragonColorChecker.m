@@ -3,22 +3,18 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Render the Dragon scene with 24 ColorChecker colors.
-
 clear;
 clc;
 
-%% Create new files in the same folder as these example files.
-working = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'Dragon');
-cd(working);
-
-%% Choose example files.
+%% Choose example files, make sure they're on the Matlab path.
+AddWorkingPath(mfilename('fullpath'));
 sceneFile = 'Dragon.dae';
 conditionsFile = 'DragonColorCheckerConditions.txt';
 mappingsFile = 'DragonColorCheckerMappings.txt';
 
 %% Choose batch renderer options.
 
-% which colors to use, [] means all 24
+% which colors to use, [] means all
 hints.whichConditions = [];
 
 % pixel size of each rendering
@@ -26,11 +22,7 @@ hints.imageWidth = 150;
 hints.imageHeight = 120;
 
 % automatically clean up batch renderer intermediate files?
-hints.isDeleteIntermediates = true;
-
-% put multi-spectral renderings in a subfolder
-batchOutputs = fullfile(working, 'outputColorChecker');
-hints.outputFolder = batchOutputs;
+hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT.
 
@@ -47,18 +39,12 @@ for renderer = {'Mitsuba', 'PBRT'}
     % make 24 multi-spectral renderings, saved in .mat files
     outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
     
-    % condense multi-spectral renderings into one sRGB montage, 
-    %   saved in a .tiff file
+    % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('%s (%s)', 'DragonColorChecker', hints.renderer);
-    montageFile = [montageName '.tiff'];
+    montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma);
+        MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma, hints);
     
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);
-end
-
-% automatically clean up multi-spectral renderings?
-if hints.isDeleteIntermediates
-    rmdir(batchOutputs, 's')
 end

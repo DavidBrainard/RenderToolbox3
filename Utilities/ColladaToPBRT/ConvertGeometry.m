@@ -6,7 +6,7 @@
 %   @param id
 %   @param stubIDMap
 %   @param colladaIDMap
-%   @param hints
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Cherry pick from Collada "geometry", "source", "float_array", and
@@ -31,15 +31,52 @@ function isConverted = ConvertGeometry(id, stubIDMap, colladaIDMap, hints)
 
 isConverted = true;
 
-%% Find data from the "polylist", the top level for geometry data
-%   get a "VERTEX" reference and a polylist offset
-colladaPath = {id, ':mesh', ':polylist', ':input|semantic=VERTEX', '.source'};
-vertexID = GetSceneValue(colladaIDMap, colladaPath);
-vertexID = vertexID(vertexID ~= '#');
-colladaPath = {id, ':mesh', ':polylist', ':input|semantic=VERTEX', '.offset'};
-vertexOffset = str2double(GetSceneValue(colladaIDMap, colladaPath));
+% TODO:
+%   export a separate object for each polylist under a mesh.
+%   each could append a _num, as in Mitsuba
+%   this would enable one mesh to specify materials per face
+%   polylists might differ by the "material" attribute
+%   this shoould be a matter of finding the polylists and repeating much of
+%   this code in a loop
+%   however some of the mesh data might need to be converted only once
+%
+% find all polylists
+%   make a name for each with _num
+%   pass name and DOM path to a convertPolylist
+% in addition to polylists, triangles? polygons?
 
-% follow the "VERTEX" reference, get another reference to "POSITION" data
+%% Find all the geometry mesh polylists.
+% get the geometry's main "mesh" object
+%   ignoring "convex_mesh" and "spline" geometries
+colladaPath = {id, ':mesh'};
+meshElement = SearchScene(colladaIDMap, colladaPath, false);
+[attrib, name, meshID] = GetElementAttributes(meshElement, 'id');
+polyLists = GetElementChildren(meshElement, 'polylist');
+nPolylists = numel(polyLists);
+for ii = 1:nPolylists
+    % make a name for this polylist
+    polyName = sprintf('%s_%d', id, ii-1);
+    
+    % convert geometry for this polylist
+    isPolyConverted = convertPolylist(polyName, polyLists{ii}, ...
+        id, stubIDMap, colladaIDMap, hints);
+end
+
+% Convert polygons from the given polylist.
+function isConverted = convertPolylist(polyName, polyList, ...
+    id, stubIDMap, colladaIDMap, hints)
+
+isConverted = true;
+
+%% Find the polylist's "VERTEX" data and "POSITION" data.
+% find the "VERTEX" reference and offset
+vertexInput = GetElementChildren(polyList, 'input', 'semantic', 'VERTEX');
+[attrib, name, vertexID] = GetElementAttributes(vertexInput, 'source');
+vertexID = vertexID(vertexID ~= '#');
+[attrib, name, vertexOffset] = GetElementAttributes(vertexInput, 'offset');
+vertexOffset = StringToVector(vertexOffset);
+
+% follow the "VERTEX" reference to a "POSITION" reference
 colladaPath = {vertexID, ':input|semantic=POSITION', '.source'};
 positionID = GetSceneValue(colladaIDMap, colladaPath);
 positionID = positionID(positionID ~= '#');
@@ -49,7 +86,7 @@ positionID = positionID(positionID ~= '#');
 colladaPath = {positionID, ':technique_common', ':accessor' '.stride'};
 stride = str2double(GetSceneValue(colladaIDMap, colladaPath));
 if stride ~= 3
-    warning('"%s" position data are not packed XYZ, not converted', id);
+    warning('"%s" position data are not packed XYZ, geometry not converted.', id);
     isConverted = false;
     return
 end
@@ -59,19 +96,19 @@ colladaPath = {positionID, ':float_array'};
 positionString = GetSceneValue(colladaIDMap, colladaPath);
 position = reshape(StringToVector(positionString), 3, []);
 
-% get a "NORMAL" reference and a polylist offset
-colladaPath = {id, ':mesh', ':polylist', ':input|.semantic=NORMAL', '.source'};
-normalID = GetSceneValue(colladaIDMap, colladaPath);
+%% Find the polylist's NORMAL data.
+normalInput = GetElementChildren(polyList, 'input', 'semantic', 'NORMAL');
+[attrib, name, normalID] = GetElementAttributes(normalInput, 'source');
 normalID = normalID(normalID ~= '#');
-colladaPath = {id, ':mesh', ':polylist', ':input|.semantic=NORMAL', '.offset'};
-normalOffset = str2double(GetSceneValue(colladaIDMap, colladaPath));
+[attrib, name, normalOffset] = GetElementAttributes(normalInput, 'offset');
+normalOffset = StringToVector(normalOffset);
 
-% follow the "NORMAL" reference to actial vertex normal data
+% follow the "NORMAL" reference to actual vertex normal data
 %   make sure the data are 3-element XYZ
 colladaPath = {normalID, ':technique_common', ':accessor' '.stride'};
 stride = str2double(GetSceneValue(colladaIDMap, colladaPath));
 if stride ~= 3
-    warning('"%s" normal data are not packed XYZ, not converted', id);
+    warning('"%s" normal data are not packed XYZ, geometry not converted.', id);
     isConverted = false;
     return
 end
@@ -81,18 +118,50 @@ colladaPath = {normalID, ':float_array'};
 normalsString = GetSceneValue(colladaIDMap, colladaPath);
 normal = reshape(StringToVector(normalsString), 3, []);
 
-% get number of polygons, polygon vertex counts, and indices from polylist
-colladaPath = {id, ':mesh', ':polylist', '.count'};
-nPolysString = GetSceneValue(colladaIDMap, colladaPath);
-nPolys = StringToVector(nPolysString);
+%% Find the polylist's TEXCOORD (UV) data, if any.
+texCoordInput = GetElementChildren(polyList, 'input', 'semantic', 'TEXCOORD');
+hasTexCoords = ~isempty(texCoordInput);
+if hasTexCoords
+    % take the first set of coordinates, ignoring the "set" attribute
+    [attrib, name, texCoordID] = GetElementAttributes(texCoordInput, 'source');
+    texCoordID = texCoordID(texCoordID ~= '#');
+    [attrib, name, texCoordOffset] = GetElementAttributes(texCoordInput, 'offset');
+    texCoordOffset = StringToVector(texCoordOffset);
+    
+    % follow the "TEXCOORD" reference to actual texture coordinate data
+    %   make sure the data are 2-element UV
+    colladaPath = {texCoordID, ':technique_common', ':accessor' '.stride'};
+    stride = str2double(GetSceneValue(colladaIDMap, colladaPath));
+    if stride ~= 2
+        warning('"%s" texture coordinates are not packed UV, coordinates ignored.', id);
+        hasTexCoords = false;
+    end
+end
 
-colladaPath = {id, ':mesh', ':polylist', ':vcount'};
-vCountsString = GetSceneValue(colladaIDMap, colladaPath);
-vCounts = StringToVector(vCountsString);
+% read actual texcoord/UV data
+if hasTexCoords
+    colladaPath = {texCoordID, ':float_array'};
+    texCoordString = GetSceneValue(colladaIDMap, colladaPath);
+    texCoord = reshape(StringToVector(texCoordString), 2, []);
+    
+    % flip the V coordinate to agree with Blender and Mitsuba
+    texCoord(2:2:end) = 1 - texCoord(2:2:end);
+end
 
-colladaPath = {id, ':mesh', ':polylist', ':p'};
-polyIndicesString = GetSceneValue(colladaIDMap, colladaPath);
-polyIndices = StringToVector(polyIndicesString);
+%% Account for the polygons in the polylist.
+% total number of polygons
+[attrib, name, nPolys] = GetElementAttributes(polyList, 'count');
+nPolys = StringToVector(nPolys);
+
+% number of vertices in each polygon
+vCountsElement = GetElementChildren(polyList, 'vcount');
+polyVertexCounts = char(vCountsElement{1}.getTextContent());
+polyVertexCounts = StringToVector(polyVertexCounts);
+
+% vertex indices for each polygon
+indicesElement = GetElementChildren(polyList, 'p');
+polyIndices = char(indicesElement{1}.getTextContent());
+polyIndices = StringToVector(polyIndices);
 
 %% Convert to PBRT-style geometry
 % There are two big differences between Collada and PBRT geometry:
@@ -105,9 +174,12 @@ polyIndices = StringToVector(polyIndicesString);
 %   and normal index.
 
 % make PBRT vertices from Collada combinations of position and normal
-nVertices = sum(vCounts);
+nVertices = sum(polyVertexCounts);
 indexStride = numel(polyIndices) / nVertices;
-vertexData = repmat(struct('position', [], 'normal', []), 1, nVertices);
+vertexData = struct( ...
+    'position', cell(1, nVertices), ...
+    'normal', cell(1, nVertices), ...
+    'texCoord', cell(1, nVertices));
 vertexCount = 0;
 for ii = 1:indexStride:numel(polyIndices)
     % locate Collada position and normal data
@@ -118,16 +190,22 @@ for ii = 1:indexStride:numel(polyIndices)
     vertexCount = vertexCount + 1;
     vertexData(vertexCount).position = position(:,posIndex);
     vertexData(vertexCount).normal = normal(:,normIndex);
+    
+    % add texCoord data if any
+    if hasTexCoords
+        texCoordIndex = 1 + polyIndices(ii + texCoordOffset);
+        vertexData(vertexCount).texCoord = texCoord(:,texCoordIndex);
+    end
 end
 
 % convert polygons to equivalent triangels
 %   each vertex more than 3 incurs a new triangle
-nTriangles = sum(vCounts - 2);
+nTriangles = sum(polyVertexCounts - 2);
 pbrtIndices = zeros(1, 3*nTriangles);
 pbrtCount = 0;
-polyStartIndices = 1 + [0; cumsum(vCounts(1:end-1))];
+polyStartIndices = 1 + [0; cumsum(polyVertexCounts(1:end-1))];
 for ii = 1:nPolys
-    nVerts = vCounts(ii);
+    nVerts = polyVertexCounts(ii);
     vertIndices = polyStartIndices(ii) + (0:(nVerts-1));
     
     if nVerts == 3
@@ -141,17 +219,35 @@ for ii = 1:nPolys
         polyData = vertexData(vertIndices);
         polyPos = cat(2, polyData.position)';
         
-        % rotate polygon into principal component space
-        [coefs, rotated] = princomp(polyPos);
+        % represent arbitrary 3D polygon in 2D
+        %   translate vertices to near the origin for FindLinMod()
+        meanPos = mean(polyPos, 1);
+        meanPosRep = repmat(meanPos, size(polyPos, 1), 1);
+        polyPosCentered = polyPos - meanPosRep;
+        [basis, coefs] = FindLinMod(polyPosCentered', 2);
+        polyPos2D = coefs';
         
-        % compute 2D Delaunay triangulation on rotated polygon
-        %   ignore rotated z data, which should be all 0
-        triIndices = delaunay(rotated(:,1:2));
+        % compute 2D Delaunay triangulation
+        triIndices = delaunay(polyPos2D);
         
         % copy indices for each Delaunay triangle (as zero-based)
-        for tt = 1:size(triIndices, 1)
+        %   preserve the winding order of the original polygon
+        isPolygonClockwise = IsVerticesClockwise(polyPos);
+        nTriangles = size(triIndices, 1);
+        for tt = 1:nTriangles
+            trianglePos = polyPos(triIndices(tt,:), :);
+            isTriangleClockwise = IsVerticesClockwise(trianglePos);
+            
+            % flip winding order if the triangle came out backwards
+            if xor(isPolygonClockwise, isTriangleClockwise)
+                windOrder = [1 3 2];
+            else
+                windOrder = [1 2 3];
+            end
+            
+            % store triangle indices for PBRT
             zeroIndices = vertIndices(triIndices(tt,:)) - 1;
-            pbrtIndices(pbrtCount + (1:3)) = zeroIndices;
+            pbrtIndices(pbrtCount + windOrder) = zeroIndices;
             pbrtCount = pbrtCount + 3;
         end
         
@@ -167,12 +263,12 @@ end
 %   meshes make it hard for humans to read the document, and very large
 %   meshes cause the XML DOM to run out of memory!
 
-% create a new file with the node id in the file name
-fileName = sprintf('mesh-data-%s.pbrt', id);
+% create a new file named like the polylist name
+fileName = sprintf('mesh-data-%s.pbrt', polyName);
 fid = fopen(fileName, 'w');
-fprintf(fid, '# mesh data %s\n', id);
+fprintf(fid, '# mesh data %s\n', polyName);
 
-% fill it with a giant PBRT statement
+% assemble mesh data and PBRT file format metadata
 identifier = 'Shape';
 type = 'trianglemesh';
 pbrtPositions = cat(1, vertexData.position);
@@ -181,9 +277,34 @@ params = struct( ...
     'name', {'P', 'N', 'indices'}, ...
     'type', {'point', 'normal', 'integer'}, ...
     'value', {pbrtPositions, pbrtNormals, pbrtIndices});
+
+% add texture UV coordinates, if any
+if hasTexCoords
+    uv.name = 'uv';
+    uv.type = 'float';
+    uv.value = cat(1, vertexData.texCoord);
+    params(end+1) = uv;
+end
+
+% fill in the file with a giant PBRT statement
 PrintPBRTStatement(fid, identifier, type, params);
 fclose(fid);
 
-%% Add a reference to the new file to the PBRT stub document.
+%% Add to the geometry node with material and geometry to include.
 SetType(stubIDMap, id, 'Shape', 'trianglemesh');
-AddReference(stubIDMap, id, 'mesh-data', 'Include', fileName);
+
+% set a material for this polylist?
+[attrib, name, materialName] = GetElementAttributes(polyList, 'material');
+if ~isempty(materialName)
+    % adding '-material' to the materialName is a hack.
+    %   should really look up the correct "instance_material" binding
+    %   but this lives in the parent node, not the geometry or polylist
+    materialID = [materialName '-material'];
+    refName = [polyName '-material'];
+    AddReference(stubIDMap, id, refName, 'Material', materialID);
+end
+
+        
+% include the newly converted geometry
+AddReference(stubIDMap, id, polyName, 'Include', fileName);
+

@@ -3,10 +3,10 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Convert multi-spectral image data to XYZ and sRGB.
-%   @param multispectralImage
-%   @param S
-%   @param toneMapFactor
-%   @param isScale
+%   @param multispectralImage multispectral image matrix [height width n]
+%   @param S image spectral sampling description [start delta n]
+%   @param toneMapFactor optional threshold for clipping luminance
+%   @param isScale whether to normalize sRGB image by max luminance
 %
 % @details
 % Convert the given @a multispectralImage of size [height width n] to an
@@ -27,15 +27,16 @@
 % they gamma-corrected maximum.
 %
 % @details
-% Returns an sRGB image of size [height width 3].  Also returns the
-% intermediate XYZ image of size [height width 3].
+% Returns a gamma-corrected sRGB image of size [height width 3].  Also
+% returns the intermediate XYZ image and the uncorrected RGB image, which
+% have the same size.
 %
 % @details
 % Usage:
-%   [SRGBImage, XYZImage] = MultispectralToSRGB(multispectralImage, S, toneMapFactor, isScale)
+%   [sRGBImage, XYZImage, rawRGBImage] = MultispectralToSRGB(multispectralImage, S, toneMapFactor, isScale)
 %
 % @ingroup Utilities
-function [SRGBImage, XYZImage] = MultispectralToSRGB(multispectralImage, S, toneMapFactor, isScale)
+function [sRGBImage, XYZImage, rawRGBImage] = MultispectralToSRGB(multispectralImage, S, toneMapFactor, isScale)
 
 %% parameters
 if nargin < 3
@@ -46,26 +47,15 @@ if nargin < 4
     isScale = false;
 end
 
-%% Convert to CIE XYZ image by weighting
-% the hyperspectral planes by the CIE color
-% matching functions.
-%
-% This code is a template for converting down
-% from hyperspectral to any linear color space.
-wls = SToWls(S);
-imSiz = size(multispectralImage);
-load T_xyz1931
-T_xyz = SplineCmf(S_xyz1931,683*T_xyz1931,S);
-XYZImage = zeros(imSiz(1),imSiz(2),size(T_xyz,1));
-for w = 1:length(wls)
-    for j = 1:size(T_xyz,1)
-        XYZImage(:,:,j) = XYZImage(:,:,j) + T_xyz(j,w)*multispectralImage(:,:,w);
-    end
-end
+% convert to CIE XYZ image by weighting the multispectral planes by the CIE
+% color matching functions.
+%   why multiply by 683?
+matchingData = load('T_xyz1931');
+matchingFunction = 683*matchingData.T_xyz1931;
+matchingS = matchingData.S_xyz1931;
+XYZImage = MultispectralToSensorImage(multispectralImage, S, ...
+    matchingFunction, matchingS);
 
-%% Convert XYZ to sRGB
-
-% convert to sRGB
-% A very simple tone mapping algorithm will truncate
-% luminance above a factor times the mean luminance.
-SRGBImage = XYZToSRGB(XYZImage, toneMapFactor, 0, isScale);
+% convert to sRGB with a very simple tone mapping algorithm that truncates
+% luminance above a factor times the mean luminance
+[sRGBImage, rawRGBImage] = XYZToSRGB(XYZImage, toneMapFactor, 0, isScale);
