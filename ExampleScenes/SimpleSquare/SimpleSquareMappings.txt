@@ -1,0 +1,10 @@
+Generic {
+    % square color conditiond file
+    SquareMaterial-material:material:matte
+    SquareMaterial-material:diffuseReflectance.spectrum = (squareColor)
+
+    % daylight sun spectrum
+    Sun-light:light:directional
+    Sun-light:intensity.spectrum = D65.spd
+}
+

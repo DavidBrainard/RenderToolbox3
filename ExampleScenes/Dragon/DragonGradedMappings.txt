@@ -1,0 +1,29 @@
+Collada {
+    % swap camera handedness from Blender's Collada output
+    Camera:scale|sid=scale = -1 1 1
+}
+
+% specify generic scene elements that apply to PBRT and Mitsuba
+Generic {
+    % make area lights with daylight spectrum
+    LightX-mesh:light:area
+    LightX-mesh:intensity.spectrum = D65.spd
+    LightY-mesh:light:area
+    LightY-mesh:intensity.spectrum = D65.spd
+
+    % make gray walls and floor
+    WallMaterial-material:material:matte
+    WallMaterial-material:diffuseReflectance.spectrum = 300:0.75 800:0.75
+    FloorMaterial-material:material:matte
+    FloorMaterial-material:diffuseReflectance.spectrum = 300:0.5 800:0.5
+
+    % make a color-changing, matte dragon!
+    DragonMaterial-material:material:matte
+    DragonMaterial-material:diffuseReflectance.spectrum = (dragonColor)
+}
+
+Mitsuba {
+    % use the path tracer with lots of samples
+    integrator:integrator:path
+    Camera-camera_sampler:sampleCount.integer = 512
+}

@@ -1,0 +1,2 @@
+targetColor			destinationColor
+SpectralIllusionTarget.spd	SpectralIllusionDestination.spd

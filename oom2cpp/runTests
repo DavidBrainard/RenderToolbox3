@@ -1,0 +1,13 @@
+#!/bin/bash
+
+lex oom2cpp.l
+gcc -o oom2cpp lex.yy.c -lfl
+
+F="testOom2cppFunctions"
+./oom2cpp test/$F.m test/output/$F.cpp
+
+F="testOom2cppClass"
+./oom2cpp test/$F.m test/output/$F.cpp
+
+F="testOom2cppSubclass"
+./oom2cpp test/$F.m test/output/$F.cpp

@@ -1,0 +1,39 @@
+Collada {
+    % flip handedness to match Blender-Collada output to Mitsuba and PBRT
+    Camera:scale|sid=scale = -1 1 1
+}
+
+Mitsuba-path {
+    % Mitsuba does not convert scale factor for orthogonal cameras!
+    %   use Scene DOM paths to replace the camera's transformations
+    Camera-camera$ = merge   
+    Camera-camera:transform|name=toWorld:scale.x = [Camera-camera:optics:technique_common:orthographic:xmag]
+    Camera-camera:transform|name=toWorld:scale.x /= 2
+    Camera-camera:transform|name=toWorld:scale.y = [Camera-camera:optics:technique_common:orthographic:xmag]
+    Camera-camera:transform|name=toWorld:scale.y /= 2
+
+    % override the default film
+    %   to reign in the pixel filter
+    Camera-camera_film$ = merge
+    Camera-camera_film:rfilter|type=gaussian:float|name=stddev.value = 0.25
+}
+
+PBRT-path {
+    % reign in the pixel filter
+    filter:parameter|name=alpha = 4
+    filter:parameter|name=xwidth = 1
+    filter:parameter|name=ywidth = 1
+}
+
+Generic {
+    % square color conditiond file
+    Material-material:material:anisoward
+    Material-material:diffuseReflectance.spectrum = mccBabel-2.spd
+    Material-material:specularReflectance.spectrum = 300:0.07 800:0.07
+    Material-material:alphaU.float = 0.05
+    Material-material:alphaV.float = 0.05
+
+    % daylight sun spectrum
+    Lamp-light:light:point
+    Lamp-light:intensity.spectrum = D65.spd
+}
