@@ -1,0 +1,64 @@
+% modify the input Collada file
+Collada {
+    % swap camera handedness from Blender's Collada output
+    Camera:scale|sid=scale = -1 1 1
+
+    % fix the top and rear lamps to be realistically quadratic
+    TopLamp-light:technique_common:point:constant_attenuation = 1
+    TopLamp-light:technique_common:point:linear_attenuation = 0
+    TopLamp-light:technique_common:point:quadratic_attenuation = 1
+    RearLamp-light:technique_common:point:constant_attenuation = 1
+    RearLamp-light:technique_common:point:linear_attenuation = 0
+    RearLamp-light:technique_common:point:quadratic_attenuation = 1
+
+    % move the camera for each condition
+    Camera:translate|sid=location = (xCam) (yCam) 3
+    Camera:rotate|sid=rotationX = 1 0 0 80
+    Camera:rotate|sid=rotationY = 0 1 0 0
+    Camera:rotate|sid=rotationZ = 0 0 1 (zRotCam)
+
+    % rotate the cube arbitrarily
+    MrCube:rotate|sid=rotationX += 0 0 0 15
+    MrCube:rotate|sid=rotationY -= 0 0 0 15
+}
+
+% moodify the lighting spectra for both Mitsuba and PBRT
+Generic {
+    TopLamp-light:light:point
+    TopLamp-light:intensity.spectrum = (topLampColor)
+
+    RearLamp-light:light:point
+    RearLamp-light:intensity.spectrum = D65.spd
+
+    Sun1-light:light:directional
+    Sun1-light:intensity.spectrum = 400:10 700:1
+
+    Sun2-light:light:directional
+    Sun2-light:intensity.spectrum = 400:1 700:10
+}
+
+% specify Mitsuba-style plastic
+Mitsuba {
+    % make the cube and sphere both plastic
+    CubeMaterial-material:bsdf:roughplastic
+    CubeMaterial-material:diffuseReflectance.spectrum = mccBabel-4.spd
+    CubeMaterial-material:alpha.float = 0.1
+
+    SphereMaterial-material:bsdf:roughplastic
+    SphereMaterial-material:diffuseReflectance.spectrum = (sphereColor)
+    SphereMaterial-material:alpha.float = 0.1
+}
+
+% specify PBRT-style plastic
+PBRT {
+    % make the cube and sphere both plastic
+    CubeMaterial-material:Material:plastic
+    CubeMaterial-material:Kd.spectrum = mccBabel-4.spd
+    CubeMaterial-material:Ks.spectrum = 300:0.75
+    CubeMaterial-material:roughness.float = 0.003
+
+    SphereMaterial-material:Material:plastic
+    SphereMaterial-material:Kd.spectrum = (sphereColor)
+    SphereMaterial-material:Ks.spectrum = 300:0.75
+    SphereMaterial-material:roughness.float = 0.003
+}

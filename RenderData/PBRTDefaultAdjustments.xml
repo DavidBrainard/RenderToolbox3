@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- basic renderer properties that Collada doesn't know about -->
+
+<pbrt_xml>
+
+    <SurfaceIntegrator id="integrator" type="directlighting">
+        <parameter name="maxdepth" type="integer">5</parameter>
+        <parameter name="strategy" type="string">all</parameter>
+    </SurfaceIntegrator>
+
+    <Sampler id="sampler" type="lowdiscrepancy">
+        <parameter name="pixelsamples" type="integer">8</parameter>
+    </Sampler>
+    
+    <PixelFilter id="filter" type="gaussian">
+        <parameter name="alpha" type="float">2.0</parameter>
+    </PixelFilter>
+    
+</pbrt_xml>

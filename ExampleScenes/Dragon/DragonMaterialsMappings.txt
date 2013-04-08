@@ -1,0 +1,65 @@
+Collada {
+    % swap camera handedness from Blender's Collada output
+    Camera:scale|sid=scale = -1 1 1
+}
+
+% specify wall, floor, and lights for all conditions, all renderers
+Generic {
+    % make gray walls and floor
+    WallMaterial-material:material:matte
+    WallMaterial-material:diffuseReflectance.spectrum = 300:0.75 800:0.75
+    FloorMaterial-material:material:matte
+    FloorMaterial-material:diffuseReflectance.spectrum = 300:0.5 800:0.5
+
+    % use daylight
+    SunX-light:light:directional
+    SunX-light:intensity.spectrum = D65.spd
+    SunY-light:light:directional
+    SunY-light:intensity.spectrum = D65.spd
+    SunZ-light:light:directional
+    SunZ-light:intensity.spectrum = D65.spd
+}
+
+% material for the matte condition
+Generic matteGroup {
+    DragonMaterial-material:material:matte
+    DragonMaterial-material:diffuseReflectance.spectrum = mccBabel-5.spd
+}
+
+% material for the metal condition
+Generic metalGroup {
+    DragonMaterial-material:material:metal
+    DragonMaterial-material:eta.spectrum = Rh.eta.spd
+    DragonMaterial-material:k.spectrum = Rh.k.spd
+}
+
+% material for the glass condition
+Mitsuba glassGroup {
+    % choose integrator and sampler to work with glass
+    integrator:integrator:bdpt
+    Camera-camera_sampler:sampleCount.integer = 64
+
+    DragonMaterial-material:bsdf:dielectric
+    DragonMaterial-material:intIOR.float = 1.5
+    DragonMaterial-material:extIOR.float = 1.0
+}
+
+PBRT glassGroup {
+    % make a glass dragon
+    DragonMaterial-material:Material:glass
+    DragonMaterial-material:index.float = 1.5
+}
+
+% material for the plastic condition
+Mitsuba plasticGroup {
+    DragonMaterial-material:bsdf:roughplastic
+    DragonMaterial-material:alpha.float = 0.1
+    DragonMaterial-material:diffuseReflectance.spectrum = mccBabel-23.spd
+}
+
+PBRT plasticGroup {
+    DragonMaterial-material:Material:plastic
+    DragonMaterial-material:roughness.float = 0.003
+    DragonMaterial-material:Kd.spectrum = mccBabel-23.spd
+    DragonMaterial-material:Ks.spectrum = 300:1.0
+}
