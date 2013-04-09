@@ -340,7 +340,7 @@ switch hints.renderer
     case 'PBRT'
         % convert Collada to PBRT's text format
         pbrtFile = fullfile(tempFolder, [imageName '.pbrt']);
-        [pbrtFile, pbrtDoc] = ColladaToPBRT( ...
+        [pbrtFile, pbrtXMLFile, pbrtDoc] = ColladaToPBRT( ...
             sceneTemp, pbrtFile, adjustTemp, hints);
         
         % invoke PBRT!

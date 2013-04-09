@@ -24,15 +24,16 @@
 %
 % @details
 % Returns the file name of the new PBRT file, which might be the same as
-% the given @a pbrtFile.  Also returns the PBRT-XML Document Object Model
-% (DOM) document node from which the PBRT file was generated.
+% the given @a pbrtFile.  Also returns the PBRT-XML file and XML Document
+% Object Model (DOM) document object from which the PBRT file was
+% generated.
 %
 % @details
 % Usage:
-%   [pbrtFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
+%   [pbrtFile, pbrtXMLFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
 %
 % @ingroup Utilities
-function [pbrtFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
+function [pbrtFile, pbrtXMLFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
 
 %% Parameters
 [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
@@ -41,7 +42,7 @@ if nargin < 2 || isempty(pbrtFile)
     pbrtFile = fullfile(colladaPath, [colladaBase '.pbrt']);
 end
 [pbrtPath, pbrtBase, pbrtExt] = fileparts(pbrtFile);
-xmlFile = fullfile(pbrtPath, [pbrtBase '.pbrt.xml']);
+pbrtXMLFile = fullfile(pbrtPath, [pbrtBase '.pbrt.xml']);
 
 if nargin < 3 || isempty(adjustmentsFile)
     adjustmentsFile = getpref('PBRT', 'adjustmentsFile');
@@ -74,9 +75,9 @@ cd(pbrtPath);
 adjustmentsDoc = ReadSceneDOM(adjustmentsFile);
 PopulateStubDOM(pbrtIDMap, colladaIDMap, hints);
 MergeAdjustments(pbrtDoc, adjustmentsDoc);
-WriteSceneDOM(xmlFile, pbrtDoc);
+WriteSceneDOM(pbrtXMLFile, pbrtDoc);
 
 % dump the PBRT-XML file into a .pbrt text file
-WritePBRTFile(pbrtFile, xmlFile, hints);
+WritePBRTFile(pbrtFile, pbrtXMLFile, hints);
 
 cd(originalFolder)

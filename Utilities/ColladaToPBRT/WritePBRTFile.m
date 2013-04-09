@@ -3,15 +3,20 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Convert a "node" node from a Collada document to a PBRT-XML document.
-%   @param PBRTFile
-%   @param PBRTXMLFile
+%   @param PBRTFile name for a new PBRT scene text file
+%   @param PBRTXMLFile name of a PBRT-XML file.
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Write an new .pbrt text scene file with the given @a PBRTFile name, based
-% on the XML document in the given @a PBRTXMLFile.  @a PBRTXMLFile must be
-% be an XML file as created with PopulateStubDOM() and WriteSceneDOM().  @a
-% hints is a struct of parameters to use in the conversion process.
+% on the XML document in the given @a PBRTXMLFile.
+%
+% @details
+% @a PBRTXMLFile must be the name of a PBRT-XML file, as created with
+% ColladaToPBRT() or MakeSceneFiles().
+%
+% @details
+% @a hints may be a struct of parameters to use in the conversion process.
 %
 % @details
 % Used internally by ColladaToPBRT().

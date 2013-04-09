@@ -10,7 +10,7 @@
 %   @param outPath path where to copy new scene files
 %
 % @details
-% Creates multiple renderer-native scene files, based on the given @a
+% Creates multiple renderer-specific scene files, based on the given @a
 % colladaFile, @a conditionsFile, and @a mappingsFile.  @a hints.renderer
 % specifies which renderer to make scene files for.  @a outPath is
 % optional, and may specify a folder path that should receive copies of the
@@ -52,11 +52,16 @@
 % where new scene files should be copied.  New scene files will also be
 % written to @a hints.tempFolder.
 %
+% @details
+% Returns a cell array of file names for new rendterer-specific scene
+% files.  If @a outPath is provided, files will be located at that path.
+% Otherwise, files will be located at hints.tempFolder.
 %
 % @details
-% Returns a cell array of file names for new rendterer-native scene files.
-% If @a outPath is provided, files will be located at that path.
-% Otherwise, files will be located at hints.tempFolder.
+% For Mitsuba, renderer-specific scene files will be in Mitsuba's native
+% .xml format.  For PBRT, files will be in RenderToolbox3's custom PBRT-XML
+% .xml format.  PBRT-XML files can be converted to PBRT's native text
+% format using WritePBRTFile().
 %
 % @details
 % Usage:
@@ -160,9 +165,7 @@ try
         
         % copy to optional ouput folder?
         if ~isempty(outPath)
-            if ~exist(outPath, 'dir')
-                copyfile(sceneFiles{cc}, outPath);
-            end
+            copyfile(sceneFiles{cc}, outPath);
         end
     end
 catch err
@@ -179,7 +182,7 @@ end
 
 % Render a scene condition and save a .mat data file.
 function sceneFile = makeConditionSceneFile(colladaFile, mappingsFile, ...
-    varNames, conditionVarValues, hints);
+    varNames, varValues, hints)
 
 sceneFile = '';
 
@@ -253,17 +256,18 @@ copyfile(hints.adjustmentsFile, adjustCopy);
     tempFolder, imageName, colladaCopy, adjustCopy, ...
     mappings, varNames, varValues, hints);
 
-% convert Collada and adjustments to a renderer-native scene file
+% convert Collada and adjustments to a renderer-specific scene file
 switch hints.renderer
     case 'Mitsuba'
         % convert Collada to Mitsuba's .xml format
         sceneFile = fullfile(tempFolder, [imageName '.xml']);
-        [mitsubaFile, mitsubaDoc] = ColladaToMitsuba( ...
-            sceneTemp, mitsubaFile, adjustTemp, hints);
+        sceneFile = ColladaToMitsuba( ...
+            sceneTemp, sceneFile, adjustTemp, hints);
         
     case 'PBRT'
-        % convert Collada to PBRT's text format
-        sceneFile = fullfile(tempFolder, [imageName '.pbrt']);
-        [pbrtFile, pbrtDoc] = ColladaToPBRT( ...
+        % convert Collada to PBRT-XML format
+        pbrtFile = fullfile(tempFolder, [imageName '.pbrt']);
+        [pbrtFile, pbrtXMLFile] = ColladaToPBRT( ...
             sceneTemp, pbrtFile, adjustTemp, hints);
+        sceneFile = pbrtXMLFile;
 end
