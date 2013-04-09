@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Create renderer scene files for a Collada file.
+% Convert a Collada file to renderer scene files, with changing varibles.
 %   @param colladaFile file name or path of a Collada scene file
 %   @param conditionsFile file name or path of a conditions file
 %   @param mappingsFile file name or path of a mappings file
@@ -34,7 +34,7 @@
 % 'mappingsFile' variable.
 %
 % @details
-% @a hints may be a struct with options that affect the rendering process,
+% @a hints may be a struct with options that affect the conversion process,
 % as returned from GetDefaultHints().  If @a hints is omitted, default
 % options are used.  For example:
 %   - @a hints.renderer specifies which renderer to make scene files for.
@@ -43,6 +43,8 @@
 %   renderer-specific values
 %   - @a hints.filmType is a renderer-specific film type to specify in the
 %   scene files.
+%   - @a hints.imageHeight and @a hints.imageWidth specify the image pixel
+%   dimensions to specify in the scene files.
 %   - @a hints.whichConditions is an array of condition numbers used to
 %   select lines from the @a conditionsFile.
 %   .
@@ -53,8 +55,14 @@
 % written to @a hints.tempFolder.
 %
 % @details
-% Returns a cell array of file names for new rendterer-specific scene
-% files.  If @a outPath is provided, files will be located at that path.
+% Returns a cell array of file names for new renderer-specific scene
+% files.  By default, each scene file will have the same base name as @a
+% the given @a colladaFile, plus a numeric suffix.  If @a conditionsFile
+% contains an 'imageName' variable, each scene file be named with the value
+% of 'imageName'.
+%
+% @details
+% If @a outPath is provided, files will be located at that path.
 % Otherwise, files will be located at hints.tempFolder.
 %
 % @details
@@ -126,14 +134,12 @@ end
 
 % create a temp folder for each renderer.
 nRenderers = numel(renderers);
-tempFolders = cell(1, nRenderers);
 for ii = 1:numel(renderers)
     renderer = renderers{ii};
     tempFolder = fullfile(hints.tempFolder, renderer);
     if ~exist(tempFolder, 'dir')
         mkdir(tempFolder);
     end
-    tempFolders{ii} = tempFolder;
 end
 
 % create optional output folder?

@@ -45,6 +45,10 @@
 % @ingroup BatchRender
 function radianceData = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
 
+if nargin < 2
+    pbrtDoc = [];
+end
+
 % merge custom hints with defaults
 if nargin < 3 || isempty(hints)
     hints = GetDefaultHints();
@@ -61,26 +65,32 @@ else
 end
 
 %% PBRT requires scene-specific adjustments to the scaling factor.
-idMap = GenerateSceneIDMap(pbrtDoc);
-
-% PBRT scaling depends on the width of the image reconstruction filter
-%   this code assumes the gaussian filter
-nodePath = 'filter:parameter|name=alpha';
-filterAlpha = StringToVector(GetSceneValue(idMap, nodePath));
-
-nodePath = 'filter:parameter|name=xwidth';
-filterXWidth = StringToVector(GetSceneValue(idMap, nodePath));
-
-nodePath = 'filter:parameter|name=ywidth';
-filterYWidth = StringToVector(GetSceneValue(idMap, nodePath));
-
-% TODO: how do we use filter params to modify RadiometricScale?
-
-% PBRT scaling depends on the number of samples used per pixel
-%   this code assumes the lowdiscrepancy sampler
-nodePath = 'sampler:parameter|name=pixelsamples';
-samplesPerPixel = StringToVector(GetSceneValue(idMap, nodePath));
-
-% TODO: how do we use number of samples to modify RadiometricScale?
+if isempty(pbrtDoc)
+    disp('PBRT-XML document was not provided.');
+    disp('Multi-spectral image might be incorrectly scaled.');
+    
+else
+    idMap = GenerateSceneIDMap(pbrtDoc);
+    
+    % PBRT scaling depends on the width of the image reconstruction filter
+    %   this code assumes the gaussian filter
+    nodePath = 'filter:parameter|name=alpha';
+    filterAlpha = StringToVector(GetSceneValue(idMap, nodePath));
+    
+    nodePath = 'filter:parameter|name=xwidth';
+    filterXWidth = StringToVector(GetSceneValue(idMap, nodePath));
+    
+    nodePath = 'filter:parameter|name=ywidth';
+    filterYWidth = StringToVector(GetSceneValue(idMap, nodePath));
+    
+    % TODO: how do we use filter params to modify RadiometricScale?
+    
+    % PBRT scaling depends on the number of samples used per pixel
+    %   this code assumes the lowdiscrepancy sampler
+    nodePath = 'sampler:parameter|name=pixelsamples';
+    samplesPerPixel = StringToVector(GetSceneValue(idMap, nodePath));
+    
+    % TODO: how do we use number of samples to modify RadiometricScale?
+end
 
 radianceData = RadiometricScale .* pbrtData;

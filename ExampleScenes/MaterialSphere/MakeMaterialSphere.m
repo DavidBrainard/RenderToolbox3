@@ -44,13 +44,14 @@ toneMapFactor = 100;
 isScaleGamma = true;
 
 % make a montage and sensor images with each renderer
-for renderer = {'Mitsuba', 'PBRT'}
+for renderer = {'PBRT'}
     
     % choose one renderer
     hints.renderer = renderer{1};
     
     % make 3 multi-spectral renderings, saved in .mat files
-    outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
+    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
+    outFiles = BatchRender(sceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('MaterialSphere (%s)', hints.renderer);
