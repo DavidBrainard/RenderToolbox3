@@ -40,7 +40,6 @@ WriteSpectrumFile(wavelengths, magnitudes, 'WindowLight.spd');
 %% Choose batch renderer options.
 hints.imageHeight = 480;
 hints.imageWidth = 640;
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 4;

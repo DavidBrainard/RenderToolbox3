@@ -14,7 +14,6 @@ conditionsFile = 'InteriorConditions.txt';
 mappingsFile = 'InteriorMappings.txt';
 
 %% Choose batch renderer options.
-hints.isDeleteTemp = false;
 hints.whichConditions = [];
 
 %% Render with Mitsuba and PBRT

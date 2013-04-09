@@ -14,7 +14,6 @@ mappingsFile = 'ScalingTestMappings.txt';
 
 %% Choose batch renderer options.
 hints.whichConditions = [];
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer

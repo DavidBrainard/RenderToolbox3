@@ -16,7 +16,6 @@ conditionsFile = 'SimpleSquareConditions.txt';
 hints.whichConditions = [];
 hints.imageWidth = 50;
 hints.imageHeight = 50;
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 0;

@@ -80,8 +80,3 @@ WriteSceneDOM(xmlFile, pbrtDoc);
 WritePBRTFile(pbrtFile, xmlFile, hints);
 
 cd(originalFolder)
-
-% clean up the intermediate PBRT-XML file
-if hints.isDeleteTemp
-    delete(xmlFile);
-end

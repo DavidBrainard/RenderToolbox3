@@ -30,9 +30,6 @@
 %   setpref('RenderToolbox3', 'imageHeight', 480);
 %   setpref('RenderToolbox3', 'imageWidth', 640);
 %
-%   % delete temporary files by default?
-%   setpref('RenderToolbox3', 'isDeleteTemp', false);
-%
 %   % review all the hints
 %   hints = GetDefaultHints()
 % @endcode

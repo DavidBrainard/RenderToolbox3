@@ -217,13 +217,6 @@ fprintf('\nBatchRender finished at %s (%.1fs elapsed).\n\n', ...
 
 % clean up after rendering or error
 path(originalPath);
-if hints.isDeleteTemp
-    for ii = 1:nRenderers
-        if exist(tempFolders{ii}, 'dir')
-            rmdir(tempFolders{ii}, 's');
-        end
-    end
-end
 
 % report the error, if any
 if ~isempty(err)

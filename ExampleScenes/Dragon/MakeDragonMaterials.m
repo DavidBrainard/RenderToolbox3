@@ -16,7 +16,6 @@ mappingsFile = 'DragonMaterialsMappings.txt';
 hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;

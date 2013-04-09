@@ -17,7 +17,6 @@ cleverConditionsFile = 'SpectralIllusionConditionsClever.txt';
 hints.renderer = 'Mitsuba';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
-hints.isDeleteTemp = true;
 
 toneMapFactor = 100;
 isScale = true;

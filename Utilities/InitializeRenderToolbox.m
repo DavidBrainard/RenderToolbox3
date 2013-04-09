@@ -63,9 +63,6 @@
 %   % default ouput image dimensions
 %   setpref('RenderToolbox3', 'imageHeight', 480);
 %   setpref('RenderToolbox3', 'imageWidth', 640);
-%
-%   % delete temporary files by default?
-%   setpref('RenderToolbox3', 'isDeleteTemp', false);
 % @endcode
 %
 % @details
@@ -154,7 +151,6 @@ if isForce || ~ispref('RenderToolbox3')
     RenderToolbox3.renderer = 'Mitsuba';
     RenderToolbox3.filmType = '';
     RenderToolbox3.adjustmentsFile = '';
-    RenderToolbox3.isDeleteTemp = true;
     RenderToolbox3.imageHeight = 240;
     RenderToolbox3.imageWidth = 320;
     RenderToolbox3.whichConditions = [];

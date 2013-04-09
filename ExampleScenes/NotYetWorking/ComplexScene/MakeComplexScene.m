@@ -23,7 +23,6 @@ mappingsFile = WriteDefaultMappingsFile(sceneFile, '', '', colors);
 %% Choose batch renderer options.
 hints.imageHeight = 480;
 hints.imageWidth = 640;
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

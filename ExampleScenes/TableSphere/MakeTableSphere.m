@@ -15,7 +15,6 @@ conditionsFile = 'TableSphereConditions.txt';
 %% Choose batch renderer options.
 hints.imageWidth = 320;
 hints.imageHeight = 240;
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

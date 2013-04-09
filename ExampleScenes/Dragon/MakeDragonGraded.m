@@ -32,7 +32,6 @@ end
 hints.whichConditions = 1:nSteps;
 hints.imageWidth = 320;
 hints.imageHeight = 240;
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;

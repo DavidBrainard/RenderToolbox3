@@ -14,7 +14,6 @@ mappingsFile = 'SimpleSphereMappings.txt';
 %% Choose batch renderer options.
 hints.imageWidth = 201;
 hints.imageHeight = 201;
-hints.isDeleteTemp = true;
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

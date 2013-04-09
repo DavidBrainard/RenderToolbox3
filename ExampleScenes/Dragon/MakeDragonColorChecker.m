@@ -21,9 +21,6 @@ hints.whichConditions = [];
 hints.imageWidth = 150;
 hints.imageHeight = 120;
 
-% automatically clean up batch renderer intermediate files?
-hints.isDeleteTemp = true;
-
 %% Render with Mitsuba and PBRT.
 
 % how to convert multi-spectral images to sRGB

@@ -30,7 +30,6 @@ conditionsFile = WriteConditionsFile(conditionsFile, names, values);
 %% Choose batch renderer options.
 hints.imageWidth = 640;
 hints.imageHeight = 480;
-hints.isDeleteTemp = false;
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;
