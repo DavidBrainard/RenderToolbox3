@@ -152,9 +152,6 @@ end
 %% Make a scene file for each condition.
 sceneFiles = cell(1, nConditions);
 
-% add the the current folder and subfolders to the Matlab path
-originalPath = path();
-AddWorkingPath(pwd());
 err = [];
 try
     for cc = 1:nConditions
@@ -177,9 +174,6 @@ try
 catch err
     disp('Scene conversion error!');
 end
-
-% clean up after rendering or error
-path(originalPath);
 
 % report the error, if any
 if ~isempty(err)

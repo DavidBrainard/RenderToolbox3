@@ -79,7 +79,6 @@ end
 
 %% Copy and modify the original scene and adjustments XML documents.
 % get original documents into memory
-
 [sceneDoc, sceneIDMap] = ReadSceneDOM(originalScene);
 if ~isempty(originalAdjust)
     [adjustDoc, adjustIDMap] = ReadSceneDOM(originalAdjust);
@@ -93,10 +92,14 @@ else
     groupName = '';
 end
 
-%% Resolve the value for each mapping:
+%% Resolve the value part of each mapping:
 %   replace (varName) syntax with corresponding varValue values
 %   resolve the full file path for files on the Matlab path
 %   filter mappings by group name
+
+% add the current folder and subfolders to the path, temporarily
+originalPath = path();
+AddWorkingPath(pwd());
 isInGroup = true(1, numel(mappings));
 for mm = 1:numel(mappings)
     % replace (varName) text with varValue for this condition
@@ -136,6 +139,9 @@ for mm = 1:numel(mappings)
     % save the mapping with replacements
     mappings(mm) = map;
 end
+
+% restore the original path
+path(originalPath);
 
 %% Apply mappings separately for each block.
 blockNums = [mappings.blockNumber];
