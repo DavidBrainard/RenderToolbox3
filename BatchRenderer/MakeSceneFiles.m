@@ -164,7 +164,7 @@ try
         
         % make a the scene file for this condition
         sceneFiles{cc} = makeConditionSceneFile(colladaFile, mappingsFile, ...
-            varNames, conditionVarValues, hints);
+            cc, varNames, conditionVarValues, hints);
         
         % copy to optional ouput folder?
         if ~isempty(outPath)
@@ -182,7 +182,7 @@ end
 
 % Render a scene condition and save a .mat data file.
 function sceneFile = makeConditionSceneFile(colladaFile, mappingsFile, ...
-    varNames, varValues, hints)
+    conditionNumber, varNames, varValues, hints)
 
 sceneFile = '';
 
@@ -223,8 +223,7 @@ isMatch = strcmp('imageName', varNames);
 if any(isMatch)
     imageName = varValues{find(isMatch, 1, 'first')};
 else
-    imageName = sprintf('%s-%03d', sceneBase, conditionNumber);
-    
+    imageName = sprintf('%s-%03d', sceneBase, conditionNumber);    
 end
 
 % choose the output image size
