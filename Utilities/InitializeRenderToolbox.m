@@ -155,6 +155,7 @@ if isForce || ~ispref('RenderToolbox3')
     RenderToolbox3.imageWidth = 320;
     RenderToolbox3.whichConditions = [];
     RenderToolbox3.isDryRun = false;
+    RenderToolbox3.isReuseSceneFiles = false;
     RenderToolbox3.isParallel = false;
     
     % default renderer radiometric unit scale factors

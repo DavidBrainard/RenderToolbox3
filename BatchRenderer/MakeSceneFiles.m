@@ -262,7 +262,7 @@ switch hints.renderer
         % convert Collada to Mitsuba's .xml format
         sceneFile = fullfile(tempFolder, [imageName '.xml']);
         
-        if hints.isCachedConversion && exist(sceneFile, 'file');
+        if hints.isReuseSceneFiles && exist(sceneFile, 'file');
             disp(sprintf('Reusing %s', sceneFile));
         else
             sceneFile = ColladaToMitsuba( ...
@@ -274,7 +274,7 @@ switch hints.renderer
         pbrtFile = fullfile(tempFolder, [imageName '.pbrt']);
         pbrtXMLFile = fullfile(tempFolder, [imageName '.pbrt.xml']);
         
-        if hints.isCachedConversion && exist(pbrtXMLFile, 'file');
+        if hints.isReuseSceneFiles && exist(pbrtXMLFile, 'file');
             disp(sprintf('Reusing %s', pbrtXMLFile));
         else
             [pbrtFile, pbrtXMLFile] = ColladaToPBRT( ...
