@@ -124,13 +124,18 @@ end
 function outFiles = makeSensorImages(inFile, ...
     matchFuncs, matchS, matchNames, hints)
 
+nMatching = numel(matchFuncs);
+outFiles = cell(1, nMatching);
+
+if ~exist(inFile, 'file')
+    return;
+end
+
 % read multispectral image and metadata
 inData = load(inFile);
 [inPath, inBase, inExt] = fileparts(inFile);
 
 % make a sensor image for each mapping function
-nMatching = numel(matchFuncs);
-outFiles = cell(1, nMatching);
 for ii = 1:nMatching
     % convert multi-spectral to to sensor image
     multispectralImage = inData.multispectralImage;

@@ -20,6 +20,9 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 
+hints.isCachedConversion = true;
+hints.isDryRun = false;
+
 %% Choose some color matching functions to make sensor images.
 % choose several Pyschtoolbox matching functions
 %   these are the names of Pyschtoolbox colorimetric .mat files
@@ -44,7 +47,7 @@ toneMapFactor = 100;
 isScaleGamma = true;
 
 % make a montage and sensor images with each renderer
-for renderer = {'PBRT'}
+for renderer = {'Mitsuba', 'PBRT'}
     
     % choose one renderer
     hints.renderer = renderer{1};
