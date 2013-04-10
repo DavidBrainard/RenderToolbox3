@@ -57,7 +57,7 @@ if nargin < 3 || isempty(exampleFolder)
 end
 
 if nargin < 4 || isempty(isDryRun)
-    isDryRun = false;
+    isDryRun = getpref('RenderToolbox3', 'isDryRun');
 end
 
 testTic = tic();
