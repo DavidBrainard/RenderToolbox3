@@ -20,9 +20,6 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 
-hints.isCachedConversion = true;
-hints.isDryRun = false;
-
 %% Choose some color matching functions to make sensor images.
 % choose several Pyschtoolbox matching functions
 %   these are the names of Pyschtoolbox colorimetric .mat files
