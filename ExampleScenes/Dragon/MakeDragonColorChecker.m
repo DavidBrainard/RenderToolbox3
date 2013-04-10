@@ -34,7 +34,8 @@ for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
     
     % make 24 multi-spectral renderings, saved in .mat files
-    outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
+    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
+    outFiles = BatchRender(sceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('%s (%s)', 'DragonColorChecker', hints.renderer);

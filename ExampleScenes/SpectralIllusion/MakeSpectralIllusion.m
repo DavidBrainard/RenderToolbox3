@@ -66,7 +66,8 @@ legend(axReflect, 'target', 'destination', ...
 drawnow();
 
 %% Do the initial rendering.
-outFiles = BatchRender(sceneFile, initialConditionsFile, mappingsFile, hints);
+sceneFiles = MakeSceneFiles(sceneFile, initialConditionsFile, mappingsFile, hints);
+outFiles = BatchRender(sceneFiles, hints);
 montageName = sprintf('SpectralIllusionInitial (%s)', hints.renderer);
 montageFile = [montageName '.png'];
 [SRGBMontage, XYZMontage] = ...
@@ -143,7 +144,8 @@ legend(axReflect, 'target', 'destination', 'clever destination', ...
     'Location', 'northwest')
 
 %% Render the illusion using the clever destination spectrum.
-outFiles = BatchRender(sceneFile, cleverConditionsFile, mappingsFile, hints);
+sceneFiles = MakeSceneFiles(sceneFile, cleverConditionsFile, mappingsFile, hints);
+outFiles = BatchRender(sceneFiles, hints);
 montageName = sprintf('SpectralIllusionClever (%s)', hints.renderer);
 montageFile = [montageName '.png'];
 [SRGBMontage, XYZMontage] = ...

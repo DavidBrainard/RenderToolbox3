@@ -25,7 +25,8 @@ for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
     
     % make 3 multi-spectral renderings, saved in .mat files
-    outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
+    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
+    outFiles = BatchRender(sceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('%s (%s)', 'ScalingTest', hints.renderer);

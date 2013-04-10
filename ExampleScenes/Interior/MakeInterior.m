@@ -21,7 +21,8 @@ toneMapFactor = 10;
 isScale = true;
 for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
-    outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
+    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
+    outFiles = BatchRender(sceneFiles, hints);
     
     % write each condition to a separte image file
     for ii = 1:numel(outFiles)

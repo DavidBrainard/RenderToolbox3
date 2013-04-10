@@ -22,7 +22,9 @@ toneMapFactor = 0;
 isScale = true;
 for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
-    outFiles = BatchRender(sceneFile, conditionsFile, mappingsFile, hints);
+    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
+    outFiles = BatchRender(sceneFiles, hints);
+    
     montageName = sprintf('%s (%s)', 'SimpleSquare', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
