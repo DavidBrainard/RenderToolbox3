@@ -133,7 +133,6 @@ else
 end
 
 % create a temp folder for each renderer.
-nRenderers = numel(renderers);
 for ii = 1:numel(renderers)
     renderer = renderers{ii};
     tempFolder = fullfile(hints.tempFolder, renderer);
@@ -165,10 +164,13 @@ try
         % make a the scene file for this condition
         sceneFiles{cc} = makeConditionSceneFile(colladaFile, mappingsFile, ...
             cc, varNames, conditionVarValues, hints);
-        
+
         % copy to optional ouput folder?
         if ~isempty(outPath)
-            copyfile(sceneFiles{cc}, outPath);
+            [scenePath, sceneBase, sceneExt] = fileparts(sceneFiles{cc});
+            if ~strcmp(scenePath, outPath)
+                copyfile(sceneFiles{cc}, outPath);
+            end
         end
     end
 catch err
@@ -241,14 +243,18 @@ end
 % copy the collada file and reduce it to known characters and elements
 tempFolder = fullfile(hints.tempFolder, hints.renderer);
 colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
-copyfile(colladaFile, colladaCopy);
+if ~strcmp(tempFolder, scenePath)
+    copyfile(colladaFile, colladaCopy);
+end
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
 
 % copy the adjustments file
 [adjustPath, adjustBase, adjustExt] = fileparts(hints.adjustmentsFile);
 adjustCopy = fullfile(tempFolder, [adjustBase adjustExt]);
-copyfile(hints.adjustmentsFile, adjustCopy);
+if ~strcmp(tempFolder, scenePath)
+    copyfile(hints.adjustmentsFile, adjustCopy);
+end
 
 % make a new, modified Collada file and adjustments file
 [sceneTemp, adjustTemp] = WriteMappedSceneFiles( ...
