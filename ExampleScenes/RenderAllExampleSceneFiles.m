@@ -11,6 +11,11 @@
 % top-level script that takes no arguments, like this one.  You should edit
 % parameter values in this script to agree with your system.
 %
+% @details
+% It should be possible to run this script from any machine, including one
+% that does not have OpenGL support, or one that delegates to worker nodes
+% that don't have OpenGL support.
+%
 
 clear;
 clc;
@@ -21,9 +26,9 @@ setpref('RenderToolbox3', 'isDryRun', false);
 setpref('RenderToolbox3', 'isReuseSceneFiles', true);
 
 % dry run on example scenes puts scene files in tempFolder
-outputRoot = '/Users/ben/epic-scene-test';
+outputRoot = '/home2/brainard/test/epic-scene-test';
 outputName = '';
-exampleFolder = 'CoordinatesTest';
+exampleFolder = '';
 results = TestAllExampleScenes(outputRoot, outputName, exampleFolder);
 
 % make results available for later review

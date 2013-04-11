@@ -11,6 +11,11 @@
 % that takes no arguments, like this one.  You should edit parameter values
 % in this script to agree with your system.
 %
+% @details
+% For Mitsuba scene files, this script must be run from a machine that has
+% OpenGL support.  This might not be the case for computer cluster worker
+% nodes.
+%
 
 clear;
 clc;
@@ -21,11 +26,14 @@ setpref('RenderToolbox3', 'isDryRun', true);
 setpref('RenderToolbox3', 'isReuseSceneFiles', false);
 
 % dry run on example scenes puts scene files in tempFolder
-outputRoot = '/Users/ben/epic-scene-test';
+outputRoot = '/home2/brainard/test/epic-scene-test';
 outputName = '';
-exampleFolder = 'CoordinatesTest';
+exampleFolder = '';
 results = TestAllExampleScenes(outputRoot, outputName, exampleFolder);
 
 % make results available for later review
+if ~exist(outputRoot, 'dir')
+    mkdir(outputRoot);
+end
 resultsFile = fullfile(outputRoot, 'MakeAllExampleSceneFiles.mat');
 save(resultsFile);
