@@ -25,3 +25,7 @@ outputRoot = '/Users/ben/epic-scene-test';
 outputName = '';
 exampleFolder = 'CoordinatesTest';
 results = TestAllExampleScenes(outputRoot, outputName, exampleFolder);
+
+% make results available for later review
+resultsFile = fullfile(outputRoot, 'MakeAllExampleSceneFiles.mat');
+save(resultsFile);
