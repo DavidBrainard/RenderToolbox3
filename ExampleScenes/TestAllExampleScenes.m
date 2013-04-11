@@ -80,12 +80,11 @@ originalPrefs = getpref('RenderToolbox3');
 setpref('RenderToolbox3', 'isDryRun', isDryRun);
 
 % try to render each example scene
-rootOffset = numel(exampleRoot)+2;
 for ii = 1:numel(makeFunctions)
     
-    % choose where to put outpus for this scene
+    % choose where to put outputs for this scene
     [makePath, makeName, makeExt] = fileparts(makeFunctions{ii});
-    subfolder = makePath(rootOffset:end);
+    subfolder = makeName;
     if isempty(outputRoot)
         % put files in subfolders of the default output folders
         tempFolder = fullfile( ...
