@@ -95,7 +95,8 @@ versionInfo = GetRenderToolbox3VersionInfo();
 % render with local "for" or distributed "parfor" loop
 nFiles = numel(sceneFiles);
 outFiles = cell(size(sceneFiles));
-fprintf('\nBatchRender started at %s.\n\n', datestr(now(), 0));
+fprintf('\nBatchRender started with isParallel = %d at %s.\n\n', ...
+    hints.isParallel, datestr(now(), 0));
 renderTick = tic();
 err = [];
 try
