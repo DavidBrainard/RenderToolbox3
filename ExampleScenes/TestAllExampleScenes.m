@@ -5,7 +5,7 @@
 % Run all "Make*" functions in the ExampleScenes/ folder.
 %   @param outputRoot base path where to save output data
 %   @param outputName trailing path where to save output data
-%   @param exampleFolder name of an ExampleScenes/ subfolder
+%   @param makeFunctions cell array of "Make" functions for example scenes
 %   @param isDryRun whether to skip rendering as a "dry run"
 %
 % @details
@@ -25,9 +25,9 @@
 % saved under the same @a outputRoot.
 %
 % @details
-% If @a exampleFolder is provided, it must be the name of an existing
-% subfolder of ExampleScenes/.  Only Make* functions in that subfolder will
-% be run.
+% By default, renders example scenes by invoking all of the "Make*" scripts
+% found within the ExampleScenes/ folder.  If @a makeFunctions is provided,
+% it must be a cell array of scripts to invoke instead.
 %
 % @details
 % If @a isDryRun is provided and true, no rendering will happen, but
@@ -39,10 +39,10 @@
 %
 % @details
 % Usage:
-%   results = TestAllExampleScenes(outputRoot, outputName, exampleFolder, isDryRun)
+%   results = TestAllExampleScenes(outputRoot, outputName, makeFunctions, isDryRun)
 %
 % @ingroup ExampleScenes
-function results = TestAllExampleScenes(outputRoot, outputName, exampleFolder, isDryRun)
+function results = TestAllExampleScenes(outputRoot, outputName, makeFunctions, isDryRun)
 
 if nargin < 1  || isempty(outputRoot)
     outputRoot = '';
@@ -52,8 +52,10 @@ if nargin < 2 || isempty(outputName)
     outputName = '';
 end
 
-if nargin < 3 || isempty(exampleFolder)
-    exampleFolder = '';
+if nargin < 3 || isempty(makeFunctions)
+    % find all the m-functions named "Make*", in ExampleScenes/
+    exampleRoot = fullfile(RenderToolboxRoot(), 'ExampleScenes');
+    makeFunctions = FindFiles(exampleRoot, 'Make\w+\.m');
 end
 
 if nargin < 4 || isempty(isDryRun)
@@ -61,19 +63,6 @@ if nargin < 4 || isempty(isDryRun)
 end
 
 testTic = tic();
-
-% find all the m-functions named "Make*", in ExampleScenes/
-exampleRoot = fullfile(RenderToolboxRoot(), 'ExampleScenes');
-exampleFolder = fullfile(exampleRoot, exampleFolder);
-makeFunctions = FindFiles(exampleFolder, 'Make\w+\.m');
-
-% exclude m-functions that make figures
-nMakeFunctions = numel(makeFunctions);
-isFigure = false(1, nMakeFunctions);
-for ii = 1:nMakeFunctions
-    isFigure(ii) = ~isempty(strfind(makeFunctions{ii}, 'Figure.m'));
-end
-makeFunctions = makeFunctions(~isFigure);
 
 % allocate a struct for test results
 results = struct( ...
