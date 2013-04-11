@@ -9,7 +9,7 @@ clc;
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
 sceneFile = 'CubanSphere.dae';
-conditionsFile = 'CubanSphereConditions.txt';
+conditionsFile = 'CubanSphereTexturedConditions.txt';
 mappingsFile = 'CubanSphereTexturedMappings.txt';
 
 %% Choose batch renderer options.

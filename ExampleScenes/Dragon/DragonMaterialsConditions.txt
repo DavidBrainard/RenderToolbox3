@@ -1,5 +1,5 @@
-groupName
-matteGroup
-metalGroup
-plasticGroup
-glassGroup
+imageName	groupName
+matteDragon	matteGroup
+metalDragon	metalGroup
+plasticDragon	plasticGroup
+glassDragon	glassGroup

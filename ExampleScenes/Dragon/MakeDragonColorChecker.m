@@ -12,9 +12,24 @@ sceneFile = 'Dragon.dae';
 conditionsFile = 'DragonColorCheckerConditions.txt';
 mappingsFile = 'DragonColorCheckerMappings.txt';
 
+%% Make a fresh conditions file.
+% choose spectrum file names and output image names
+nSpectra = 24;
+imageNames = cell(nSpectra, 1);
+fileNames = cell(nSpectra, 1);
+for ii = 1:nSpectra
+    imageNames{ii} = sprintf('macbethDragon-%d', ii);
+    fileNames{ii} = sprintf('mccBabel-%d.spd', ii);
+end
+
+% write file names and image names to a conditions file
+varNames = {'imageName', 'dragonColor'};
+varValues = cat(2, imageNames, fileNames);
+WriteConditionsFile(conditionsFile, varNames, varValues);
+
 %% Choose batch renderer options.
 
-% which colors to use, [] means all
+cd% which colors to use, [] means all
 hints.whichConditions = [];
 
 % pixel size of each rendering

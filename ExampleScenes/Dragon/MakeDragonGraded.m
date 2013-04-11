@@ -22,11 +22,19 @@ spectrumB = 'mccBabel-9.spd';
 % grade linearly from a to b
 nSteps = 6;
 alpha = linspace(0, 1, nSteps);
+imageNames = cell(nSteps, 1);
+fileNames = cell(nSteps, 1);
 for ii = 1:nSteps
     srf = alpha(ii)*srfA + (1-alpha(ii))*srfB;
-    filename = sprintf('GradedSpectrum-%d.spd', ii);
-    WriteSpectrumFile(wlsA, srf, filename);
+    imageNames{ii} = sprintf('GradedDragon-%d', ii);
+    fileNames{ii} = sprintf('GradedSpectrum-%d.spd', ii);
+    WriteSpectrumFile(wlsA, srf, fileNames{ii});
 end
+
+% write a conditions file with image names and spectrum file names.
+varNames = {'imageName', 'dragonColor'};
+varValues = cat(2, imageNames, fileNames);
+WriteConditionsFile(conditionsFile, varNames, varValues);
 
 %% Choose batch renderer options.
 hints.whichConditions = 1:nSteps;
