@@ -67,6 +67,14 @@ exampleRoot = fullfile(RenderToolboxRoot(), 'ExampleScenes');
 exampleFolder = fullfile(exampleRoot, exampleFolder);
 makeFunctions = FindFiles(exampleFolder, 'Make\w+\.m');
 
+% exclude m-functions that make figures
+nMakeFunctions = numel(makeFunctions);
+isFigure = false(1, nMakeFunctions);
+for ii = 1:nMakeFunctions
+    isFigure(ii) = ~isempty(strfind(makeFunctions{ii}, 'Figure.m'));
+end
+makeFunctions = makeFunctions(~isFigure);
+
 % allocate a struct for test results
 results = struct( ...
     'makeFile', makeFunctions, ...
