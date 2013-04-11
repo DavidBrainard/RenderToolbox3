@@ -79,7 +79,8 @@ makeFunctions = makeFunctions(~isFigure);
 results = struct( ...
     'makeFile', makeFunctions, ...
     'isSuccess', false, ...
-    'error', []);
+    'error', [], ...
+    'elapsed', []);
 
 % remember original folder and preferences
 %   which might change during testing
@@ -131,6 +132,9 @@ for ii = 1:numel(makeFunctions)
         results(ii).isSuccess = false;
         results(ii).error = err;
     end
+    
+    % keep track of timing
+    results(ii).elapsed = toc(testTic);
 end
 
 % how did it go?
