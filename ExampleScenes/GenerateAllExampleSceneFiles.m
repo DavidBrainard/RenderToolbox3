@@ -35,5 +35,5 @@ results = TestAllExampleScenes(outputRoot, outputName, exampleFolder);
 if ~exist(outputRoot, 'dir')
     mkdir(outputRoot);
 end
-resultsFile = fullfile(outputRoot, 'MakeAllExampleSceneFiles.mat');
+resultsFile = fullfile(outputRoot, 'GenerateAllExampleSceneFiles.mat');
 save(resultsFile);

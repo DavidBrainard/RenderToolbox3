@@ -6,7 +6,7 @@
 %
 % @details
 % This script is useful for rendering lots and lots of scene files that
-% were generated previouslt with  MakeAllExampleSceneFiles().  In some
+% were generated previouslt with  GenerateAllExampleSceneFiles().  In some
 % production settings, like  computer clusters, it's useful to have a
 % top-level script that takes no arguments, like this one.  You should edit
 % parameter values in this script to agree with your system.
