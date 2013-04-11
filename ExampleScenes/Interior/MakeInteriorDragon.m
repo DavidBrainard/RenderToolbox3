@@ -8,7 +8,8 @@ clc;
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'interior/source/interio-dragon.dae';
+scenePath = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'Interior');
+sceneFile = fullfile(scenePath, 'interior/source/interio-dragon.dae');
 mappingsFile = 'InteriorDragonMappings.txt';
 
 % generate a fresh mappings file

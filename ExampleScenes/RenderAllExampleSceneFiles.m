@@ -26,7 +26,8 @@ setpref('RenderToolbox3', 'isDryRun', false);
 setpref('RenderToolbox3', 'isReuseSceneFiles', true);
 
 % dry run on example scenes puts scene files in tempFolder
-outputRoot = '/home2/brainard/test/epic-scene-test';
+%outputRoot = '/home2/brainard/test/epic-scene-test';
+outputRoot = '/Users/ben/epic-scene-test';
 outputName = '';
 makeFunctions = { ...
     'MakeCheckerboard.m', ...
@@ -51,5 +52,6 @@ makeFunctions = { ...
 results = TestAllExampleScenes(outputRoot, outputName, makeFunctions);
 
 % make results available for later review
+outputRoot = '/Users/ben/epic-scene-test';
 resultsFile = fullfile(outputRoot, 'RenderAllExampleSceneFiles.mat');
 save(resultsFile);

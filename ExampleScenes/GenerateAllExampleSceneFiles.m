@@ -23,10 +23,11 @@ clc;
 % choose global RenderToolbox3 behavior
 setpref('RenderToolbox3', 'isParallel', false);
 setpref('RenderToolbox3', 'isDryRun', true);
-setpref('RenderToolbox3', 'isReuseSceneFiles', false);
+setpref('RenderToolbox3', 'isReuseSceneFiles', true);
 
 % dry run on example scenes puts scene files in tempFolder
-outputRoot = '/home2/brainard/test/epic-scene-test';
+%outputRoot = '/home2/brainard/test/epic-scene-test';
+outputRoot = '/Users/ben/epic-scene-test';
 outputName = '';
 makeFunctions = { ...
     'MakeCheckerboard.m', ...
@@ -51,6 +52,7 @@ makeFunctions = { ...
 results = TestAllExampleScenes(outputRoot, outputName, makeFunctions);
 
 % make results available for later review
+outputRoot = '/Users/ben/epic-scene-test';
 if ~exist(outputRoot, 'dir')
     mkdir(outputRoot);
 end

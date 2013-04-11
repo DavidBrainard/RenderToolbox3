@@ -81,6 +81,9 @@ drawnow();
 
 %% Read the initial rendering and compute a clever destination spectrum.
 % locate the target and destination pixels in the rendering
+if ~exist(outFiles{1}, 'file')
+    return;
+end
 rendering = load(outFiles{1});
 height = size(rendering.multispectralImage, 1);
 width = size(rendering.multispectralImage, 2);
