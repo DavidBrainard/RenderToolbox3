@@ -24,8 +24,9 @@ clc;
 setpref('RenderToolbox3', 'isParallel', true);
 setpref('RenderToolbox3', 'isDryRun', false);
 setpref('RenderToolbox3', 'isReuseSceneFiles', true);
+setpref('RenderToolbox3', 'isPlot', false);
 
-% dry run on example scenes puts scene files in tempFolder
+% choose example scenes and output location
 %outputRoot = '/home2/brainard/test/epic-scene-test';
 outputRoot = '/Users/ben/epic-scene-test';
 outputName = '';
@@ -49,9 +50,6 @@ makeFunctions = { ...
     'MakeSimpleSquare.m', ...
     'MakeSpectralIllusion.m', ...
     'MakeTableSphere.m'};
-results = TestAllExampleScenes(outputRoot, outputName, makeFunctions);
 
-% make results available for later review
-outputRoot = '/Users/ben/epic-scene-test';
-resultsFile = fullfile(outputRoot, 'RenderAllExampleSceneFiles.mat');
-save(resultsFile);
+% render example scenes, reusing scene files
+results = TestAllExampleScenes(outputRoot, outputName, makeFunctions);

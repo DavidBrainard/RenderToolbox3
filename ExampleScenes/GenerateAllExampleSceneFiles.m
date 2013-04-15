@@ -23,9 +23,10 @@ clc;
 % choose global RenderToolbox3 behavior
 setpref('RenderToolbox3', 'isParallel', false);
 setpref('RenderToolbox3', 'isDryRun', true);
-setpref('RenderToolbox3', 'isReuseSceneFiles', true);
+setpref('RenderToolbox3', 'isReuseSceneFiles', false);
+setpref('RenderToolbox3', 'isPlot', false);
 
-% dry run on example scenes puts scene files in tempFolder
+% choose example scenes and output location
 %outputRoot = '/home2/brainard/test/epic-scene-test';
 outputRoot = '/Users/ben/epic-scene-test';
 outputName = '';
@@ -49,12 +50,6 @@ makeFunctions = { ...
     'MakeSimpleSquare.m', ...
     'MakeSpectralIllusion.m', ...
     'MakeTableSphere.m'};
-results = TestAllExampleScenes(outputRoot, outputName, makeFunctions);
 
-% make results available for later review
-outputRoot = '/Users/ben/epic-scene-test';
-if ~exist(outputRoot, 'dir')
-    mkdir(outputRoot);
-end
-resultsFile = fullfile(outputRoot, 'GenerateAllExampleSceneFiles.mat');
-save(resultsFile);
+% make example scene files without rendering
+results = TestAllExampleScenes(outputRoot, outputName, makeFunctions);
