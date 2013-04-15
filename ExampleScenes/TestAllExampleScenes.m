@@ -38,6 +38,21 @@
 % file executed successfully, and any Matlab error struct that was trapped.
 %
 % @details
+% Saves a .mat file with several variables about the test parameters and
+% results:
+%   - outputRoot, the given @a outputRoot
+%   - outputName, the given @a outputName
+%   - makeFunctions, the given @a makeFunctions
+%   - isDryRun, the given @a isDryRun
+%   - hints, RenderToolbox3 options, as returned from GetDefaultHints()
+%   - results, the returned struct of results about each "Make*" file
+% .
+% @details
+% The .mat file will be saved in the given @a outputRoot folder.  It will
+% have a name that that includes the name of this m-file, plus the given @a
+% outputName, if any, plus the date and time.  For example,
+%
+% @details
 % Usage:
 %   results = TestAllExampleScenes(outputRoot, outputName, makeFunctions, isDryRun)
 %
@@ -147,3 +162,19 @@ toc(testTic)
 cd(originalFolder)
 setpref('RenderToolbox3', ...
     fieldnames(originalPrefs), struct2cell(originalPrefs));
+
+%% Save lots of results to a .mat file.
+hints = GetDefaultHints();
+if ~isempty(outputRoot) && ~exist(outputRoot, 'dir')
+    mkdir(outputRoot);
+end
+baseName = mfilename();
+dateTime = datestr(now(), 30);
+if isempty(outputName)
+    resultsBase = sprintf('%s-%s', baseName, dateTime);
+else
+    resultsBase = sprintf('%s-%s-%s', baseName, outputName, dateTime);
+end
+resultsFile = fullfile(outputRoot, resultsBase);
+save(resultsFile, 'outputRoot', 'outputName', 'makeFunctions', ...
+    'isDryRun', 'results', 'hints');
