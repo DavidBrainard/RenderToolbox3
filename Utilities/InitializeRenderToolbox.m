@@ -157,6 +157,7 @@ if isForce || ~ispref('RenderToolbox3')
     RenderToolbox3.isDryRun = false;
     RenderToolbox3.isReuseSceneFiles = false;
     RenderToolbox3.isParallel = false;
+    RenderToolbox3.isPlot = true;
     
     % default renderer radiometric unit scale factors
     RenderToolbox3.PBRTRadiometricScale = 1;

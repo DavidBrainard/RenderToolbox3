@@ -5,6 +5,7 @@
 % Plot histograms for XYZ image components.
 %   @param XYZImage matrix of XYZ image data
 %   @param nEdges how many bin edges to use in histograms
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Plots histograms of X, Y, and Z components of the given @a XYZimage, in a
@@ -13,7 +14,7 @@
 %
 % @details
 % By default, plots histograms with 100 bin edges.  If @a nEdges is
-% provided, uses the given number of bin edges.  All  
+% provided, uses the given number of bin edges.  All
 % components will share the same bin edges, ranging from a common
 % minimum to a commpn maximum.  0-values are ignored.
 %
@@ -22,14 +23,30 @@
 % returns the array of bin edges.
 %
 % @details
+% If @a hints is provided, it must be a struct of RenderToolbox3 options,
+% as returned from GetDefaultHints().  If hints.isPlot is false, returns
+% without plotting anything.
+%
+%
+% @details
 % Usage:
-%   [nX, nY, nZ, edges] = ShowXYZHistogram(XYZImage, nEdges)
+%   [nX, nY, nZ, edges] = ShowXYZHistogram(XYZImage, nEdges, hints)
 %
 % @ingroup Utilities
-function [nX, nY, nZ, edges] = ShowXYZHistogram(XYZImage, nEdges)
+function [nX, nY, nZ, edges] = ShowXYZHistogram(XYZImage, nEdges, hints)
 
 if nargin < 2 || isempty(nEdges)
     nEdges = 100;
+end
+
+if nargin < 3
+    hints = GetDefaultHints();
+else
+    hints = GetDefaultHints(hints);
+end
+
+if ~hints.isPlot
+    return;
 end
 
 %% compute bin edges

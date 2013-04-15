@@ -14,6 +14,7 @@ initialConditionsFile = 'SpectralIllusionConditionsInitial.txt';
 cleverConditionsFile = 'SpectralIllusionConditionsClever.txt';
 
 %% Choose batch renderer options.
+hints = GetDefaultHints();
 hints.renderer = 'Mitsuba';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
@@ -54,16 +55,18 @@ destSpectrum = values{strcmp(names, 'destinationColor')};
 [targWls, targReflect] = ReadSpectrum(targSpectrum);
 [destWls, destReflect] = ReadSpectrum(destSpectrum);
 
-f = figure();
-axReflect = subplot(5, 1, 3, 'Parent', f);
-plot(axReflect, ...
-    targWls, targReflect, 'square', ...
-    destWls, destReflect, 'o');
-xlim(axReflect, [350 750]);
-ylabel(axReflect, 'reflectance');
-legend(axReflect, 'target', 'destination', ...
-    'Location', 'northwest')
-drawnow();
+if hints.isPlot
+    f = figure();
+    axReflect = subplot(5, 1, 3, 'Parent', f);
+    plot(axReflect, ...
+        targWls, targReflect, 'square', ...
+        destWls, destReflect, 'o');
+    xlim(axReflect, [350 750]);
+    ylabel(axReflect, 'reflectance');
+    legend(axReflect, 'target', 'destination', ...
+        'Location', 'northwest')
+    drawnow();
+end
 
 %% Do the initial rendering.
 sceneFiles = MakeSceneFiles(sceneFile, initialConditionsFile, mappingsFile, hints);
@@ -73,17 +76,21 @@ montageFile = [montageName '.png'];
 [SRGBMontage, XYZMontage] = ...
     MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
 
+% only makes sense to proceed with fresh renderings and scene files
+if hints.isReuseSceneFiles || hints.isDryRun
+    return;
+end
+
 %% Plot the initial rendering.
-axInitial = subplot(5, 2, [1 3], 'Parent', f);
-imshow(uint8(SRGBMontage), 'Parent', axInitial);
-title('initial');
-drawnow();
+if hints.isPlot
+    axInitial = subplot(5, 2, [1 3], 'Parent', f);
+    imshow(uint8(SRGBMontage), 'Parent', axInitial);
+    title('initial');
+    drawnow();
+end
 
 %% Read the initial rendering and compute a clever destination spectrum.
 % locate the target and destination pixels in the rendering
-if ~exist(outFiles{1}, 'file')
-    return;
-end
 rendering = load(outFiles{1});
 height = size(rendering.multispectralImage, 1);
 width = size(rendering.multispectralImage, 2);
@@ -104,33 +111,35 @@ destIllum = destPixelResampled ./ destReflect;
 
 %% Plot target and destination pixels and apparent illumination.
 % show target and destination pixel locations
-line(targX, targY, ...
-    'Parent', axInitial, ...
-    'Marker', 'square', ...
-    'Color', [0 0 1]);
-line(destX, destY, ...
-    'Parent', axInitial, ...
-    'Marker', 'o', ...
-    'Color', [0 1 0]);
-
-% show apparent illumination
-axIllum = subplot(5, 1, 4, 'Parent', f);
-plot(axIllum, ...
-    targWls, targIllum, 'square', ...
-    destWls, destIllum, 'o');
-ylabel(axIllum, 'illumination');
-xlim(axIllum, [350 750]);
-drawnow();
-
-% show rendered pixel spectra
-wls = SToWls(rendering.S);
-axPixel = subplot(5, 1, 5, 'Parent', f);
-plot(axPixel, ...
-    wls, targPixel, 'square', ...
-    wls, destPixel, 'o');
-ylabel(axPixel, 'pixel');
-xlim(axPixel, [350 750]);
-drawnow();
+if hints.isPlot
+    line(targX, targY, ...
+        'Parent', axInitial, ...
+        'Marker', 'square', ...
+        'Color', [0 0 1]);
+    line(destX, destY, ...
+        'Parent', axInitial, ...
+        'Marker', 'o', ...
+        'Color', [0 1 0]);
+    
+    % show apparent illumination
+    axIllum = subplot(5, 1, 4, 'Parent', f);
+    plot(axIllum, ...
+        targWls, targIllum, 'square', ...
+        destWls, destIllum, 'o');
+    ylabel(axIllum, 'illumination');
+    xlim(axIllum, [350 750]);
+    drawnow();
+    
+    % show rendered pixel spectra
+    wls = SToWls(rendering.S);
+    axPixel = subplot(5, 1, 5, 'Parent', f);
+    plot(axPixel, ...
+        wls, targPixel, 'square', ...
+        wls, destPixel, 'o');
+    ylabel(axPixel, 'pixel');
+    xlim(axPixel, [350 750]);
+    drawnow();
+end
 
 %% Compute a clever new destination spectrum and write it to file.
 destIllumNonzero = max(destIllum, 0.001);
@@ -138,13 +147,15 @@ cleverReflect = targPixelResampled ./ destIllumNonzero;
 WriteSpectrumFile(destWls, cleverReflect, 'SpectralIllusionDestination.spd');
 
 %% Plot the clever new reflectance
-line(destWls, cleverReflect, ...
-    'Parent', axReflect, ...
-    'LineStyle', 'none', ...
-    'Marker', '*', ...
-    'Color', [1 0 0])
-legend(axReflect, 'target', 'destination', 'clever destination', ...
-    'Location', 'northwest')
+if hints.isPlot
+    line(destWls, cleverReflect, ...
+        'Parent', axReflect, ...
+        'LineStyle', 'none', ...
+        'Marker', '*', ...
+        'Color', [1 0 0])
+    legend(axReflect, 'target', 'destination', 'clever destination', ...
+        'Location', 'northwest')
+end
 
 %% Render the illusion using the clever destination spectrum.
 sceneFiles = MakeSceneFiles(sceneFile, cleverConditionsFile, mappingsFile, hints);
@@ -155,10 +166,12 @@ montageFile = [montageName '.png'];
     MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
 
 %% Plot the clever rendering.
-axClever = subplot(5, 2, [2 4], 'Parent', f);
-imshow(uint8(SRGBMontage), 'Parent', axClever);
-title('clever');
-drawnow();
+if hints.isPlot
+    axClever = subplot(5, 2, [2 4], 'Parent', f);
+    imshow(uint8(SRGBMontage), 'Parent', axClever);
+    title('clever');
+    drawnow();
+end
 
 %% Read the destination pixel from the clever rendering.
 rendering = load(outFiles{1});
@@ -172,16 +185,18 @@ destIllum = destPixelResampled ./ cleverReflect;
 
 %% Plot clever destination pixel spectrum and apparent illumination.
 % apparent illumination
-line(destWls, destIllum, ...
-    'Parent', axIllum, ...
-    'LineStyle', 'none', ...
-    'Marker', '*', ...
-    'Color', [1 0 0])
-
-% pixel spectrum
-wls = SToWls(rendering.S);
-line(wls, destPixel, ...
-    'Parent', axPixel, ...
-    'LineStyle', 'none', ...
-    'Marker', '*', ...
-    'Color', [1 0 0])
+if hints.isPlot
+    line(destWls, destIllum, ...
+        'Parent', axIllum, ...
+        'LineStyle', 'none', ...
+        'Marker', '*', ...
+        'Color', [1 0 0])
+    
+    % pixel spectrum
+    wls = SToWls(rendering.S);
+    line(wls, destPixel, ...
+        'Parent', axPixel, ...
+        'LineStyle', 'none', ...
+        'Marker', '*', ...
+        'Color', [1 0 0])
+end
