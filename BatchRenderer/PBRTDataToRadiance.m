@@ -10,8 +10,8 @@
 % @details
 % Scales the given "raw" @a pbrtData into physical radiance units.  The
 % scaling depends on a PBRT-specific scale factor computed previously with
-% ComputeRadiometricScaleFactors(), and may also depend on particulars of the
-% rendered scene.
+% ComputeRadiometricScaleFactors(), and may also depend on particulars of
+% the scene.
 %
 % @details
 % @a pbrtData should be a matrix of multi-spectral data obtained from
@@ -31,19 +31,20 @@
 % radiance units.  If @a hints does not contain this field, the default
 % value will be taken from
 % @code
-%   RadiometricScale = getpref('RenderToolbox3', 'PBRTRadiometricScale');
+%   scaleFactor = getpref('RenderToolbox3', 'PBRTRadiometricScale');
 % @endcode
 %
 % @details
 % Returns the given "raw" @a pbrtData, scaled into physical radiance
-% units.
+% units.  Also returns the radiance scale factor that was used, which in
+% some cases might differ from @a hints.PBRTRadiometricScale.
 %
 % @details
 % Usage:
-%   radianceData = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
+%   [radianceData, scaleFactor] = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
 %
 % @ingroup BatchRender
-function radianceData = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
+function [radianceData, scaleFactor] = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
 
 if nargin < 2
     pbrtDoc = [];
@@ -58,10 +59,10 @@ end
 
 if IsStructFieldPresent(hints, 'PBRTRadiometricScale')
     % get custom or stored scale factor
-    RadiometricScale = hints.PBRTRadiometricScale;
+    scaleFactor = hints.PBRTRadiometricScale;
 else
     % scale factor has not been computed yet
-    RadiometricScale = 1;
+    scaleFactor = 1;
 end
 
 %% PBRT requires scene-specific adjustments to the scaling factor.
@@ -83,14 +84,14 @@ else
     nodePath = 'filter:parameter|name=ywidth';
     filterYWidth = StringToVector(GetSceneValue(idMap, nodePath));
     
-    % TODO: how do we use filter params to modify RadiometricScale?
+    % TODO: how do we use filter params to modify scaleFactor?
     
     % PBRT scaling depends on the number of samples used per pixel
     %   this code assumes the lowdiscrepancy sampler
     nodePath = 'sampler:parameter|name=pixelsamples';
     samplesPerPixel = StringToVector(GetSceneValue(idMap, nodePath));
     
-    % TODO: how do we use number of samples to modify RadiometricScale?
+    % TODO: how do we use number of samples to modify scaleFactor?
 end
 
-radianceData = RadiometricScale .* pbrtData;
+radianceData = scaleFactor .* pbrtData;

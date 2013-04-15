@@ -50,13 +50,18 @@
 %   - hints - the given @a hints struct, or default hints struct
 %   - versionInfo - struct of version information about RenderToolbox3 and
 %   its dependencies
-% .
+%   .
 %
 % @details
 % The multi-spectral data in each .mat file will be scaled into radiance
 % units using funtions like PBRTDataToRadiance() and
 % MitsubaDataToRadiance().  These rely on pre-computed renderer-specific
-% scale factors computed in ComputeRadiometricScaleFactors().
+% scale factors computed in ComputeRadiometricScaleFactors().  The .mat
+% file will also contain the radiometric scale factor that was used to
+% convert data to radiance units:
+%   - radiometricScaleFactor - scale factor that was used to bring renderer
+%   ouput into radiance units
+%   .
 %
 % @details
 % Returns a cell array of output .mat file names, with the same dimensions
@@ -160,7 +165,8 @@ switch hints.renderer
         
         % scale the output into radiance units
         mitsubaDoc = ReadSceneDOM(sceneFile);
-        multispectralImage = MitsubaDataToRadiance( ...
+        [multispectralImage, radiometricScaleFactor] = ...
+            MitsubaDataToRadiance( ...
             multispectralImage, mitsubaDoc, hints);
         
     case 'PBRT'
@@ -190,7 +196,8 @@ switch hints.renderer
         multispectralImage = ReadDAT(output);
         
         % scale the output into radiance units
-        multispectralImage = PBRTDataToRadiance( ...
+        [multispectralImage, radiometricScaleFactor] = ...
+            PBRTDataToRadiance( ...
             multispectralImage, pbrtDoc, hints);
         
         % interpret output according to PBRT's spectral sampling
@@ -204,5 +211,5 @@ end
 % save a .mat file with multispectral data and metadata
 outPath = fullfile(hints.outputDataFolder, hints.renderer);
 outFile = fullfile(outPath, [sceneBase '.mat']);
-save(outFile, 'multispectralImage', 'S', ...
+save(outFile, 'multispectralImage', 'S', 'radiometricScaleFactor', ...
     'hints', 'sceneFile', 'versionInfo');

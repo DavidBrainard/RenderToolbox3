@@ -10,8 +10,8 @@
 % @details
 % Scales the given "raw" @a mitsubaData into physical radiance units.  The
 % scaling depends on a Mitsuba-specific scale factor computed previously
-% with ComputeRadiometricScaleFactors(), and may also depend on particulars of
-% the rendered scene.
+% with ComputeRadiometricScaleFactors(), and may also depend on particulars
+% of the scene.
 %
 % @details
 % @a mitsubaData should be a matrix of multi-spectral data obtained from
@@ -26,24 +26,25 @@
 %
 % @details
 % @a hints should be a struct with additional parameters used during
-% rendering.  In particular, @a hints.MitsubaRadiometricScale may contain the
-% mitsuba-specific scale factor for converting multi-spectral data to
+% rendering.  In particular, @a hints.MitsubaRadiometricScale may contain
+% the mitsuba-specific scale factor for converting multi-spectral data to
 % radiance units.  If @a hints does not contain this field, the default
 % value will be taken from
 % @code
-%   RadiometricScale = getpref('RenderToolbox3', 'MitsubaRadiometricScale');
+%   scaleFactor = getpref('RenderToolbox3', 'MitsubaRadiometricScale');
 % @endcode
 %
 % @details
 % Returns the given "raw" @a mitsubaData, scaled into physical radiance
-% units.
+% units.  Also returns the radiance scale factor that was used, which in
+% some cases might differ from @a hints.MitsubaRadiometricScale.
 %
 % @details
 % Usage:
-%   radianceData = MitsubaDataToRadiance(mitsubaData, mitsubaDoc, hints)
+%   [radianceData, scaleFactor] = MitsubaDataToRadiance(mitsubaData, mitsubaDoc, hints)
 %
 % @ingroup BatchRender
-function radianceData = MitsubaDataToRadiance(mitsubaData, mitsubaDoc, hints)
+function [radianceData, scaleFactor] = MitsubaDataToRadiance(mitsubaData, mitsubaDoc, hints)
 
 % merge custom hints with defaults
 if nargin < 3 || isempty(hints)
@@ -54,12 +55,12 @@ end
 
 if IsStructFieldPresent(hints, 'MitsubaRadiometricScale')
     % get custom or stored scale factor
-    RadiometricScale = hints.MitsubaRadiometricScale;
+    scaleFactor = hints.MitsubaRadiometricScale;
 else
     % scale factor has not been computed yet
-    RadiometricScale = 1;
+    scaleFactor = 1;
 end
 
 %% As far as we know, Mitsuba does not require scene-specific adjustments
 %   to the scaling factor.
-radianceData = RadiometricScale .* mitsubaData;
+radianceData = scaleFactor .* mitsubaData;
