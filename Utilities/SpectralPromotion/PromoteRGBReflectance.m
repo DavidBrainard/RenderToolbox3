@@ -83,7 +83,7 @@ end
 scenePath = fullfile(RenderToolboxRoot(), 'Utilities', 'SpectralPromotion');
 sceneFile = fullfile(scenePath, 'SpectralPromotion.dae');
 mappingsFile = fullfile(scenePath, 'SpectralPromotionMappings.txt');
-conditionsFile = fullfile(scenePath, 'SpectralPromotionConditions.txt');
+conditionsFile = 'SpectralPromotionConditions.txt';
 
 % create a conditions file with given reflectance and illuminant
 varNames = {'reflectanceRGB', 'illuminant'};
