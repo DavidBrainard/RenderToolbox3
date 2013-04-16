@@ -2,29 +2,47 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Promote an RGB reflectance to a spectrum, using a renderer.
+% Promote an RGB reflectance to a full spectrum, using a renderer.
 %   @param reflectance RGB reflectance to promote to spectrum
 %   @param illuminant illuminant spectrum to use in rendering
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Converts the given RGB @a reflectance to a spectral value, by rendering a
-% simple scene.  The scene contains a matte reflector with the given @a
+% simple scene that contains a matte reflector with the given surface @a
 % reflectance, illuminated by a directional "sun" light with the given @a
 % illuminant spectrum.
 %
 % @details
-% The renderer will "promote" the given RGB @a reflectance to its own
-% internal spectral representation, perform rendering, and output some
-% pixels that have spectral values that depend on the given RGB
-% reflectance and the given @a illuminant spectrum, and also on the
-% algorithm that the renderer used to promote the @a reflectance to
-% spectral representation.
+% @a reflectance should have RGB components in the range [0 1].
 %
 % @details
-% Estimates the "promoted" reflectance that the renderer used internally
-% by reading the spectrum from one of the rendered output pixels, and
-% "dividing out" the known spectrum of the given @a illuminant.
+% The renderer will "promote" the given RGB @a reflectance to its own
+% internal spectral representation, perform rendering, and output some
+% pixels that have spectral values that depend a few factors:
+%   - the given RGB @a reflectance
+%   - the given @a illuminant spectrum
+%   - the geometry of the test scene
+%   - the renderer's spectral promotion algorithm
+%   .
+%
+% @details
+% This function estimates the "promoted" reflectance spectrum that the
+% renderer used internally:
+%   - reads the spectrum from one of the rendered output pixels
+%   - "divides out" the spectrum of the given @a illuminant
+%   - normalizes the obtained spectrum to have the same max value as the
+%   given @a reflectance.
+%   .
+% The obtained "promoted" spectrum will expose the "shape" of the
+% renderer's sprctral promotion algorithm, but not scaling effects.
+%
+% @details
+% This function also converts the "promoted" spectrum to down to an RGB
+% RGB representation, for comparison with the given @a reflectance.  The
+% down-conversion uses the CIE XYV 1931 color matching functions.  The
+% donw-converted RGB reflectance will have its max value scaled to match
+% the given @a reflectance.
 %
 % @details
 % By default, uses a "white" illuminant spectrum with unit untensity at all
@@ -35,21 +53,21 @@
 % @details
 % @a hints may be a struct with options that affect the rendering process,
 % as returned from GetDefaultHints().  If @a hints is omitted, default
-% options are used.  hints.renderer specifies which renderer to use.
+% options are used.  @a hints.renderer specifies which renderer to use.
 %
 % @details
-% Returns the estimated "promoted" reflectance spectrum that the renderer
+% Returns the estimated, "promoted" reflectance spectrum that the renderer
 % used internally.  Also returns the "S" description of the renderer's
-% wavelength sampling.  Also returns the "promoted" reflectance spectrum,
-% converted down to sRGB.  Also returns the name of the .mat file that
-% contains the renderer ouput data and metadata.
+% wavelength sampling.  Also returns the RGB representation of the promoted
+% spectrum.  Finally, returns the name of the .mat file that contains the
+% renderer ouput data and metadata from the simple scene rendering.
 %
 % @details
 % Usage:
-%   [promoted, S, sRGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
+%   [promoted, S, RGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
 %
 % @ingroup Readers
-function [promoted, S, sRGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
+function [promoted, S, RGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
 
 if nargin < 2 || isempty(illuminant)
     illuminant = '300:1 800:1';
@@ -91,7 +109,10 @@ outPixel = squeeze(outPixel);
 [illumWls, illumPower] = ReadSpectrum(illuminant);
 illumResampled = SplineSpd(illumWls, illumPower, outData.S);
 promoted = outPixel ./ illumResampled;
+promoted = max(reflectance) * (promoted ./ max(promoted));
 
 % convert to sRGB
 tinyImage = reshape(promoted, 1, 1, []);
-sRGB = squeeze(MultispectralToSRGB(tinyImage, outData.S, false));
+[sRGB, XYZ, rawRGB] = MultispectralToSRGB(tinyImage, outData.S, 0, false);
+RGB = squeeze(rawRGB);
+RGB = max(reflectance) * (RGB ./ max(RGB));
