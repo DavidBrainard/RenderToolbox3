@@ -75,8 +75,8 @@ end
 % Convert to sRGB
 %   may allow code to scale input max to output max.
 SRGBPrimaryCalFormat = XYZToSRGBPrimary(XYZCalFormat);
-SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat,isScale);
+SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, isScale);
 
 % Back to image plane format
-rawImage = CalFormatToImage(SRGBPrimaryCalFormat,m,n);
-gammaImage = CalFormatToImage(SRGBCalFormat,m,n);
+rawImage = CalFormatToImage(SRGBPrimaryCalFormat, m, n);
+gammaImage = CalFormatToImage(SRGBCalFormat, m, n);
