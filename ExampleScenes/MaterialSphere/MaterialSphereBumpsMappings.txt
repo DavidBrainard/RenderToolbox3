@@ -37,7 +37,7 @@ Generic metalGroup {
 }
 
 % add bumps to the sphere material under all conditions
-Generic {
+skipGeneric {
     % load an image into a texture
     earthTexture:spectrumTexture:bitmap
     earthTexture:filename.string = Earthmap1000x500.exr
