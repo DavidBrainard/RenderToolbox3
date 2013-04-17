@@ -50,6 +50,8 @@
 %   - hints - the given @a hints struct, or default hints struct
 %   - versionInfo - struct of version information about RenderToolbox3 and
 %   its dependencies
+%   - commandResult - text output from the shell command that invoked the
+%   renderer
 %   .
 %
 % @details
@@ -141,7 +143,13 @@ function outFile = renderScene(sceneFile, versionInfo, hints)
 
 outFile = '';
 
+% get the scene file parts
+%   it may have a double extension, like base.pbrt.xml
 [scenePath, sceneBase, sceneExt] = fileparts(sceneFile);
+baseDot = find('.' == sceneBase, 1, 'first');
+if ~isempty(baseDot)
+    sceneBase = sceneBase(1:(baseDot-1));
+end
 
 % if this is a dry run, skip the rendering
 if hints.isDryRun
@@ -153,10 +161,10 @@ end
 switch hints.renderer
     case 'Mitsuba'
         % invoke Mitsuba!
-        [status, result, output] = RunMitsuba(sceneFile);
+        [status, commandResult, output] = RunMitsuba(sceneFile);
         if status ~= 0
             error('Mitsuba rendering failed\n  %s\n  %s\n', ...
-                mitsubaFile, result);
+                mitsubaFile, commandResult);
         end
         
         % read raw output into memory
@@ -172,7 +180,7 @@ switch hints.renderer
     case 'PBRT'
         if strcmpi('.xml', sceneExt)
             % convert PBRT-XML to text, read scene document
-            pbrtFile = fullfile(hints.tempFolder, hints.renderer, sceneBase);
+            pbrtFile = fullfile(hints.tempFolder, hints.renderer, [sceneBase '.pbrt']);
             if isempty(hints.filmType)
                 hints.filmType = 'image';
             end
@@ -186,10 +194,10 @@ switch hints.renderer
         end
         
         % invoke PBRT!
-        [status, result, output] = RunPBRT(pbrtFile);
+        [status, commandResult, output] = RunPBRT(pbrtFile);
         if status ~= 0
             error('PBRT rendering failed\n  %s\n  %s\n', ...
-                pbrtFile, result);
+                pbrtFile, commandResult);
         end
         
         % read output into memory
@@ -206,10 +214,11 @@ switch hints.renderer
     otherwise
         S = [];
         multispectralImage = [];
+        commandResult = '';
 end
 
 % save a .mat file with multispectral data and metadata
 outPath = fullfile(hints.outputDataFolder, hints.renderer);
 outFile = fullfile(outPath, [sceneBase '.mat']);
 save(outFile, 'multispectralImage', 'S', 'radiometricScaleFactor', ...
-    'hints', 'sceneFile', 'versionInfo');
+    'hints', 'sceneFile', 'versionInfo', 'commandResult');
