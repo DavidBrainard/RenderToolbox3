@@ -1,11 +1,6 @@
 Collada {
     % swap camera handedness from Blender's Collada output
     Camera:scale|sid=scale = -1 1 1
-
-    % make sure the point light behaves with inverse-square attenuation
-    Point-light:technique_common:point:constant_attenuation = 1
-    Point-light:technique_common:point:linear_attenuation = 0
-    Point-light:technique_common:point:quadratic_attenuation = 1
 }
 
 % specify generic scene elements under the "matteGroup" condition
@@ -39,4 +34,13 @@ Generic metalGroup {
     % make it out of gold!
     Material-material:eta.spectrum = Au.eta.spd
     Material-material:k.spectrum = Au.k.spd
+}
+
+% add bumps to the sphere material under all conditions
+Generic {
+    % load an image into a texture
+    earthTexture:spectrumTexture:bitmap
+    earthTexture:filename.string = Earthmap1000x500.exr
+
+
 }
