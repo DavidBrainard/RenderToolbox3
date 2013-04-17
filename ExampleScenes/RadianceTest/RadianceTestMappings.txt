@@ -2,11 +2,6 @@ Collada {
     % swap camera handedness from Blender's Collada output
     Camera:scale|sid=scale = -1 1 1
 
-    % make sure the point light behaves with inverse-square attenuation
-    Point-light:technique_common:point:constant_attenuation = 1
-    Point-light:technique_common:point:linear_attenuation = 0
-    Point-light:technique_common:point:quadratic_attenuation = 1
-
     % move the lights
     %   make sure the AreaLight is behind Point light
     Point:translate|sid=location = 0 0 (lightDistance)
