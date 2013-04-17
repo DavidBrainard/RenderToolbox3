@@ -3,14 +3,6 @@ Collada {
     % swap camera handedness from Blender's Collada output
     Camera:scale|sid=scale = -1 1 1
 
-    % fix the top and rear lamps to be realistically quadratic
-    TopLamp-light:technique_common:point:constant_attenuation = 1
-    TopLamp-light:technique_common:point:linear_attenuation = 0
-    TopLamp-light:technique_common:point:quadratic_attenuation = 1
-    RearLamp-light:technique_common:point:constant_attenuation = 1
-    RearLamp-light:technique_common:point:linear_attenuation = 0
-    RearLamp-light:technique_common:point:quadratic_attenuation = 1
-
     % move the camera for each condition
     Camera:translate|sid=location = (xCam) (yCam) 3
     Camera:rotate|sid=rotationX = 1 0 0 80
