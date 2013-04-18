@@ -160,8 +160,9 @@ if isForce || ~ispref('RenderToolbox3')
     RenderToolbox3.isPlot = true;
     
     % default renderer radiometric unit scale factors
-    RenderToolbox3.PBRTRadiometricScale = 1;
-    RenderToolbox3.MitsubaRadiometricScale = 1;
+    %   these are in the RenderToolbox3 group so that they appear as hints
+    RenderToolbox3.PBRTRadiometricScale = 0.0063831432;
+    RenderToolbox3.MitsubaRadiometricScale = 0.0795827427;
     
     % create or overwrite existing values
     setpref('RenderToolbox3', ...
