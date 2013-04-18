@@ -93,7 +93,7 @@ sliceColors = { ...
     };
 
 % choose tone mapping parameters
-inputScale = 500;
+inputScale = 4000;
 toneMapFactor = 0;
 isGammaScale = false;
 
