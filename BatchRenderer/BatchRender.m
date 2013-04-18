@@ -164,7 +164,7 @@ switch hints.renderer
         [status, commandResult, output] = RunMitsuba(sceneFile);
         if status ~= 0
             error('Mitsuba rendering failed\n  %s\n  %s\n', ...
-                mitsubaFile, commandResult);
+                sceneFile, commandResult);
         end
         
         % read raw output into memory
