@@ -43,7 +43,7 @@ if nargin < 3
 end
 
 if nargin < 4
-    where = 'append';
+    where = 'last';
 end
 
 % make a new node with the given name
@@ -59,7 +59,7 @@ elseif ischar(where) && strcmp('first', where)
     element.insertBefore(newElement, element.getFirstChild());
     
 else
-    %if strcmp('append', where)
+    %if strcmp('last', where)
     % new element is the last child
     element.appendChild(newElement);
 end
