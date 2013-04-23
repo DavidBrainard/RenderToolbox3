@@ -42,8 +42,6 @@ nImages = numel(imageNames);
 
 % choose where to look for renderings
 dataFolder = getpref('RenderToolbox3', 'outputDataFolder');
-%dataFolder = fullfile(fileparts(mfilename('fullpath')), ...
-%    'Output-Generated-21-Feb-2013');
 for ii = 1:nImages
     % make a PBRT sRGB image and read the pixel of interest
     PBRTImage = FindFiles(dataFolder, ['PBRT.+' imageNames{ii}]);

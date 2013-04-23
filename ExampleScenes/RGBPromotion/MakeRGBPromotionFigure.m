@@ -12,13 +12,13 @@ load B_cieday
 temp = 4000;
 spd = GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
-yellowDay = WriteSpectrumFile(wls, spd, sprintf('CIE-daylight-%d.spd', temp));
+yellowDay = WriteSpectrumFile(wls, spd, sprintf('CIE-day-%d.spd', temp));
 
 % blue daylight
 temp = 10000;
 spd = GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
-blueDay = WriteSpectrumFile(wls, spd, sprintf('CIE-daylight-%d.spd', temp));
+blueDay = WriteSpectrumFile(wls, spd, sprintf('CIE-day-%d.spd', temp));
 
 illuminants = {yellowDay, blueDay};
 RGBs = {[.8 .1 .4], [.5 .5 .5]};
@@ -53,6 +53,7 @@ RGBMarkers = {'x', 'o'};
 RGBOutMarkers = {'+', 'square'};
 spectrumMarkers = {'x', 'o'};
 RGBLegend = {};
+labelSize = 14;
 if hints.isPlot
     fig = figure();
     nCols = nRGBs * 2;
@@ -68,7 +69,6 @@ if hints.isPlot
                 'YLim', [0 1.1*maxPower], ...
                 'YTick', [0 maxPower], ...
                 'YTickLabel', {}, ...
-                'XDir', 'reverse', ...
                 'XLim', [.9 3.1], ...
                 'XTick', 1:3, ...
                 'XTickLabel', {});
@@ -80,28 +80,38 @@ if hints.isPlot
                 'YLim', [0 1.1*maxPower], ...
                 'YTick', [0 maxPower], ...
                 'YTickLabel', {}, ...
+                'YAxisLocation', 'right', ...
                 'XLim', [min(outWls) max(outWls)] + [-.1 .1], ...
                 'XTick', [min(outWls) max(outWls)], ...
-                'XTickLabel', {});
+                'XTickLabel', {}, ...
+                'XDir', 'reverse');
             
             % label outside plots
             if 1 == illum
-                rgbName = sprintf('BGR=[%0.1f %0.1f %0.1f]', ...
+                rgbName = sprintf('RGB=[%0.1f %0.1f %0.1f]', ...
                     RGBs{rgb}(3), RGBs{rgb}(2), RGBs{rgb}(1));
-                title(axRGB, rgbName);
-                title(axSpectra, 'promoted');
+                title(axRGB, rgbName, 'FontSize', labelSize);
+                title(axSpectra, 'promoted', 'FontSize', labelSize);
             end
             
             if 1 == rgb
                 [illumPath, illumName] = fileparts(illuminants{illum});
-                ylabel(axRGB, illumName);
-                set(axRGB, 'YTickLabel', {'0', 'max power'});
+                ylabel(axRGB, 'reflectance', 'FontSize', labelSize);
+                set(axRGB, 'YTickLabel', {'0', 'max'});
+            end
+            
+            if nRGBs == rgb
+                ylabel(axSpectra, illumName, ...
+                    'Rotation', 0, ...
+                    'HorizontalAlignment', 'left', ...
+                    'FontSize', labelSize);
             end
             
             if illum == nIlluminants
                 set(axRGB, 'XTickLabel', {'R', 'G', 'B'});
+                xlabel(axRGB, 'component', 'FontSize', labelSize);
                 set(axSpectra, 'XTickLabel', [min(outWls) max(outWls)])
-                xlabel(axSpectra, 'nm')
+                xlabel(axSpectra, 'wavelength (nm)', 'FontSize', labelSize);
             end
             
             for rend = 1:nRenderers

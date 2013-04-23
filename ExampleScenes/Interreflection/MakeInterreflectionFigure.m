@@ -29,8 +29,6 @@ mitsuba = pbrt;
 
 % choose where to look for renderings
 dataFolder = getpref('RenderToolbox3', 'outputDataFolder');
-%dataFolder = fullfile(fileparts(mfilename('fullpath')), ...
-%    'Output-Generated-21-Feb-2013');
 
 % fill in multi-spectral data for each condition
 for ii = 1:nImages

@@ -14,8 +14,6 @@ MakeSimpleSphere();
 
 % choose where to look for renderings
 dataFolder = getpref('RenderToolbox3', 'outputDataFolder');
-%dataFolder = fullfile(fileparts(mfilename('fullpath')), ...
-%    'Output-Generated-21-Feb-2013');
 
 % get output from the Render Toolbox reference renderer
 %   normalize it, scale it
