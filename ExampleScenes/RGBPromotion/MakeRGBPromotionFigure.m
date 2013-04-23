@@ -89,7 +89,7 @@ if hints.isPlot
             % label outside plots
             if 1 == illum
                 rgbName = sprintf('RGB=[%0.1f %0.1f %0.1f]', ...
-                    RGBs{rgb}(3), RGBs{rgb}(2), RGBs{rgb}(1));
+                    RGBs{rgb}(1), RGBs{rgb}(2), RGBs{rgb}(3));
                 title(axRGB, rgbName, 'FontSize', labelSize);
                 title(axSpectra, 'promoted', 'FontSize', labelSize);
             end

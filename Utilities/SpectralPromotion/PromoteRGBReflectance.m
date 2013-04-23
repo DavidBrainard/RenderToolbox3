@@ -40,7 +40,7 @@
 % @details
 % This function also converts the "promoted" spectrum to down to an RGB
 % RGB representation, for comparison with the given @a reflectance.  The
-% down-conversion uses the CIE XYV 1931 color matching functions.  The
+% down-conversion uses the CIE XYZ 1931 color matching functions.  The
 % donw-converted RGB reflectance will have its max value scaled to match
 % the given @a reflectance.
 %
