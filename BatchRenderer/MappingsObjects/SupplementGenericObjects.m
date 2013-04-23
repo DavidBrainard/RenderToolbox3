@@ -20,6 +20,10 @@ for ii = 1:numel(objects)
                     obj = FillInObjectProperty(obj, 'eta', 'spectrum', which('Cu.eta.spd'));
                     obj = FillInObjectProperty(obj, 'k', 'spectrum', which('Cu.k.spd'));
                     obj = FillInObjectProperty(obj, 'roughness', 'float', '0.4');
+                case 'bumpmap'
+                    obj = FillInObjectProperty(obj, 'materialID', 'string', '');
+                    obj = FillInObjectProperty(obj, 'textureID', 'string', '');
+                    obj = FillInObjectProperty(obj, 'scale', 'float', '1.0');
             end
             
         case 'light'

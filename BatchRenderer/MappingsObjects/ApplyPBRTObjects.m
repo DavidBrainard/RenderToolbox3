@@ -43,6 +43,24 @@ for ii = 1:numel(objects)
         addConfiguration(idMap, shapeID, 'reference', ...
             'area-light', 'AreaLightSource', lightID);
         
+    elseif strcmp(obj.hints, 'bumpmap')
+        % make a new scale texture that scales the given bump texture
+        textureID = GetObjectProperty(obj, 'textureID');
+        scale = GetObjectProperty(obj, 'scale');
+        scaledID = ['zzz-' obj.id '-scaled'];
+        addDeclaration(idMap, scaledID, 'Texture', 'scale');
+        addConfiguration(idMap, ...
+            scaledID, 'parameter', 'dataType', 'string', 'float');
+        addConfiguration(idMap, ...
+            scaledID, 'parameter', 'tex1', 'texture', textureID);
+        addConfiguration(idMap, ...
+            scaledID, 'parameter', 'tex2', 'float', scale);
+        
+        % assign the scaled texture to the given material's bumpmap
+        materialID = GetObjectProperty(obj, 'materialID');
+        addConfiguration(idMap, ...
+            materialID, 'parameter', 'bumpmap', 'texture', scaledID);
+        
     else
         % otherwise, add the object to the DOM as-is
         addObject(idMap, obj);

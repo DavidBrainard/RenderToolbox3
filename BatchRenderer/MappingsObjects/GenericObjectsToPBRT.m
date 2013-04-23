@@ -23,6 +23,9 @@ for ii = 1:numel(objects)
                     obj = EditObjectProperty(obj, 'roughness', 'roughness');
                     r = StringToVector(GetObjectProperty(obj, 'roughness'))/5;
                     obj = SetObjectProperty(obj, 'roughness', VectorToString(r));
+                case 'bumpmap'
+                    obj.hints = 'bumpmap';
+                    % bump map conversion happens in ApplyPBRTObjects()
             end
             
         case 'light'
@@ -70,8 +73,8 @@ for ii = 1:numel(objects)
                         obj = SetObjectProperty(obj, 'trilinear', 'false');
                     end
                     obj = EditObjectProperty(obj, 'maxAnisotropy', 'maxanisotropy');
-                    obj = EditObjectProperty(obj, 'offsetU', 'uoffset');
-                    obj = EditObjectProperty(obj, 'offsetV', 'voffset');
+                    obj = EditObjectProperty(obj, 'offsetU', 'udelta');
+                    obj = EditObjectProperty(obj, 'offsetV', 'vdelta');
                     obj = EditObjectProperty(obj, 'scaleU', 'uscale');
                     obj = EditObjectProperty(obj, 'scaleV', 'vscale');
                     

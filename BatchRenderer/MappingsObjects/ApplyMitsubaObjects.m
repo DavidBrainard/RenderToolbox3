@@ -53,12 +53,14 @@ for ii = 1:numel(objects)
             PrintPathPart(':', 'emitter', 'id', lightID)};
         lightNode = SearchScene(idMap, path);
         idMap(lightID) = lightNode;
-
         
         % redirect properties to the new emitter
         obj.id = lightID;
         obj.class = 'emitter';
         addObject(idMap, obj);
+        
+    elseif strcmp(obj.hints, 'bumpmap')
+        % build a bump map and rewire stuff
         
     else
         % otherwise, add the object to the DOM as-is
@@ -125,7 +127,7 @@ elseif 0 == numel(StringToVector(value)) ...
     %   detect this as non-numeric value,
     %   with a non-string, non-boolean type
     flavor = 'filename';
-
+    
 else
     % Mitsuba stores most things in the "value" attribute.
     flavor = 'value';

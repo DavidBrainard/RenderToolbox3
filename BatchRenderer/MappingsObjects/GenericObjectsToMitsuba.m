@@ -20,12 +20,14 @@ for ii = 1:numel(objects)
                     obj = EditObjectProperty(obj, 'alphaU', 'alphaU');
                     obj = EditObjectProperty(obj, 'alphaV', 'alphaV');
                     obj = FillInObjectProperty(obj, 'variant', 'string', 'ward');
-                    
                 case 'metal'
                     obj.subclass = 'roughconductor';
                     obj = EditObjectProperty(obj, 'eta', 'eta');
                     obj = EditObjectProperty(obj, 'k', 'k');
                     obj = EditObjectProperty(obj, 'roughness', 'alpha');
+                case 'bumpmap'
+                    obj.hints = 'bumpmap';
+                    % bump map conversion happens in ApplyMitsubaObjects()
             end
             
         case 'light'
