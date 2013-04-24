@@ -127,7 +127,8 @@ for mm = 1:numel(mappings)
     end
     
     % look up the full file path for files on the Matlab path
-    if ~isempty(strfind(map.right.value, '.')) ...
+    if hints.isAbsoluteResourcePaths ...
+            && ~isempty(strfind(map.right.value, '.')) ...
             && exist(map.right.value, 'file')
         map.right.value = which(map.right.value);
     end
