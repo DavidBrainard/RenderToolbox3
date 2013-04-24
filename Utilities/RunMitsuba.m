@@ -49,7 +49,9 @@ fprintf('%s\n', renderCommand);
 
 % run Mitsuba in the destination folder to capture all ouput there
 originalFolder = pwd();
-cd(scenePath);
+if exist(scenePath, 'dir')
+    cd(scenePath);
+end
 [status, result] = unix(renderCommand);
 cd(originalFolder)
 

@@ -2,15 +2,16 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Add the given file or folder and subfolders to the Matlab path.
+% Add the given file or folder to the Matlab path.
 %   @param working string path to a file or folder
+%   @param isRecursive whether to add subfolders of @a working folder
 %
 % @details
-% Adds to the Matlab path based on the given @a working file or path.  If
-% @a working is a file, determines the file's folder using the built-in
-% which() function.  Generates a path entries starting at the @a working
-% folder and including subfolders using the built-in genpath() function.
-% Prepends new path entries to the current Matlab path.
+% Adds to the Matlab path, starting with the given @a working file or path.
+% If @a working is a file, determines the file's folder using the built-in
+% which() function.  If @a isRecursive is provided and true, recursively
+% adds subfolders of @a working, using the built-in genpath().  Prepends
+% new path entries to the current Matlab path.
 %
 % @details
 % Attempts to add new path entries only if they are not already part of the
@@ -26,18 +27,26 @@
 %
 % @details
 % Usage:
-%   [updatedPath, newEntries] = AddWorkingPath(working)
+%   [updatedPath, newEntries] = AddWorkingPath(working, isRecursive)
 %
 % @ingroup Utilities
-function [updatedPath, newEntries] = AddWorkingPath(working)
+function [updatedPath, newEntries] = AddWorkingPath(working, isRecursive)
 
 if 2 == exist(working, 'file')
     % get the folder of the file
     working = fileparts(which(working));
 end
 
-% get path entries in and below the working folder
-workingPath = genpath(working);
+if nargin < 2 || isempty(isRecursive)
+    isRecursive = false;
+end
+
+% add path entries below the working folder?
+if isRecursive
+    workingPath = genpath(working);
+else
+    workingPath = working;
+end
 
 % check which entries are already on the Matlab path
 %   and are not silly .svn or .git folders

@@ -14,11 +14,12 @@ mappingsFile = 'SimpleSphereMappings.txt';
 %% Choose batch renderer options.
 hints.imageWidth = 201;
 hints.imageHeight = 201;
+hints.isAbsoluteResourcePaths = false;
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;
 isScale = true;
-for renderer = {'Mitsuba', 'PBRT'}
+for renderer = {'PBRT'}
     hints.renderer = renderer{1};
     sceneFiles = MakeSceneFiles(sceneFile, '', mappingsFile, hints);
     outFiles = BatchRender(sceneFiles, hints);

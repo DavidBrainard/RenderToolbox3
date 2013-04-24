@@ -158,7 +158,7 @@ if isForce || ~ispref('RenderToolbox3')
     RenderToolbox3.isReuseSceneFiles = false;
     RenderToolbox3.isParallel = false;
     RenderToolbox3.isPlot = true;
-    RenderToolbox3.isAbsoluteResourcePaths = true;
+    RenderToolbox3.isAbsoluteResourcePaths = false;
     
     % default renderer radiometric unit scale factors
     %   these are in the RenderToolbox3 group so that they appear as hints

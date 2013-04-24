@@ -180,7 +180,7 @@ switch hints.renderer
     case 'PBRT'
         if strcmpi('.xml', sceneExt)
             % convert PBRT-XML to text, read scene document
-            pbrtFile = fullfile(hints.tempFolder, hints.renderer, [sceneBase '.pbrt']);
+            pbrtFile = fullfile(scenePath, [sceneBase '.pbrt']);
             if isempty(hints.filmType)
                 hints.filmType = 'image';
             end

@@ -243,9 +243,7 @@ end
 % copy the collada file and reduce it to known characters and elements
 tempFolder = fullfile(hints.tempFolder, hints.renderer);
 colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
-if ~strcmp(tempFolder, scenePath)
-    copyfile(colladaFile, colladaCopy);
-end
+[isSuccess, result] = copyfile(colladaFile, colladaCopy);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
 
