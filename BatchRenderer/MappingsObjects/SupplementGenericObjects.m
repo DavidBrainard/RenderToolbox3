@@ -17,8 +17,11 @@ for ii = 1:numel(objects)
                     obj = FillInObjectProperty(obj, 'alphaU', 'float', '0.1');
                     obj = FillInObjectProperty(obj, 'alphaV', 'float', '0.1');
                 case 'metal'
-                    obj = FillInObjectProperty(obj, 'eta', 'spectrum', which('Cu.eta.spd'));
-                    obj = FillInObjectProperty(obj, 'k', 'spectrum', which('Cu.k.spd'));
+                    dataPath = fullfile(RenderToolboxRoot(), 'RenderData', 'PBRTMetals');
+                    eta = fullfile(dataPath, 'Cu.eta.spd');
+                    k = fullfile(dataPath, 'Cu.k.spd');
+                    obj = FillInObjectProperty(obj, 'eta', 'spectrum', eta);
+                    obj = FillInObjectProperty(obj, 'k', 'spectrum', k);
                     obj = FillInObjectProperty(obj, 'roughness', 'float', '0.4');
                 case 'bumpmap'
                     obj = FillInObjectProperty(obj, 'materialID', 'string', '');
