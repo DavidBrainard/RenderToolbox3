@@ -27,7 +27,7 @@ toneMapFactor = 100;
 isScaleGamma = true;
 
 % make a montage and sensor images with each renderer
-for renderer = {'PBRT'}
+for renderer = {'Mitsuba', 'PBRT'}
     
     % choose one renderer
     hints.renderer = renderer{1};
