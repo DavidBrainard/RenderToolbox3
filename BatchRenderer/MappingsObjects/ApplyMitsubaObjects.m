@@ -60,7 +60,30 @@ for ii = 1:numel(objects)
         addObject(idMap, obj);
         
     elseif strcmp(obj.hints, 'bumpmap')
-        % build a bump map and rewire stuff
+        % make a new scale texture that scales the given bump texture
+        textureID = GetObjectProperty(obj, 'textureID');
+        scale = GetObjectProperty(obj, 'scale');
+        scaledID = [obj.id '-scaled'];
+        addDeclaration(idMap, scaledID, 'texture', 'scale');
+        addConfiguration(idMap, ...
+            scaledID, 'value', 'ref', textureID);
+        addConfiguration(idMap, ...
+            scaledID, 'scale', 'float', scale);
+        
+        % change id of the given material
+        materialID = GetObjectProperty(obj, 'materialID');
+        innerMaterialID = [materialID '-inner'];
+        innerMaterial = idMap(materialID);
+        innerMaterial.setAttribute('id', innerMaterialID);
+        idMap(innerMaterialID) = innerMaterial;
+        idMap.remove(materialID);
+        
+        % replace given material with a bump material
+        addDeclaration(idMap, materialID, 'bsdf', 'bump');
+        addConfiguration(idMap, ...
+            materialID, 'texture', 'ref', scaledID);
+        addConfiguration(idMap, ...
+            materialID, 'bsdf', 'ref', innerMaterialID);
         
     else
         % otherwise, add the object to the DOM as-is
@@ -74,7 +97,7 @@ function checkDOMNode(idMap, id, nodeName)
 if ~idMap.isKey(id)
     docNode = idMap('document');
     docRoot = docNode.getDocumentElement();
-    objectNode = CreateElementChild(docRoot, nodeName, id);
+    objectNode = CreateElementChild(docRoot, nodeName, id, 'first');
     idMap(id) = objectNode;
 end
 
@@ -115,7 +138,7 @@ function addConfiguration(idMap, id, name, type, value)
 % make sure the DOM has a node for this object
 checkDOMNode(idMap, id, 'merge');
 
-if strcmp(type, 'texture')
+if strcmp(type, 'texture') || strcmp(type, 'ref')
     % Mitsuba textures use a "ref" node type and "id" instead of "value"
     type = 'ref';
     flavor = 'id';
