@@ -73,7 +73,7 @@ function checkDOMNode(idMap, id, nodeName)
 if ~idMap.isKey(id)
     docNode = idMap('document');
     docRoot = docNode.getDocumentElement();
-    objectNode = CreateElementChild(docRoot, nodeName, id);
+    objectNode = CreateElementChild(docRoot, nodeName, id, 'first');
     idMap(id) = objectNode;
 end
 
