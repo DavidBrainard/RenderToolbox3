@@ -106,10 +106,10 @@ outPixel = outData.multispectralImage(nPixels/2, nPixels/2, :);
 outPixel = squeeze(outPixel);
 
 % divide out the illuminant
+%   SplineRaw(), not SplineSpd(): renderers already assume power/wavelength
 [illumWls, illumPower] = ReadSpectrum(illuminant);
-illumResampled = SplineSpd(illumWls, illumPower, outData.S);
+illumResampled = SplineRaw(illumWls, illumPower, outData.S);
 promoted = outPixel ./ illumResampled;
-promoted = max(reflectance) * (promoted ./ max(promoted));
 
 % convert to sRGB
 tinyImage = reshape(promoted, 1, 1, []);
