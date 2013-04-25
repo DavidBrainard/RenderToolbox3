@@ -4,77 +4,52 @@
 %
 % Run all "Make*" functions in the ExampleScenes/ folder.
 %   @param outputRoot base path where to save output data
-%   @param outputName trailing path where to save output data
-%   @param makeFunctions cell array of "Make" functions for example scenes
-%   @param isDryRun whether to skip rendering as a "dry run"
+%   @param makeFunctions cell array of rendering scripts to invoke
 %
 % @details
-% Finds all m-files named "Make* in the RenderToolbox3 ExampleScenes/
-% folder, and executes each one.  Attempts to trap and save any errors that
-% occur.
+% By default, renders example scenes by invoking all of the "Make*" scripts
+% found within the ExampleScenes/ folder.  If @a makeFunctions is provided,
+% it must be a cell array of rendering scripts to invoke instead.
 %
 % @details
 % @a outputRoot is the base path under which all output data should be
 % saved.  If outputRoot is missing or empty, uses default folders from
 % getpref('RenderToolbox3').  Outputs will be saved in subfolders of @a
-% outputRoot, one for each subfolder of ExampleScenes/.
+% outputRoot, one for each rendering script.
 %
 % @details
-% If @a outputName is provided, it should be the name of a folder to append
-% to each subfolder of @a outputRoot.  This allows multiple test runs to be
-% saved under the same @a outputRoot.
-%
-% @details
-% By default, renders example scenes by invoking all of the "Make*" scripts
-% found within the ExampleScenes/ folder.  If @a makeFunctions is provided,
-% it must be a cell array of scripts to invoke instead.
-%
-% @details
-% If @a isDryRun is provided and true, no rendering will happen, but
-% "Make*" files will still be executed.
-%
-% @details
-% Returns a struct with information about each "Make*" file, whether the
-% file executed successfully, and any Matlab error struct that was trapped.
+% Returns a struct with information about each rendering script, such as
+% whether the script executed successfully, any Matlab error struct that
+% was thrown, and when the script completed.
 %
 % @details
 % Saves a .mat file with several variables about the test parameters and
 % results:
 %   - outputRoot, the given @a outputRoot
-%   - outputName, the given @a outputName
 %   - makeFunctions, the given @a makeFunctions
-%   - isDryRun, the given @a isDryRun
 %   - hints, RenderToolbox3 options, as returned from GetDefaultHints()
-%   - results, the returned struct of results about each "Make*" file
+%   - results, the returned struct of results about rendering scripts
 % .
 % @details
 % The .mat file will be saved in the given @a outputRoot folder.  It will
-% have a name that that includes the name of this m-file, plus the given @a
-% outputName, if any, plus the date and time.  For example,
+% have a name that that includes the name of this m-file, plus the date and
+% time.
 %
 % @details
 % Usage:
-%   results = TestAllExampleScenes(outputRoot, outputName, makeFunctions, isDryRun)
+%   results = TestAllExampleScenes(outputRoot, makeFunctions)
 %
 % @ingroup ExampleScenes
-function results = TestAllExampleScenes(outputRoot, outputName, makeFunctions, isDryRun)
+function results = TestAllExampleScenes(outputRoot, makeFunctions)
 
 if nargin < 1  || isempty(outputRoot)
     outputRoot = '';
 end
 
-if nargin < 2 || isempty(outputName)
-    outputName = '';
-end
-
-if nargin < 3 || isempty(makeFunctions)
+if nargin < 2 || isempty(makeFunctions)
     % find all the m-functions named "Make*", in ExampleScenes/
     exampleRoot = fullfile(RenderToolboxRoot(), 'ExampleScenes');
     makeFunctions = FindFiles(exampleRoot, 'Make\w+\.m');
-end
-
-if nargin < 4 || isempty(isDryRun)
-    isDryRun = getpref('RenderToolbox3', 'isDryRun');
 end
 
 testTic = tic();
@@ -91,38 +66,30 @@ results = struct( ...
 originalFolder = pwd();
 originalPrefs = getpref('RenderToolbox3');
 
-% dry runs or real rendering?
-setpref('RenderToolbox3', 'isDryRun', isDryRun);
+% choose where to write all outputs
+if isempty(outputRoot)
+    tempRoot = getpref('RenderToolbox3', 'tempFolder');
+    dataRoot = getpref('RenderToolbox3', 'outputDataFolder');
+    imageRoot = getpref('RenderToolbox3', 'outputImageFolder');
+    
+else
+    tempRoot = fullfile(outputRoot, 'temp');
+    dataRoot = fullfile(outputRoot, 'data');
+    imageRoot = fullfile(outputRoot, 'images');
+end
+
 
 % try to render each example scene
 for ii = 1:numel(makeFunctions)
     
-    % choose where to put outputs for this scene
+    % choose where to write outputs for this scene
     [makePath, makeName, makeExt] = fileparts(makeFunctions{ii});
     subfolder = makeName;
-    if isempty(outputRoot)
-        % put files in subfolders of the default output folders
-        tempFolder = fullfile( ...
-            getpref('RenderToolbox3', 'tempFolder'), ...
-            subfolder, outputName);
-        outputDataFolder = fullfile( ...
-            getpref('RenderToolbox3', 'outputDataFolder'), ...
-            subfolder, outputName);
-        outputImageFolder = fullfile( ...
-            getpref('RenderToolbox3', 'outputImageFolder'), ...
-            subfolder, outputName);
-        
-    else
-        % put all files under the given output root
-        tempFolder = fullfile(outputRoot, 'temp', subfolder, outputName);
-        outputDataFolder = fullfile(outputRoot, 'data', subfolder, outputName);
-        outputImageFolder = fullfile(outputRoot, 'images', subfolder, outputName);
-    end
     
     % let the Make* function use new default output folders
-    setpref('RenderToolbox3', 'tempFolder', tempFolder);
-    setpref('RenderToolbox3', 'outputDataFolder', outputDataFolder);
-    setpref('RenderToolbox3', 'outputImageFolder', outputImageFolder);
+    setpref('RenderToolbox3', 'tempFolder', fullfile(tempRoot, subfolder));
+    setpref('RenderToolbox3', 'outputDataFolder', fullfile(dataRoot, subfolder));
+    setpref('RenderToolbox3', 'outputImageFolder', fullfile(imageRoot, subfolder));
     
     try
         % make the example scene!
@@ -170,11 +137,6 @@ if ~isempty(outputRoot) && ~exist(outputRoot, 'dir')
 end
 baseName = mfilename();
 dateTime = datestr(now(), 30);
-if isempty(outputName)
-    resultsBase = sprintf('%s-%s', baseName, dateTime);
-else
-    resultsBase = sprintf('%s-%s-%s', baseName, outputName, dateTime);
-end
+resultsBase = sprintf('%s-%s', baseName, dateTime);
 resultsFile = fullfile(outputRoot, resultsBase);
-save(resultsFile, 'outputRoot', 'outputName', 'makeFunctions', ...
-    'isDryRun', 'results', 'hints');
+save(resultsFile, 'outputRoot', 'makeFunctions', 'results', 'hints');

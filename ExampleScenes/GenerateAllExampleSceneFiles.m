@@ -29,7 +29,6 @@ setpref('RenderToolbox3', 'isPlot', false);
 % choose example scenes and output location
 %outputRoot = '/home2/brainard/test/epic-scene-test';
 outputRoot = '/Users/ben/epic-scene-test';
-outputName = '';
 makeFunctions = { ...
     'MakeCheckerboard.m', ...
     'MakeCoordinatesTest.m', ...
@@ -52,4 +51,4 @@ makeFunctions = { ...
     'MakeTableSphere.m'};
 
 % make example scene files without rendering
-results = TestAllExampleScenes(outputRoot, outputName, makeFunctions);
+results = TestAllExampleScenes(outputRoot, makeFunctions(1:2));
