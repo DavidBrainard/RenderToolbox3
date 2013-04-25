@@ -26,14 +26,15 @@
 % Returns the file name of the new PBRT file, which might be the same as
 % the given @a pbrtFile.  Also returns the PBRT-XML file and XML Document
 % Object Model (DOM) document object from which the PBRT file was
-% generated.
+% generated.  Also returns a cell array of file names for auxiliary files,
+% like geometry files. 
 %
 % @details
 % Usage:
-%   [pbrtFile, pbrtXMLFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
+%   [pbrtFile, pbrtXMLFile, pbrtDoc, auxiliary] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
 %
 % @ingroup Utilities
-function [pbrtFile, pbrtXMLFile, pbrtDoc] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
+function [pbrtFile, pbrtXMLFile, pbrtDoc, auxiliary] = ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)
 
 %% Parameters
 [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
@@ -81,3 +82,6 @@ WriteSceneDOM(pbrtXMLFile, pbrtDoc);
 WritePBRTFile(pbrtFile, pbrtXMLFile, hints);
 
 cd(originalFolder)
+
+%% Detect auxiliary geometry files.
+auxiliary = FindFiles(pbrtPath, 'mesh-data-[^\.]+.pbrt');

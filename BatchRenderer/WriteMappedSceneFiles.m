@@ -41,19 +41,20 @@
 %
 % @details
 % Returns the names of the new, mapped scene file and the new, mapped
-% adjustments file.
+% adjustments file.  Also returns a cell array of file names for resources
+% specified in mappings, such as image files and spectrum files.
 %
 % @details
 % Used internally by BatchRender().
 %
 % @details
 % Usage:
-%   [mappedScene, mappedAdjust] = WriteMappedSceneFiles( ...
+%   [mappedScene, mappedAdjust, resources] = WriteMappedSceneFiles( ...
 %       workingPath, name, originalScene, originalAdjust, ...
 %       mappings, varNames, varValues, hints)
 %
 % @ingroup BatchRender
-function [mappedScene, mappedAdjust] = WriteMappedSceneFiles( ...
+function [mappedScene, mappedAdjust, resources] = WriteMappedSceneFiles( ...
     workingPath, name, originalScene, originalAdjust, ...
     mappings, varNames, varValues, hints)
 
@@ -94,13 +95,14 @@ end
 
 %% Resolve the value part of each mapping:
 %   replace (varName) syntax with corresponding varValue values
-%   resolve the full file path for files on the Matlab path
+%   find resource files, possibly substitute full path names
 %   filter mappings by group name
 
 % add the current folder and subfolders to the path, temporarily
 originalPath = path();
 AddWorkingPath(pwd());
 isInGroup = true(1, numel(mappings));
+resources = {};
 for mm = 1:numel(mappings)
     % replace (varName) text with varValue for this condition
     map = mappings(mm);
@@ -126,11 +128,16 @@ for mm = 1:numel(mappings)
         map.right.value = map.right.value;
     end
     
-    % look up the full file path for files on the Matlab path
-    if hints.isAbsoluteResourcePaths ...
-            && ~isempty(strfind(map.right.value, '.')) ...
+    % locate resource files on the Matlab path
+    if ~isempty(strfind(map.right.value, '.')) ...
             && exist(map.right.value, 'file')
-        map.right.value = which(map.right.value);
+        resourcePath = which(map.right.value);
+        resources{end+1} = resourcePath;
+        
+        % write full path name in scene file?
+        if hints.isAbsoluteResourcePaths
+            map.right.value = resourcePath;
+        end
     end
     
     % should this mapping be filtered by group name?

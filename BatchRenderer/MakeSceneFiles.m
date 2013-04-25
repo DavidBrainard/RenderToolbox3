@@ -62,6 +62,10 @@
 % of 'imageName'.
 %
 % @details
+% Also retrurns a cell array of file names for auxiliary files on which the
+% scene files depend, like images, spectrum files, and geometry files.
+%
+% @details
 % If @a outPath is provided, files will be located at that path.
 % Otherwise, files will be located at hints.tempFolder.
 %
@@ -73,10 +77,10 @@
 %
 % @details
 % Usage:
-%   sceneFiles = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+%   [sceneFiles, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 %
 % @ingroup BatchRender
-function sceneFiles = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+function [sceneFiles, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 
 InitializeRenderToolbox();
 
@@ -141,15 +145,9 @@ for ii = 1:numel(renderers)
     end
 end
 
-% create optional output folder?
-if ~isempty(outPath)
-    if ~exist(outPath, 'dir')
-        mkdir(outPath);
-    end
-end
-
 %% Make a scene file for each condition.
 sceneFiles = cell(1, nConditions);
+auxiliaryFiles = {};
 
 err = [];
 try
@@ -162,19 +160,33 @@ try
         end
         
         % make a the scene file for this condition
-        sceneFiles{cc} = makeConditionSceneFile(colladaFile, mappingsFile, ...
+        [sceneFiles{cc}, sceneAux] = ...
+            makeConditionSceneFile(colladaFile, mappingsFile, ...
             cc, varNames, conditionVarValues, hints);
-
-        % copy to optional ouput folder?
-        if ~isempty(outPath)
-            [scenePath, sceneBase, sceneExt] = fileparts(sceneFiles{cc});
-            if ~strcmp(scenePath, outPath)
-                copyfile(sceneFiles{cc}, outPath);
-            end
-        end
+        
+        % append to running list of auxiliary files
+        auxiliaryFiles = cat(2, auxiliaryFiles, sceneAux);
     end
 catch err
     disp('Scene conversion error!');
+end
+
+% only care about unique auxiliary files
+auxiliaryFiles = unique(auxiliaryFiles);
+
+% copy scene files and auxiliary files to an output folder?
+if ~isempty(outPath)
+    if ~exist(outPath, 'dir')
+        mkdir(outPath);
+    end
+    
+    for ii = 1:numel(sceneFiles)
+        [status, result] = copyfile(sceneFiles{ii}, outPath);
+    end
+
+    for ii = 1:numel(auxiliaryFiles)
+        [status, result] = copyfile(auxiliaryFiles{ii}, outPath);
+    end
 end
 
 % report the error, if any
@@ -183,10 +195,12 @@ if ~isempty(err)
 end
 
 % Render a scene condition and save a .mat data file.
-function sceneFile = makeConditionSceneFile(colladaFile, mappingsFile, ...
+function [sceneFile, auxiliary] = makeConditionSceneFile( ...
+    colladaFile, mappingsFile, ...
     conditionNumber, varNames, varValues, hints)
 
 sceneFile = '';
+auxiliary = {};
 
 % choose the renderer
 isMatch = strcmp('renderer', varNames);
@@ -255,7 +269,7 @@ if ~strcmp(tempFolder, scenePath)
 end
 
 % make a new, modified Collada file and adjustments file
-[sceneTemp, adjustTemp] = WriteMappedSceneFiles( ...
+[sceneTemp, adjustTemp, sceneResources] = WriteMappedSceneFiles( ...
     tempFolder, imageName, colladaCopy, adjustCopy, ...
     mappings, varNames, varValues, hints);
 
@@ -268,7 +282,7 @@ switch hints.renderer
         if hints.isReuseSceneFiles && exist(sceneFile, 'file');
             disp(sprintf('Reusing %s', sceneFile));
         else
-            sceneFile = ColladaToMitsuba( ...
+            [sceneFile, sceneDoc, sceneAux] = ColladaToMitsuba( ...
                 sceneTemp, sceneFile, adjustTemp, hints);
         end
         
@@ -280,8 +294,11 @@ switch hints.renderer
         if hints.isReuseSceneFiles && exist(pbrtXMLFile, 'file');
             disp(sprintf('Reusing %s', pbrtXMLFile));
         else
-            [pbrtFile, pbrtXMLFile] = ColladaToPBRT( ...
+            [pbrtFile, pbrtXMLFile, pbrtDoc, sceneAux] = ColladaToPBRT( ...
                 sceneTemp, pbrtFile, adjustTemp, hints);
         end
         sceneFile = pbrtXMLFile;
 end
+
+% combined list of dependencies for this scene
+auxiliary = cat(2, sceneResources, sceneAux);

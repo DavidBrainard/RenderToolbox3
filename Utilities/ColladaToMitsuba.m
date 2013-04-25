@@ -30,14 +30,15 @@
 % @details
 % Returns the file name of the new Mitsuba file, which might be the same as
 % the given @a mitsubaFile.  Also returns an XML Document Object Model
-% (DOM) document node that represenets the Mitsuba file.
+% (DOM) document node that represenets the Mitsuba file.  Also returns a
+% cell array of file names for auxiliary files, like geometry files.
 %
 % @details
 % Usage:
-%   [mitsubaFile, mitsubaDoc] = ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
+%   [mitsubaFile, mitsubaDoc, auxiliary] = ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
 %
 % @ingroup Utilities
-function [mitsubaFile, mitsubaDoc] = ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
+function [mitsubaFile, mitsubaDoc, auxiliary] = ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)
 
 %% Parameters
 [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
@@ -101,3 +102,6 @@ mitsubaDoc = ReadSceneDOM(unadjustedFile, excludePattern);
 adjustmentsDoc = ReadSceneDOM(adjustmentsFile, excludePattern);
 MergeAdjustments(mitsubaDoc, adjustmentsDoc, excludePattern);
 WriteSceneDOM(mitsubaFile, mitsubaDoc);
+
+%% Detect auxiliary geometry files.
+auxiliary = FindFiles(mitsubaPath, '\.serialized');
