@@ -281,6 +281,7 @@ switch hints.renderer
         
         if hints.isReuseSceneFiles && exist(sceneFile, 'file');
             disp(sprintf('Reusing %s', sceneFile));
+            sceneAux = {};
         else
             [sceneFile, sceneDoc, sceneAux] = ColladaToMitsuba( ...
                 sceneTemp, sceneFile, adjustTemp, hints);
@@ -293,6 +294,7 @@ switch hints.renderer
         
         if hints.isReuseSceneFiles && exist(pbrtXMLFile, 'file');
             disp(sprintf('Reusing %s', pbrtXMLFile));
+            sceneAux = {};
         else
             [pbrtFile, pbrtXMLFile, pbrtDoc, sceneAux] = ColladaToPBRT( ...
                 sceneTemp, pbrtFile, adjustTemp, hints);
