@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render the MaterialSphere scene with 3 materials and a bump map.
+%% Render the MaterialSphere scene in a portable fashion.
 clear;
 clc;
 
@@ -20,24 +20,43 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 
-%% Render with Mitsuba and PBRT.
+% resources like images and spectrum files should use relative paths
+hints.isAbsoluteResourcePaths = false;
 
-% how to convert multi-spectral images to sRGB
-toneMapFactor = 100;
-isScaleGamma = true;
-
-% make a montage with each renderer
+%% Create scene files for Mistuba and PBRT.
+startFolder = pwd();
 for renderer = {'Mitsuba', 'PBRT'}
     
     % choose one renderer
     hints.renderer = renderer{1};
     
-    % make 3 multi-spectral renderings, saved in .mat files
-    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
+    % save scene files and auxiliary files in a custom folder
+    outFolder = fullfile(startFolder, 'portable-scenes', hints.renderer);
+    MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints, outFolder);
+end
+
+%% Render with Mitsuba and PBRT.
+% how to convert multi-spectral images to sRGB
+toneMapFactor = 100;
+isScaleGamma = true;
+
+for renderer = {'Mitsuba', 'PBRT'}
+    
+    % choose one renderer
+    hints.renderer = renderer{1};
+    
+    % locate scene ".xml" files in the custom folder
+    sceneFolder = fullfile(startFolder, 'portable-scenes', hints.renderer);
+    sceneFiles = FindFiles(sceneFolder, '\.xml');
+    
+    % change to custom folder so that renderers can find auxiliary files
+    cd(sceneFolder);
+    
+    % render scene files generated previously
     outFiles = BatchRender(sceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
-    montageName = sprintf('MaterialSphereBumps (%s)', hints.renderer);
+    montageName = sprintf('MaterialSpherePortable (%s)', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
         MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma, hints);
@@ -45,3 +64,5 @@ for renderer = {'Mitsuba', 'PBRT'}
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
+
+cd(startFolder);
