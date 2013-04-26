@@ -51,4 +51,4 @@ makeFunctions = { ...
     'MakeTableSphere.m'};
 
 % render example scenes, reusing scene files
-results = TestAllExampleScenes(outputRoot, makeFunctions(1:2));
+results = TestAllExampleScenes(outputRoot, makeFunctions);

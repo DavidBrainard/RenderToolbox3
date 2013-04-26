@@ -51,4 +51,4 @@ makeFunctions = { ...
     'MakeTableSphere.m'};
 
 % make example scene files without rendering
-results = TestAllExampleScenes(outputRoot, makeFunctions(1:2));
+results = TestAllExampleScenes(outputRoot, makeFunctions);
