@@ -83,6 +83,7 @@ end
 scenePath = fullfile(RenderToolboxRoot(), 'Utilities', 'SpectralPromotion');
 sceneFile = fullfile(scenePath, 'SpectralPromotion.dae');
 mappingsFile = fullfile(scenePath, 'SpectralPromotionMappings.txt');
+calibrationFile = fullfile(scenePath, 'SpectralPromotionCalibration.mat');
 conditionsFile = 'SpectralPromotionConditions.txt';
 
 % create a conditions file with given reflectance and illuminant
@@ -105,6 +106,11 @@ S = outData.S;
 outPixel = outData.multispectralImage(nPixels/2, nPixels/2, :);
 outPixel = squeeze(outPixel);
 
+% divide out scene specific scale factors related to geometry
+%   this should be independent of the renderer
+calibrationData = load(calibrationFile);
+outPixel = outPixel ./ calibrationData.geometryScale;
+
 % divide out the illuminant
 %   SplineRaw(), not SplineSpd(): renderers already assume power/wavelength
 [illumWls, illumPower] = ReadSpectrum(illuminant);
@@ -115,4 +121,6 @@ promoted = outPixel ./ illumResampled;
 tinyImage = reshape(promoted, 1, 1, []);
 [sRGB, XYZ, rawRGB] = MultispectralToSRGB(tinyImage, outData.S, 0, false);
 RGB = squeeze(rawRGB);
-RGB = max(reflectance) * (RGB ./ max(RGB));
+
+% scale so unit-valued reflectance comes out with unit-valued RGB
+RGB = RGB ./ calibrationData.rgbScale;

@@ -48,7 +48,7 @@ if nargin < 4
 end
 
 % convert to CIE XYZ image using CIE 1931 standard weighting functions
-%   683 converts watt-valued spectra to lumen-valued luminance (Y-values)
+%   683 converts watt-valued spectra to lumen-valued luminances (Y-values)
 wattsToLumens = 683;
 matchingData = load('T_xyz1931');
 matchingFunction = wattsToLumens*matchingData.T_xyz1931;
