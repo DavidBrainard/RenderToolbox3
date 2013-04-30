@@ -24,9 +24,9 @@ hints.imageHeight = 160;
 hints.isAbsoluteResourcePaths = false;
 
 %% Create scene files for Mistuba and PBRT.
+%   this could happen on "machine A"
 startFolder = pwd();
 for renderer = {'Mitsuba', 'PBRT'}
-    
     % choose one renderer
     hints.renderer = renderer{1};
     
@@ -36,12 +36,12 @@ for renderer = {'Mitsuba', 'PBRT'}
 end
 
 %% Render with Mitsuba and PBRT.
+% this could happen on "machine B", after copying over the custom folder
+
 % how to convert multi-spectral images to sRGB
 toneMapFactor = 100;
 isScaleGamma = true;
-
 for renderer = {'Mitsuba', 'PBRT'}
-    
     % choose one renderer
     hints.renderer = renderer{1};
     
@@ -49,10 +49,8 @@ for renderer = {'Mitsuba', 'PBRT'}
     sceneFolder = fullfile(startFolder, 'portable-scenes', hints.renderer);
     sceneFiles = FindFiles(sceneFolder, '\.xml');
     
-    % change to custom folder so that renderers can find auxiliary files
-    cd(sceneFolder);
-    
-    % render scene files generated previously
+    % render from the custom folder so renderers can find auxiliary files
+    cd(sceneFolder);    
     outFiles = BatchRender(sceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage

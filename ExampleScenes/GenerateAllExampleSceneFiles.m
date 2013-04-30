@@ -6,7 +6,7 @@
 %
 % @details
 % This script is useful for generating lots and lots of scene files, to be
-% rendererd later with RenderAllExampleScenes().  In some production
+% rendererd later with RenderAllExampleScenes.  In some production
 % settings, like computer clusters, it's useful to have a top-level script
 % that takes no arguments, like this one.  You should edit parameter values
 % in this script to agree with your system.
@@ -20,14 +20,13 @@
 clear;
 clc;
 
-% choose global RenderToolbox3 behavior
+%% Choose global RenderToolbox3 behavior.
 setpref('RenderToolbox3', 'isParallel', false);
 setpref('RenderToolbox3', 'isDryRun', true);
 setpref('RenderToolbox3', 'isReuseSceneFiles', false);
 setpref('RenderToolbox3', 'isPlot', false);
 
-% choose example scenes and output location
-%outputRoot = '/home2/brainard/test/epic-scene-test';
+%% Invoke rendering scripts.
 outputRoot = '/Users/ben/epic-scene-test';
 makeFunctions = { ...
     'MakeCheckerboard.m', ...
@@ -49,6 +48,4 @@ makeFunctions = { ...
     'MakeSimpleSquare.m', ...
     'MakeSpectralIllusion.m', ...
     'MakeTableSphere.m'};
-
-% make example scene files without rendering
 results = TestAllExampleScenes(outputRoot, makeFunctions);
