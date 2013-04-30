@@ -65,7 +65,7 @@ unmatchedA = {};
 unmatchedB = {};
 
 % find .mat files for sets A and B
-fileFilter = [filterExpression '[^\.]+\.mat'];
+fileFilter = [filterExpression '[^\.]*\.mat'];
 filesA = FindFiles(outputRootA, fileFilter);
 filesB = FindFiles(outputRootB, fileFilter);
 
@@ -89,8 +89,10 @@ end
 % report unmatched files
 [setMatch, indexA, indexB] = intersect(relativeA, relativeB, 'stable');
 filesMatched = filesA(indexA);
-unmatchedA = setdiff(filesA, filesMatched);
-unmatchedB = setdiff(filesB, filesMatched);
+[unmatched, unmatchedIndex] = setdiff(relativeA, relativeB);
+unmatchedA = filesA(unmatchedIndex);
+[unmatched, unmatchedIndex] = setdiff(relativeB, relativeA);
+unmatchedB = filesA(unmatchedIndex);
 
 % allocate an info struct for image comparisons
 matchInfo = struct( ...
@@ -124,6 +126,8 @@ end
 % compare matched images!
 nHistBins = 30;
 for ii = 1:nMatches
+    fprintf('%d of %d: %s\n', ii, nMatches, matchInfo(ii).relativeA);
+    
     % load rendering A
     dataA = load(matchInfo(ii).fileA);
     if ~isfield(dataA, 'multispectralImage')
@@ -153,7 +157,17 @@ for ii = 1:nMatches
     end
     
     % check spectral sampling
+    if ~isfield(dataA, 'S')
+        matchInfo(ii).error = ...
+            sprintf('Data file A has no spectral sampling variable ''S''.');
+        continue;
+    end
     matchInfo(ii).samplingA = dataA.S;
+    if ~isfield(dataB, 'S')
+        matchInfo(ii).error = ...
+            sprintf('Data file B has no spectral sampling variable ''S''.');
+        continue;
+    end
     matchInfo(ii).samplingB = dataB.S;
     if ~isequal(dataA.S, dataB.S)
         matchInfo(ii).error = ...
@@ -199,7 +213,7 @@ for ii = 1:n
     % bite off the file name as the image name
     [filePath, fileBase, fileExt] = fileparts(paths{ii});
     image{ii} = [fileBase fileExt];
-
+    
     % take the script name as the second-to-last subfolder in the path
     seps = find(filesep() == filePath);
     script{ii} = filePath(seps(end-1)+1:seps(end)-1);
