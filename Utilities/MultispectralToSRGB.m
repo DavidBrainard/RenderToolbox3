@@ -47,11 +47,11 @@ if nargin < 4
     isScale = false;
 end
 
-% convert to CIE XYZ image by weighting the multispectral planes by the CIE
-% color matching functions.
-%   why multiply by 683?
+% convert to CIE XYZ image using CIE 1931 standard weighting functions
+%   683 converts watt-valued spectra to lumen-valued luminances (Y-values)
+wattsToLumens = 683;
 matchingData = load('T_xyz1931');
-matchingFunction = 683*matchingData.T_xyz1931;
+matchingFunction = wattsToLumens*matchingData.T_xyz1931;
 matchingS = matchingData.S_xyz1931;
 XYZImage = MultispectralToSensorImage(multispectralImage, S, ...
     matchingFunction, matchingS);
