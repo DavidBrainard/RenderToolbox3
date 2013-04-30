@@ -21,7 +21,8 @@ wls = SToWls(S_cieday);
 blueDay = WriteSpectrumFile(wls, spd, sprintf('CIE-day-%d.spd', temp));
 
 illuminants = {yellowDay, blueDay};
-RGBs = {[.8 .1 .4], [.5 .5 .5]};
+RGBs = {[0.8, 0.1, 0.3], [1 0 0], [0 1 0], [0 0 1], [1 1 1], [1 1 1], 0.5*[1 1 1]};
+RGBNames = {'irregular', 'red', 'green', 'blue', 'white', 'sum', 'gray'};
 
 %% Get RGB promotions from PBRT and Mitsuba
 renderers = {'Mitsuba', 'PBRT'};
@@ -36,8 +37,21 @@ for rend = 1:nRenderers
     for illum = 1:nIlluminants
         for rgb = 1:nRGBs
             hints.renderer = renderers{rend};
-            [promoted, S, RGB, dataFile] = ...
-                PromoteRGBReflectance(RGBs{rgb}, illuminants{illum}, hints);
+            
+            if strcmp('sum', RGBNames{rgb})
+                % build the "sum" condition out of red, green, and blue
+                promoted = promotions{rend, illum, 2} ...
+                    + promotions{rend, illum, 3} ...
+                    + promotions{rend, illum, 4};
+                S = SOuts{1};
+                RGB = RGBOuts{rend, illum, 2} ...
+                    + RGBOuts{rend, illum, 3} ...
+                    + RGBOuts{rend, illum, 4};
+                dataFile = '';
+            else
+                [promoted, S, RGB, dataFile] = ...
+                    PromoteRGBReflectance(RGBs{rgb}, illuminants{illum}, hints);
+            end
             promotions{rend, illum, rgb} = promoted;
             SOuts{rend, illum, rgb} = S;
             RGBOuts{rend, illum, rgb} = RGB;
@@ -56,17 +70,19 @@ RGBLegend = {};
 labelSize = 14;
 if hints.isPlot
     fig = figure();
-    nCols = nRGBs * 2;
-    nRows = nIlluminants;
+    nCols = nIlluminants * 2;
+    nRows = nRGBs;
     for illum = 1:nIlluminants
         for rgb = 1:nRGBs
             % for plotting RGB values
-            row = illum;
-            sp = (2*rgb-1) + (illum-1)*nCols;
+            row = rgb;
+            sp = (2*illum-1) + (rgb-1)*nCols;
+            maxReflectance = 1.25;
             axRGB = subplot(nRows, nCols, sp, ...
                 'Parent', fig, ...
-                'YLim', [0 1.1], ...
-                'YTick', [0 1], ...
+                'YLim', [0 maxReflectance], ...
+                'YTick', [0 0.5 1], ...
+                'YGrid', 'on', ...
                 'XLim', [.9 3.1], ...
                 'XTick', 1:3, ...
                 'XTickLabel', {});
@@ -75,8 +91,9 @@ if hints.isPlot
             outWls = MakeItWls(SOuts{1, illum, rgb});
             axSpectra = subplot(nRows, nCols, sp+1, ...
                 'Parent', fig, ...
-                'YLim', [0 1.1], ...
-                'YTick', [0 1], ...
+                'YLim', [0 maxReflectance], ...
+                'YTick', [0 0.5 1], ...
+                'YGrid', 'on', ...
                 'YAxisLocation', 'right', ...
                 'XLim', [min(outWls) max(outWls)] + [-.1 .1], ...
                 'XTick', [min(outWls) max(outWls)], ...
@@ -84,30 +101,27 @@ if hints.isPlot
                 'XDir', 'reverse');
             
             % label outside plots
-            if 1 == illum
-                rgbName = sprintf('RGB=[%0.1f %0.1f %0.1f]', ...
-                    RGBs{rgb}(1), RGBs{rgb}(2), RGBs{rgb}(3));
-                title(axRGB, rgbName, 'FontSize', labelSize);
-                title(axSpectra, 'promoted', 'FontSize', labelSize);
-            end
-            
             if 1 == rgb
                 [illumPath, illumName] = fileparts(illuminants{illum});
-                ylabel(axRGB, 'reflectance', 'FontSize', labelSize);
-            end
-            
-            if nRGBs == rgb
-                ylabel(axSpectra, illumName, ...
-                    'Rotation', 0, ...
-                    'HorizontalAlignment', 'left', ...
+                title(axRGB, sprintf('%s: RGB', illumName), ...
+                    'FontSize', labelSize);
+                title(axSpectra, 'promoted', ...
                     'FontSize', labelSize);
             end
             
-            if illum == nIlluminants
+            if nRGBs == rgb
                 set(axRGB, 'XTickLabel', {'R', 'G', 'B'});
                 xlabel(axRGB, 'component', 'FontSize', labelSize);
                 set(axSpectra, 'XTickLabel', [min(outWls) max(outWls)])
                 xlabel(axSpectra, 'wavelength (nm)', 'FontSize', labelSize);
+                
+                if nIlluminants == illum
+                    ylabel(axSpectra, 'reflectance', 'FontSize', labelSize);
+                end
+            end
+            
+            if 1 == illum
+                ylabel(axRGB, RGBNames{rgb}, 'FontSize', labelSize);
             end
             
             for rend = 1:nRenderers
@@ -133,15 +147,26 @@ if hints.isPlot
                     'Marker', spectrumMarkers{rend}, ...
                     'LineStyle', 'none');
                 
+                % plot white points on a dark background
+                if all(plotColor > 0.9)
+                    set([axRGB axSpectra], 'Color', 0.5*[1 1 1]);
+                end
+                
                 % remember RGB legend info
                 rgbIndex = (rend-1)*nRenderers;
-                RGBLegend{rgbIndex+1} = sprintf('in %s', renderers{rend});
-                RGBLegend{rgbIndex+2} = sprintf('out %s', renderers{rend});
+                RGBLegend{rgbIndex+1} = sprintf('%s in', renderers{rend});
+                RGBLegend{rgbIndex+2} = sprintf('%s out', renderers{rend});
             end
         end
     end
 end
 
-% put a legend on the last axes
-legend(axRGB, RGBLegend, 'Location', 'southwest');
-legend(axSpectra, renderers, 'Location', 'southwest');
+% resize the figure before messing with legend positions
+set(fig, 'Position', [0 0 1000, 1000]);
+
+% put legends on the last axes
+%   move clear of plotted points
+l = legend(axRGB, RGBLegend, 'Location', 'southeast');
+set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
+l = legend(axSpectra, renderers, 'Location', 'southwest');
+set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
