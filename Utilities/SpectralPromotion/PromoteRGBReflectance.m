@@ -67,7 +67,7 @@
 % Usage:
 %   [promoted, S, RGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
 %
-% @ingroup Readers
+% @ingroup Utilities
 function [promoted, S, RGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
 
 if nargin < 2 || isempty(illuminant)
