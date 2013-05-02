@@ -27,7 +27,6 @@
 % as returned from GetDefaultHints().  If hints.isPlot is false, returns
 % without plotting anything.
 %
-%
 % @details
 % Usage:
 %   [nX, nY, nZ, edges] = ShowXYZHistogram(XYZImage, nEdges, hints)

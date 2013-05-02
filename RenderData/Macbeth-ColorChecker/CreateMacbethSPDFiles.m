@@ -4,6 +4,7 @@
 %
 % Convert Macbeth ColorChecker colorimetric data from the Psychtoolbox .mat
 % file format to the .spd format expected by PBRT and Mitsuba.
+%
 [macbethPath, macbethName] = fileparts(mfilename('fullpath'));
 matFile = fullfile(macbethPath, 'sur_mccBabel.mat');
 outFiles = ImportPsychColorimetricMatFile(matFile);

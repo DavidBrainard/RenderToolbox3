@@ -13,8 +13,7 @@
 % @details
 % For more about Psychtooblox colorimetric .mat files and conventions, see
 % the <a
-% href="http://docs.psychtoolbox.org/PsychColorimetricMatFiles">Psychtoolbox
-% web documentation</a> or the file
+% href="http://docs.psychtoolbox.org/PsychColorimetricMatFiles">Psychtoolbox web documentation</a> or the file
 %   Psychtoolbox/PsychColorimetricData/PsychColorimetricMatFiles/Contents.m
 %
 % @details

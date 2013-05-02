@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert an image in XYZ colors to sRGB colors.
+% Convert an image in XYZ space to sRGB color space.
 %   @param XYZImage matrix of XYZ image data
 %   @param toneMapFactor relative luminance truncation (optional)
 %   @param toneMapMax absolute luminance truncation (optional)

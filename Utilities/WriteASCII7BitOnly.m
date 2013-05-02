@@ -22,7 +22,7 @@
 % Usage:
 %   newFileName = WriteASCII7BitOnly(fileName, newFileName)
 %
-% @ingroup ColladaToPBRT
+% @ingroup Utilities
 function newFileName = WriteASCII7BitOnly(fileName, newFileName)
 
 [filePath, fileBase, fileExt] = fileparts(fileName);

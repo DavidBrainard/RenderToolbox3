@@ -24,9 +24,6 @@
 % @ingroup ColladaToPBRT
 function AddReference(idMap, id, name, type, value)
 
-% create new XML DOM objects as needed
-isCreate = true;
-
 % strip '#' from the node id and reference value
 value = value(value ~= '#');
 id = id(id ~= '#');

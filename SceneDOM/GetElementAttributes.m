@@ -30,22 +30,6 @@
 %
 % @ingroup SceneDOM
 function [attributes, names, values] = GetElementAttributes(element, name)
-%   [attributes, names, values] = GetElementAttributes(element, name)
-%
-% Get the attributes owned by an XML document element, if any.
-%
-% element must be an element node from an scene document, as returned
-% from GetSceneNode().
-%
-% By default, returns a cell array of all attribute nodes, a cell array
-% of strings of all attribute names, and a cell array of strings of all
-% attribute values.
-%
-% If name is provided, searches for an attribute with the given name and
-% returns a single attribute node, single string name, and single string
-% value.  If no attribute with the given name is fouund, returns empty
-% arrays.
-%
 
 if nargin < 2
     name = '';

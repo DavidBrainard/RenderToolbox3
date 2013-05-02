@@ -4,14 +4,12 @@
 %
 % Render example scene files that were generated previously.
 %
-% @details
 % This script is useful for rendering lots and lots of scene files that
 % were generated previously with  GenerateAllExampleSceneFiles.  In some
 % production settings, like  computer clusters, it's useful to have a
 % top-level script that takes no arguments, like this one.  You should edit
 % parameter values in this script to agree with your system.
 %
-% @details
 % It should be possible to run this script from any machine, including one
 % that does not have OpenGL support, or one that delegates to worker nodes
 % that don't have OpenGL support.

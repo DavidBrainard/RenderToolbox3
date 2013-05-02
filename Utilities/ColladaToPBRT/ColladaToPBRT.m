@@ -27,7 +27,7 @@
 % the given @a pbrtFile.  Also returns the PBRT-XML file and XML Document
 % Object Model (DOM) document object from which the PBRT file was
 % generated.  Also returns a cell array of file names for auxiliary files,
-% like geometry files. 
+% like geometry files that the PBRT files depends on.
 %
 % @details
 % Usage:

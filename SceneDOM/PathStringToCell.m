@@ -15,11 +15,6 @@
 %
 % @ingroup SceneDOM
 function pathCell = PathStringToCell(pathString)
-%   pathCell = PathStringToCell(pathString)
-%
-%
-% See GetScenePath() for details about scene paths.
-%
 
 % already a cell representation?
 if iscell(pathString)

@@ -14,8 +14,7 @@
 %
 % @details
 % See the RenderToolbox3 wiki for more about image <a 
-% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands">Spectrum
-% Bands</a>, and how RenderToolbox3 determines the spectral sampling of
+% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands">Spectrum Bands</a>, and how RenderToolbox3 determines the spectral sampling of
 % PBRT .dat files.
 %
 % @details
