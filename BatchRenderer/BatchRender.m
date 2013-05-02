@@ -4,7 +4,6 @@
 %
 % Render multiple scenes at once.
 %   @param sceneFiles cell array of renderer-specific scene file names
-%   @param renderers cell array of renderer names, one for each scene file
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
