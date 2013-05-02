@@ -1,4 +1,4 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
@@ -25,7 +25,7 @@
 % node name @a name.
 %
 % @details
-% If @a name, a checkName and a checkValue are provided, searches for a
+% If @a name, @a checkName and @a checkValue are provided, searches for a
 % single child element that has the node name @a, and has an attribute with
 % the name @a checkName and value equal to @a checkValue.  If such a child
 % element is found, returns the single child element and string name.

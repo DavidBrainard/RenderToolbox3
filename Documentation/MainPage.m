@@ -1,14 +1,14 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% @defgroup BatchRender Batch Renderer
+% @defgroup BatchRenderer Batch Renderer
 % Render scenes multiple times with changing variables.
 % @details
 % These functions make up the RenderToolox3 batch renderer, which can
 % render the same basic scene multiple times, with changing variables.
 % Users should not use most of these functions directly.  Just use the
-% BatchRender() and MakeMontage() functions.
+% MakeSceneFiles(), BatchRender(), and MakeMontage() functions.
 %
 % @defgroup Readers
 % Read multi-spectral data from various image file formats.
@@ -41,7 +41,7 @@
 % renderer-native formats.
 % @details
 % Users should not use these functions directly.  Just use the
-% BatchRender() function.
+% MakeSceneFiles() function.
 %
 % @defgroup Mex
 % Build Mex-functions from source.

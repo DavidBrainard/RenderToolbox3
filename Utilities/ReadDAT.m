@@ -1,4 +1,4 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
@@ -14,8 +14,7 @@
 %
 % @details
 % See the RenderToolbox3 wiki for more about image <a 
-% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands">Spectrum
-% Bands</a>, and how RenderToolbox3 determines the spectral sampling of
+% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands">Spectrum Bands</a>, and how RenderToolbox3 determines the spectral sampling of
 % PBRT .dat files.
 %
 % @details

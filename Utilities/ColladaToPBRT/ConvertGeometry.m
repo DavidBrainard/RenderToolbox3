@@ -1,4 +1,4 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
@@ -30,20 +30,6 @@
 function isConverted = ConvertGeometry(id, stubIDMap, colladaIDMap, hints)
 
 isConverted = true;
-
-% TODO:
-%   export a separate object for each polylist under a mesh.
-%   each could append a _num, as in Mitsuba
-%   this would enable one mesh to specify materials per face
-%   polylists might differ by the "material" attribute
-%   this shoould be a matter of finding the polylists and repeating much of
-%   this code in a loop
-%   however some of the mesh data might need to be converted only once
-%
-% find all polylists
-%   make a name for each with _num
-%   pass name and DOM path to a convertPolylist
-% in addition to polylists, triangles? polygons?
 
 %% Find all the geometry mesh polylists.
 % get the geometry's main "mesh" object

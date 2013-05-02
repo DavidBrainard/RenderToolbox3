@@ -1,4 +1,4 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
@@ -27,7 +27,7 @@
 % the given @a pbrtFile.  Also returns the PBRT-XML file and XML Document
 % Object Model (DOM) document object from which the PBRT file was
 % generated.  Also returns a cell array of file names for auxiliary files,
-% like geometry files. 
+% like geometry files that the PBRT files depends on.
 %
 % @details
 % Usage:

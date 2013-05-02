@@ -1,4 +1,4 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
@@ -8,10 +8,10 @@
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Converts the given RGB @a reflectance to a spectral value, by rendering a
-% simple scene that contains a matte reflector with the given surface @a
-% reflectance, illuminated by a directional "sun" light with the given @a
-% illuminant spectrum.
+% Converts the given RGB @a reflectance to a full multi-spectral
+% representation, by rendering a simple scene that contains a matte
+% reflector with the given RGB surface @a reflectance, illuminated by a
+% directional "sun" light with the given @a illuminant spectrum.
 %
 % @details
 % @a reflectance should have RGB components in the range [0 1].
@@ -38,11 +38,11 @@
 % renderer's sprctral promotion algorithm, but not scaling effects.
 %
 % @details
-% This function also converts the "promoted" spectrum to down to an RGB
-% RGB representation, for comparison with the given @a reflectance.  The
-% down-conversion uses the CIE XYZ 1931 color matching functions.  The
-% donw-converted RGB reflectance will have its max value scaled to match
-% the given @a reflectance.
+% This function also down-converts the "promoted" spectrum to down to an
+% RGB representation, for direct comparison with the given @a reflectance.
+% The down-conversion uses the CIE XYZ 1931 color matching functions.  The
+% down-converted RGB reflectance will not necessarily match the original @a
+% reflectance, but might nevertheless be of interest. 
 %
 % @details
 % By default, uses a "white" illuminant spectrum with unit untensity at all
@@ -58,15 +58,16 @@
 % @details
 % Returns the estimated, "promoted" reflectance spectrum that the renderer
 % used internally.  Also returns the "S" description of the renderer's
-% wavelength sampling.  Also returns the RGB representation of the promoted
-% spectrum.  Finally, returns the name of the .mat file that contains the
-% renderer ouput data and metadata from the simple scene rendering.
+% wavelength sampling.  Also returns the down-converted RGB representation
+% of the promoted spectrum.  Finally, returns the name of the .mat file
+% that contains renderer ouput data and metadata from the simple scene
+% rendering.
 %
 % @details
 % Usage:
 %   [promoted, S, RGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
 %
-% @ingroup Readers
+% @ingroup Utilities
 function [promoted, S, RGB, dataFile] = PromoteRGBReflectance(reflectance, illuminant, hints)
 
 if nargin < 2 || isempty(illuminant)

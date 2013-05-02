@@ -1,4 +1,4 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
@@ -12,7 +12,7 @@
 % @details
 % The lines in licenseNotice.m all begin with %%%.  Any lines at the top of
 % each m-file that begin with %%% will be overwritten.  Subsequent lines
-% will be copied as they are.  This prevents redundant coptyright and
+% will be copied as they are.  This prevents redundant copyright and
 % license notices, and allows them to be updated.
 %
 % @details
@@ -31,7 +31,7 @@ if nargin < 1
 end
 
 % get all the m-files in the RenderToolbox3 source tree
-mFiles = FindFiles(RenderToolboxRoot(), '.m$');
+mFiles = FindFiles(RenderToolboxRoot(), '\.m$');
 
 % get the text to prepend
 noticeFile = fullfile(RenderToolboxRoot(), 'licenseNotice.m');

@@ -1,4 +1,4 @@
-%%% RenderToolbox3 Copyright (c) 2012 The RenderToolbox3 Team.
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
@@ -31,7 +31,8 @@
 % Returns the file name of the new Mitsuba file, which might be the same as
 % the given @a mitsubaFile.  Also returns an XML Document Object Model
 % (DOM) document node that represenets the Mitsuba file.  Also returns a
-% cell array of file names for auxiliary files, like geometry files.
+% cell array of file names for auxiliary files, like geometry files, that
+% the Mitsuba file depends on.
 %
 % @details
 % Usage:
