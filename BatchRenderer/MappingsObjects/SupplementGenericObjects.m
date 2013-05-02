@@ -1,7 +1,24 @@
 %%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
+%
 % Fill in generic objects with default properties, if needed.
+%   @param objects
+%
+% @details
+% Add default properties to generic mappings objects, as needed to make
+% them complete.  @a objects must be a struct array of mappings  
+% objects as returned from MappingsToObjects() or
+% GenericObjectsToMitsuba().
+%
+% @details
+% Used internally by MakeSceneFiles().
+%
+% @details
+% Usage:
+%   objects = SupplementGenericObjects(objects)
+%
+% @ingroup MappingsObjects
 function objects = SupplementGenericObjects(objects)
 
 % fill in properties for each object, by type

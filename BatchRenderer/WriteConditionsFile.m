@@ -27,7 +27,7 @@
 % Usage:
 %   conditionsFile = WriteConditionsFile(conditionsFile, names, values)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function conditionsFile = WriteConditionsFile(conditionsFile, names, values)
 
 if nargin < 1 || isempty(conditionsFile)

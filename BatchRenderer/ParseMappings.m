@@ -32,13 +32,13 @@
 %   .
 %
 % @details
-% Used internally by BatchRender().
+% Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
 %   mappings = ParseMappings(mappingsFile)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function mappings = ParseMappings(mappingsFile)
 
 %% Make a default mappints struct.

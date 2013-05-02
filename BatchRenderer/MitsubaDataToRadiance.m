@@ -43,7 +43,7 @@
 % Usage:
 %   [radianceData, scaleFactor] = MitsubaDataToRadiance(mitsubaData, mitsubaDoc, hints)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function [radianceData, scaleFactor] = MitsubaDataToRadiance(mitsubaData, mitsubaDoc, hints)
 
 % merge custom hints with defaults

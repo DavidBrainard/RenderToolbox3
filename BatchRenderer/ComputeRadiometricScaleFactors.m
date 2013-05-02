@@ -39,7 +39,6 @@
 %   BatchRender(..., hints);
 % @endcode
 %
-%
 % @details
 % Returns the computed PBRT and Mitsuba radiometric unit scale factors.
 %
@@ -47,7 +46,7 @@
 % Usage:
 %   [pbrtScale, mitsubaScale] = ComputeRadiometricScaleFactors()
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function [pbrtScale, mitsubaScale] = ComputeRadiometricScaleFactors()
 
 %% Get renderingings with known radiometric properties.

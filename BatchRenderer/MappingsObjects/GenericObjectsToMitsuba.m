@@ -1,7 +1,23 @@
 %%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
-% Translate generic objects names and values to Mitsuba.
+%
+% Translate generic object names and values to Mitsuba.
+%   @param objects
+%
+% @details
+% Convert generic mappings objectsto Mitsuba-native mappings objects.  @a
+% objects must be a struct array of mappings objects as returned from
+% SupplementGenericObjects().
+%
+% @details
+% Used internally by MakeSceneFiles().
+%
+% @details
+% Usage:
+%   objects = GenericObjectsToMitsuba(objects)
+%
+% @ingroup MappingsObjects
 function objects = GenericObjectsToMitsuba(objects)
 
 for ii = 1:numel(objects)

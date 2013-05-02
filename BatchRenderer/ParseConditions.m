@@ -17,13 +17,13 @@
 % of varible values, with m values per variable.
 %
 % @details
-% Used internally by BatchRender().
+% Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
 %   [names, values] = ParseConditions(conditionsFile)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function [names, values] = ParseConditions(conditionsFile)
 
 %% Prepare to read conditions file.

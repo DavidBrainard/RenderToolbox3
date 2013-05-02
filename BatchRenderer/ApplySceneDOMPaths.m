@@ -17,13 +17,13 @@
 % paths.
 %
 % @details
-% Used internally by BatchRender().
+% Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
 %   ApplySceneDOMPaths(idMap, mappings)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function ApplySceneDOMPaths(idMap, mappings)
 
 for ii = 1:numel(mappings)

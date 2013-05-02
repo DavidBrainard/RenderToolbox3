@@ -14,7 +14,7 @@
 % Returns the updated mappings object.
 %
 % @details
-% Used internally by BatchRender().
+% Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:

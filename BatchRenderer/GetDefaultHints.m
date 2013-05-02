@@ -36,7 +36,6 @@
 %
 % @details
 % Returns a new or modified struct of batch renderer options.
-% output.
 %
 % @details
 % Usage:
@@ -50,7 +49,7 @@
 %   MakeMontage(..., hints);
 % @endcode
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function hints = GetDefaultHints(hints)
 
 if nargin < 1 || ~isstruct(hints)

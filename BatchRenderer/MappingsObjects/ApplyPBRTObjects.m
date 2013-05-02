@@ -12,7 +12,7 @@
 % objects as returned from MappingsToObjects() or GenericObjectsToPBRT().
 %
 % @details
-% Used internally by BatchRender().
+% Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:

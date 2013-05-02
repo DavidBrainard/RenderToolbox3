@@ -50,7 +50,7 @@
 % Usage:
 %   WriteDefaultMappingsFile(colladaFile, mappingsFile, includeFile, reflectances, lightSpectra, excludePattern)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function mappingsFile = WriteDefaultMappingsFile( ...
     colladaFile, mappingsFile, includeFile, reflectances, lightSpectra, excludePattern)
 

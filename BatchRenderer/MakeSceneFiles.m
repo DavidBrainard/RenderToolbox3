@@ -51,8 +51,8 @@
 %
 % @details
 % @a outPath is optional.  If provided, it should be the path to a folder
-% where new scene files should be copied.  New scene files will also be
-% written to @a hints.tempFolder.
+% where new scene files and auxiliary files should be copied.  New scene
+% files will also be written to @a hints.tempFolder.
 %
 % @details
 % Returns a cell array of file names for new renderer-specific scene
@@ -66,10 +66,6 @@
 % scene files depend, like images, spectrum files, and geometry files.
 %
 % @details
-% If @a outPath is provided, files will be located at that path.
-% Otherwise, files will be located at hints.tempFolder.
-%
-% @details
 % For Mitsuba, renderer-specific scene files will be in Mitsuba's native
 % .xml format.  For PBRT, files will be in RenderToolbox3's custom PBRT-XML
 % .xml format.  PBRT-XML files can be converted to PBRT's native text
@@ -79,7 +75,7 @@
 % Usage:
 %   [sceneFiles, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function [sceneFiles, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 
 InitializeRenderToolbox();

@@ -73,7 +73,7 @@
 % Usage:
 %   outFiles = BatchRender(sceneFiles, hints)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function outFiles = BatchRender(sceneFiles, hints)
 
 InitializeRenderToolbox();

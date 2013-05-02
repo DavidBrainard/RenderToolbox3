@@ -66,7 +66,7 @@
 % Usage:
 %   [SRGBMontage, XYZMontage] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function [SRGBMontage, XYZMontage] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
 
 %% Parameters

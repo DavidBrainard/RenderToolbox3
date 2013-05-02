@@ -45,7 +45,7 @@
 % specified in mappings, such as image files and spectrum files.
 %
 % @details
-% Used internally by BatchRender().
+% Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
@@ -53,7 +53,7 @@
 %       workingPath, name, originalScene, originalAdjust, ...
 %       mappings, varNames, varValues, hints)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function [mappedScene, mappedAdjust, resources] = WriteMappedSceneFiles( ...
     workingPath, name, originalScene, originalAdjust, ...
     mappings, varNames, varValues, hints)

@@ -43,7 +43,7 @@
 % Usage:
 %   [radianceData, scaleFactor] = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
 %
-% @ingroup BatchRender
+% @ingroup BatchRenderer
 function [radianceData, scaleFactor] = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
 
 if nargin < 2

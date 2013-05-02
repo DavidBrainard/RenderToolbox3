@@ -11,7 +11,7 @@
 % Set a property value for a mappings object.  Returns the updated object.
 %
 % @details
-% Used internally by BatchRender().
+% Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
