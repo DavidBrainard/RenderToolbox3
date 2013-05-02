@@ -29,7 +29,7 @@ WriteConditionsFile(conditionsFile, varNames, varValues);
 
 %% Choose batch renderer options.
 
-cd% which colors to use, [] means all
+% which colors to use, [] means all
 hints.whichConditions = [];
 
 % pixel size of each rendering

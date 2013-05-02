@@ -4,7 +4,7 @@ Collada {
     Camera:scale|sid=scale = -1 1 1
 }
 
-% moodify the spectra for both Mitsuba and PBRT
+% moodify the spectra for all renderers
 Generic {
     Point-light:light:point
     Point-light:intensity.spectrum = D65.spd
@@ -16,11 +16,13 @@ Generic {
 	Floor-material:diffuseReflectance.spectrum = mccBabel-1.spd
 }
 
-% specify the reflectance bitmap for the dice.
+% specify the reflectance bitmap for the dice
 Generic {
+    % define a bitmap texture based on an .exr image
     diceTexture:spectrumTexture:bitmap
     diceTexture:filename.string = DiceUVColored.exr
 
+    % apply the bitmatp texture to the dice diffuse reflectance
     Textured-material:material:anisoward
     Textured-material:diffuseReflectance.texture = diceTexture
     Textured-material:specularReflectance.spectrum = 300:0 800:0
