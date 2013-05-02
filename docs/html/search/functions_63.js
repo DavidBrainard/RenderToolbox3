@@ -1,9 +1,9 @@
 var searchData=
 [
   ['cleanmatlabpath',['CleanMatlabPath',['../group___utilities.html#ga4ce5a5214a8d4dd1fd319f6fd9221c3f',1,'CleanMatlabPath.m']]],
-  ['colladatomitsuba',['ColladaToMitsuba',['../group___utilities.html#ga5975f774f66357175082584ecbfda23e',1,'ColladaToMitsuba.m']]],
-  ['colladatopbrt',['ColladaToPBRT',['../group___utilities.html#ga25e2e8e16f2f9c0939ce87f8f5308e85',1,'ColladaToPBRT.m']]],
-  ['colorimetricmattotextfiles',['ColorimetricMatToTextFiles',['../group___utilities.html#ga514e5eff7397632d69f246ff2f2744bd',1,'ColorimetricMatToTextFiles.m']]],
+  ['colladatomitsuba',['ColladaToMitsuba',['../group___utilities.html#ga7c0c95f63d05404d1caaa06da2d662b0',1,'ColladaToMitsuba.m']]],
+  ['colladatopbrt',['ColladaToPBRT',['../group___utilities.html#ga509d8833e7183548b2b4e36346b1b36b',1,'ColladaToPBRT.m']]],
+  ['computeradiometricscalefactors',['ComputeRadiometricScaleFactors',['../group___batch_renderer.html#ga549cc197fbfc7d88e081cfe1c70b7f77',1,'ComputeRadiometricScaleFactors.m']]],
   ['convertcamera',['ConvertCamera',['../group___collada_to_p_b_r_t.html#gaffe0a70ab60323321b1d735bc528c472',1,'ConvertCamera.m']]],
   ['convertgeometry',['ConvertGeometry',['../group___collada_to_p_b_r_t.html#gaaa17bcc18975d65d5d5684a43c4ca36f',1,'ConvertGeometry.m']]],
   ['convertlight',['ConvertLight',['../group___collada_to_p_b_r_t.html#gadcad0607cee2a2421151941821f9aa36',1,'ConvertLight.m']]],
