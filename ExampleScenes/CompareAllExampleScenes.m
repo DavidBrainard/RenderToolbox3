@@ -36,9 +36,28 @@
 % multispectral pixel components (A minus B).
 %
 % @details
+% This function is intended to help validate RenderToolbox3 installations
+% and detect bugs in the RenderToolbox3 code.  A potential use would
+% compare renderings produced locally with archived renderings located on
+% GitHub.  For example:
+% @code
+%   % produce renderings locally
+%   TestAllExampleScenes('my/local/renderings');
+%
+%   % download archived renderings
+%   git clone
+%   https://github.com/DavidBrainard/RenderToolbox3-ReferenceData.git my/local/archive
+%
+%   % summarize local vs archived renderings
+%   outputRootA = 'my/local/renderings/data';
+%   outputRootA = 'my/local/archive/data';
+%   visualize = 1;
+%   matchInfo = CompareAllExampleScenes(outputRootA, outputRootB, '', visualize);
+% @endcode
+%
+% @details
 % Returns a struct array of info about each matched pair, including file
-% names and differneces between multispectral images (A minus
-% B).
+% names and differneces between multispectral images (A minus B).
 %
 % @details
 % Also returns a cell array of paths for files in set A that did not match
