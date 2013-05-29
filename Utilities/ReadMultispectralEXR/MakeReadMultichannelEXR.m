@@ -55,7 +55,7 @@ rows = round(sqrt(nSlices));
 cols = ceil(nSlices/rows);
 for ii = 1:nSlices
     subplot(rows,cols,ii)
-    imshow(data(:,:,ii))
+    imshow(255*data(:,:,ii))
     title(sliceInfo(ii).name)
     xlabel(sliceInfo(ii).pixelType)
 end
