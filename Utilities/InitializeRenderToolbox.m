@@ -88,7 +88,7 @@ end
 %% For Mitsuba
 if isForce || ~ispref('Mitsuba')
     % default config
-    Mitsuba.app = '~/RenderToolbox3/Mitsuba.app';
+    Mitsuba.app = '/Applications/Mitsuba.app';
     Mitsuba.executable = fullfile('Contents', 'MacOS', 'mitsuba');
     Mitsuba.importer = fullfile('Contents', 'MacOS', 'mtsimport');
     Mitsuba.adjustmentsFile = fullfile(RenderToolboxRoot(), 'RenderData', 'MitsubaDefaultAdjustments.xml');
@@ -105,7 +105,7 @@ end
 %% For PBRT
 if isForce || ~ispref('PBRT')
     % default config
-    PBRT.executable = '~/RenderToolbox3/pbrt';
+    PBRT.executable = '/usr/local/bin/pbrt';
     PBRT.S = [400 10 31];
     PBRT.adjustmentsFile = fullfile(RenderToolboxRoot(), 'RenderData', 'PBRTDefaultAdjustments.xml');
     
