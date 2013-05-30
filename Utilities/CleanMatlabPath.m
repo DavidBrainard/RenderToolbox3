@@ -15,17 +15,13 @@
 %
 % @ingroup Utilities
 function CleanMatlabPath()
-% get the Matlab path as a cell array
-pathParts = textscan(path(), '%s', 'Delimiter', ':');
-n = length(pathParts{1});
 
-% check for '.svn' and '.git'
-isUseful = false(1, n);
-for ii = 1:n
-    p = pathParts{1}{ii};
-    isUseful(ii) = isempty(regexp(p, '\.git|\.svn', 'once'));
-end
+% get the Matlab path
+pathString = path();
 
-% set the new path without extra folders
-betterPath = sprintf('%s:', pathParts{1}{isUseful});
-path(betterPath);
+% remove .svn and .git folders
+pathString = RemoveMatchingPaths(pathString, '.svn');
+pathString = RemoveMatchingPaths(pathString, '.git');
+
+% set the cleaned-up path
+path(pathString);
