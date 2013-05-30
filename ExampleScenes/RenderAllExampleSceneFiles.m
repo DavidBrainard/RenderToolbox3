@@ -4,6 +4,10 @@
 %
 % Render example scene files that were generated previously.
 %
+% GenerateAllExampleSceneFiles.m and RenderAllExampleSceneFiles.m work as a
+% pair.  You should run GenerateAllExampleSceneFiles.m first, then run
+% RenderAllExampleSceneFiles.m.
+%
 % This script is useful for rendering lots and lots of scene files that
 % were generated previously with  GenerateAllExampleSceneFiles.  In some
 % production settings, like  computer clusters, it's useful to have a
