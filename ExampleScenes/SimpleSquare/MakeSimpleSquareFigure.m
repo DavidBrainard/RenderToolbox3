@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Make figure comparing rendered colors with expected colors.
-clear;
-clc;
 
 %% Render the scene.
 MakeSimpleSquare();

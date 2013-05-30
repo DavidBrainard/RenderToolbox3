@@ -19,9 +19,6 @@
 % nodes.
 %
 
-clear;
-clc;
-
 %% Choose global RenderToolbox3 behavior.
 setpref('RenderToolbox3', 'isParallel', false);
 setpref('RenderToolbox3', 'isDryRun', true);

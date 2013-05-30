@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Make a figure with data about renderer output absolute magnitudes.
-clear;
-clc;
 
 %% Render the scene.
 MakeScalingTest;

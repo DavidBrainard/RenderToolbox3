@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Probe the RGB spectral promotion algortigms of renderers.
-clear;
-clc;
 
 %% Choose some illuminants and RGB colors to render
 % yellow daylight

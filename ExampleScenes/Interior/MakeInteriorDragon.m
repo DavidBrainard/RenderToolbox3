@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Render a furnished interior scene from Nextwave Multimedia, plus dragon!
-clear;
-clc;
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));

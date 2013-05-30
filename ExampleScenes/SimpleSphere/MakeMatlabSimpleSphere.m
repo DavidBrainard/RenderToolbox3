@@ -12,8 +12,6 @@
 %
 % This script is based on DoMatlabSphereRender.m from Render Toolbox
 % version 2, by Dan Lichtman and David Brainard.
-clear;
-clc;
 
 %% Make sure working folder is on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));

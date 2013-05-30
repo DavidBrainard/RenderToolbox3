@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Make a figure comparing TableSphere renderings.
-clear;
-clc;
 
 %% Render the scene.
 MakeTableSphere();

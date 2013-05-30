@@ -34,7 +34,6 @@ for ii = 1:nFunctions
 end
 
 %% Summarize the dependencies.
-clc;
 nMatches = sum(isMatch);
 disp(sprintf('\nFound %d functions matching "%s":\n', ...
     nMatches, pathPattern))

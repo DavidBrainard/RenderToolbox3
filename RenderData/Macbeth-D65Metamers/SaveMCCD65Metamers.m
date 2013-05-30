@@ -5,9 +5,6 @@
 % Using the IlluminantMetamerExample() demo function, loop through all 24
 % MCC surface spectra and save the computed D65 Metamers.
 
-clear;
-clc;
-
 % allocate a matrix to hold many metamers
 nSurfaces = 24;
 S_mccD65Metamer = getpref('Mitsuba', 'S');

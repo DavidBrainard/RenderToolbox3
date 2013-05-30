@@ -19,9 +19,6 @@
 % that don't have OpenGL support.
 %
 
-clear;
-clc;
-
 %% Choose global RenderToolbox3 behavior.
 setpref('RenderToolbox3', 'isParallel', true);
 setpref('RenderToolbox3', 'isDryRun', false);

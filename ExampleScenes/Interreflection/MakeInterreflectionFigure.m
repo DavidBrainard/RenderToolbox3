@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Make a figure with data about light reflecting between surfaces.
-clear;
-clc;
 
 %% Render the scene.
 MakeInterreflection;

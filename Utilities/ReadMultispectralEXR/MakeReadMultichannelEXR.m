@@ -23,9 +23,6 @@
 % @ingroup Mex
 function MakeReadMultichannelEXR()
 
-clear;
-clc;
-
 %% Choose the source and function files
 cd(fullfile(RenderToolboxRoot(), 'Utilities', 'ReadMultispectralEXR'));
 source = 'ReadMultichannelEXR.cpp';

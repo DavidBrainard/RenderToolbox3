@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Render a perfect reflector and check physics of radiance units.
-clear;
-clc;
 
 %% Choose example files, make sure they're on the Matlab path.
 examplePath = fileparts(mfilename('fullpath'));

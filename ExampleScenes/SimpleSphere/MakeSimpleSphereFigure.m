@@ -3,8 +3,6 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Make a figure with data about rendered and expected Ward spheres.
-clear;
-clc;
 
 %% Render the scene.
 MakeMatlabSimpleSphere();
