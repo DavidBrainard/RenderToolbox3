@@ -25,7 +25,10 @@ setpref('RenderToolbox3', 'isReuseSceneFiles', false);
 setpref('RenderToolbox3', 'isPlot', false);
 
 %% Invoke rendering scripts.
-outputRoot = '/Users/ben/epic-scene-test';
+% choose where to put output files
+%   for example '/Users/myName/epic-scene-test'
+%   or empty '' for default folders (see GetDefaultHints())
+outputRoot = '';
 makeFunctions = { ...
     'MakeCheckerboard.m', ...
     'MakeCoordinatesTest.m', ...
