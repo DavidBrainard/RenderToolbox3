@@ -1,3 +1,12 @@
+% RenderToolbox3InstallationTest
+%
+% Initialize RTB3 after installation and then
+% put it through some basic tests.  If this
+% runs properly, you're off to the races.
+%
+% 5/30/13  ncp  Wrote.
+% 5/31/13  dhb  Expanded and tweaked.  
+
 function RenderToolbox3InstallationTest
 
     %% Parameters
