@@ -1,80 +1,151 @@
-% RenderToolbox3InstallationTest
+%%% RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
+%%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
+%%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Initialize RTB3 after installation and then
-% put it through some basic tests.  If this
-% runs properly, you're off to the races.
+% Make sure a new RenderToolbox3 installation is working.
+%   @param referenceRoot path to RenderTooblox3 reference data
 %
+% @details
+% Initialize RenderToolbox3 after installation and then put it through some
+% basic tests.  If this functin runs properly, you're off to the races.
+%
+% @details
+% If @a referenceRoot is provided, it must be the path to a set of
+% RenderToolbox3 reference data.  Rendering produced locally will be
+% compared to renderings in the reference data set. You can download
+% reference data set or clode the reference data repository from GitHub:
+% <a href="https://github.com/DavidBrainard/RenderToolbox3-ReferenceData">RenderToolbox3-ReferenceData</a>.
+%
+% @details
+% Returns a struct of results from rendering test scenes.  If @a
+% referenceRoot is provided, also returns a struct of comparisons between
+% local renderings and reference renderings.
+%
+% @details
+% Usage:
+%   [renderResults, comparison] = RenderToolbox3InstallationTest(referenceRoot)
+%
+% @ingroup Utilities
+function [renderResults, comparison] = RenderToolbox3InstallationTest(referenceRoot)
 % 5/30/13  ncp  Wrote.
-% 5/31/13  dhb  Expanded and tweaked.  
+% 5/31/13  dhb  Expanded and tweaked.
+% 6/6/13   bsh  Changed to RenderToolbox3 code style.
 
-function RenderToolbox3InstallationTest
+if nargin < 1
+    referenceRoot = '';
+end
 
-    %% Parameters
-    
-    % This defines a user-writable directory.  RTB output
-    % will by default go into the subdirectory render-toolbox
-    % in here.
-    %
-    % You need to run the initialization block after this
-    % is set.
-    localUserPath = '/Volumes/Users1/Shared/Matlab/';
-    
-    % Paths to the renderers.  You need to run the 
-    % initialization block after these are set.
-    localMitsubaPath = '/Applications';
-    localPBRTPath = '/usr/local/bin';
+renderResults = [];
+comparison = [];
 
-    % Initialize.  Run the initializationn block?
-    % Only need to do this once after RTB installation,
-    % or after changes to the paths above.
-    initialize = true;
-       
-    % Set to true to generate the scenes locally
-    generate = false;
- 
-    % Set to true to compare the locally-rendered to the reference scenes
-    compare = true;
+%% Get a user folder with write permission.
+% get the default user folder, or let the user choose
+userFolder = GetUserFolder();
+if isempty(userFolder) || ~ischar(userFolder)
+    title = 'Choose a folder that you own.';
+    userFolder = uigetdir(pwd(), title);
+end
+
+if isempty(userFolder) || ~ischar(userFolder)
+    error('You must choose a folder for RenderToolbox3.');
+end
+
+% make sure Matlab can write to the folder
+fprintf('\nChecking user folder for write permission:\n  %s\n', userFolder);
+testFile = fullfile(userFolder, 'test.txt');
+[fid, message] = fopen(testFile, 'w');
+if fid < 0
+    error('Could not write to folder:\n  %s\n', message)
+end
+fclose(fid);
+delete(testFile);
+fprintf('  OK.\n');
+
+%% Initialize RenderToolbox3 preferences.
+InitializeRenderToolbox(true);
+
+%% Locate Mitsuba and pbrt executables.
+if ismac()
+    % must locate Mitsuba.app
+    executable(1).prefGroup = 'Mitsuba';
+    executable(1).prefName = 'app';
+    executable(1).fileName = 'Mitsuba.app';
     
-    % Make sure the following commands have been issued in this order.
-    % Note that userpath is a general matlab command and that any program
-    % that uses it will have its ouput dumped into that folder.
-    if (initialize)
-        userpath(localUserPath);
-        InitializeRenderToolbox(true);
-        setpref('Mitsuba', 'app', fullfile(localMitsubaPath, 'Mitsuba.app'));
-        setpref('PBRT', 'executable', fullfile(ocalPBRTPath, 'pbrt'));
-    end
- 
-    if (generate)
-        TestAllExampleScenes('');
-    end
- 
-    % After running the TestAllExamplesScenes command (above) I had 12 more
-    % directories than what is currently included in the ReferenceData. This causes
-    % the CompareAllExamplesScenes() function below to fail. Instead of
-    % modifying that function I moved those extra directories elsewhere.
-    %
-    % The 12 extra directories are:
-    % MakeColorIllusion
-    % MakeComplexScene
-    % MakeInterrreflectionFIgure
-    % MakeMaterialSphereBumps
-    % MakeMaterialSpherePortable
-    % MakeMatlabSimpleSphere
-    % MakeRadianceTestFigure
-    % MakeRGBPromotionFigure
-    % MakeScaldingTestFigure
-    % MakeSimpleSphereFigure
-    % MakeSimpleSquareFigure
-    % MakeTableSphereFigure
+    % locate Mitsuba executables relative to the app
+    setpref('Mitsuba', 'executable', 'Contents/MacOS/mitsuba');
+    setpref('Mitsuba', 'importer', 'Contents/MacOS/mtsimport');
     
-    if (compare)
-        localRenderingsData = [localRenderings '/data'];
-        % Make sure you download the reference data from: https://github.com/DavidBrainard/RenderToolbox3-ReferenceData.git
-        % Location for reference data  
-        referenceRenderingsData = '/Users/Shared/Matlab/RenderToolbox3Related/RenderToolbox3-ReferenceData/data';
-        visualize = 1;
-        matchInfo = CompareAllExampleScenes(localRenderingsData, referenceRenderingsData, '', visualize);
+    % must locate pbrt
+    executable(2).prefGroup = 'PBRT';
+    executable(2).prefName = 'executable';
+    executable(2).fileName = 'pbrt';
+    
+else
+    % must locate Mitsuba executable
+    executable(1).prefGroup = 'Mitsuba';
+    executable(1).prefName = 'executable';
+    executable(1).fileName = 'mitsuba';
+    
+    % must locate Mitsuba importer
+    executable(2).prefGroup = 'Mitsuba';
+    executable(2).prefName = 'importer';
+    executable(2).fileName = 'mtsimport';
+    
+    % there is no Mitsuba.app
+    setpref('Mitsuba', 'app', '');
+    
+    % must locate pbrt
+    executable(3).prefGroup = 'PBRT';
+    executable(3).prefName = 'executable';
+    executable(3).fileName = 'pbrt';
+end
+
+% locate each executable or let the user choose
+for ii = 1:numel(executable)
+    % get the default executable path from preferences
+    execPath = getpref(executable(ii).prefGroup, executable(ii).prefName);
+    if ~exist(execPath)
+        title = sprintf('Choose the %s %s: "%s"', ...
+            executable(ii).prefGroup, ...
+            executable(ii).prefName, ...
+            executable(ii).fileName);
+        [getFile, getPath] = uigetfile('*.*', title, 'MultiSelect', 'off');
+        execPath = fullfile(getPath, getFile);
     end
- 
+    
+    if isempty(execPath) || ~ischar(execPath) || ~exist(execPath)
+        error('Could not find any %s %s', ...
+            executable(ii).prefGroup, ...
+            executable(ii).prefName)
+    else
+        
+        fprintf('\nFound %s %s:\n  %s\n', ...
+            executable(ii).prefGroup, ...
+            executable(ii).prefName, ...
+            execPath);
+        setpref(executable(ii).prefGroup, executable(ii).prefName, execPath);
+    end
+end
+
+%% Render a few example scenes.
+testScenes = { ...
+    'MakeCoordinatesTest.m', ...
+    'MakeCheckerboard.m', ...
+    'MakeMaterialSphere.m'};
+
+fprintf('\nTesting rendering with %d example scripts.\n', numel(testScenes));
+fprintf('You should see several figures with rendered images.\n\n');
+renderResults = TestAllExampleScenes([], testScenes);
+
+if all([renderResults.isSuccess])
+    fprintf('\nYour RenderToolbox3 installation seems to be working!\n');
+end
+
+%% Compare renderings to reference renderings?
+if ~isempty(referenceRoot)
+    localRoot = GetOutputPath('outputDataFolder');
+    fprintf('\nComparing local renderings\n  %s\n', localRoot);
+    fprintf('with reference renderings\n  %s\n', referenceRoot);
+    fprintf('You should see several more figures.\n\n');
+    comparison = CompareAllExampleScenes(localRoot, referenceRoot, '', 2);
 end
