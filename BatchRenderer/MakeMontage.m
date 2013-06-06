@@ -129,11 +129,12 @@ end
 SRGBMontage = XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
 
 %% Save to disk.
-if ~exist(hints.outputImageFolder, 'dir')
-    mkdir(hints.outputImageFolder)
+imageFolder = fullfile(hints.outputImageFolder, hints.outputSubfolder);
+if ~exist(imageFolder, 'dir')
+    mkdir(imageFolder)
 end
 
-outFullPath = fullfile(hints.outputImageFolder, [outBase outExt]);
+outFullPath = fullfile(imageFolder, [outBase outExt]);
 if strcmp(outExt, '.mat')
     % write multi-spectral data
     save(outFullPath, 'SRGBMontage', 'XYZMontage');
