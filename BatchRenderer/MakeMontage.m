@@ -69,7 +69,13 @@
 % @ingroup BatchRenderer
 function [SRGBMontage, XYZMontage] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
 
-%% Parameters
+SRGBMontage = [];
+XYZMontage = [];
+
+if nargin < 1 || isempty(inFiles)
+    return;
+end
+
 if nargin < 2 || isempty(outFile)
     [inPath, inBase, inExt] = fileparts(inFiles{1});
     outFile = [inBase '-montage.png'];
@@ -92,8 +98,6 @@ end
 
 %% If this is a dry run, skip the montage.
 if hints.isDryRun
-    SRGBMontage = [];
-    XYZMontage = [];
     return;
 end
 
