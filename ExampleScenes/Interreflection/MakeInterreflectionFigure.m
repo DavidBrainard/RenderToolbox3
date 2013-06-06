@@ -7,7 +7,7 @@
 %% Render the scene.
 MakeInterreflection;
 
-%% Get multi-spectral data each sphere rendering.
+%% Get multi-spectral data from each interreflection rendering.
 
 % look in the conditions file for image names
 conditionsFile = 'InterreflectionConditions.txt';

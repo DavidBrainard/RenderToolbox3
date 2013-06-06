@@ -13,6 +13,17 @@ mappingsFile = 'InteriorDragonMappings.txt';
 % generate a fresh mappings file
 %WriteDefaultMappingsFile(sceneFile, mappingsFile)
 
+%% Choose batch renderer options.
+hints.imageHeight = 480;
+hints.imageWidth = 640;
+hints.outputSubfolder = mfilename();
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
+
 %% Write some spectra to use.
 load B_cieday
 
@@ -36,11 +47,6 @@ scale = 1;
 magnitudes = scale * magnitudes;
 WriteSpectrumFile(wavelengths, magnitudes, 'WindowLight.spd');
 
-%% Choose batch renderer options.
-hints.imageHeight = 480;
-hints.imageWidth = 640;
-hints.outputSubfolder = mfilename();
-
 %% Render with Mitsuba and PBRT
 toneMapFactor = 4;
 isScale = true;
@@ -54,3 +60,5 @@ for renderer = {'Mitsuba'}
         MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
+
+cd(originalFolder);
