@@ -129,7 +129,7 @@ end
 SRGBMontage = XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
 
 %% Save to disk.
-imageFolder = fullfile(hints.outputImageFolder, hints.outputSubfolder);
+imageFolder = fullfile(GetOutputPath('outputImageFolder', hints));
 if ~exist(imageFolder, 'dir')
     mkdir(imageFolder)
 end

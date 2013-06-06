@@ -148,8 +148,8 @@ for ii = 1:nMatching
     % choose a name for the new data file of the form
     %   inputFileName_matchingFunctionName.mat
     outName = [inBase '_' matchNames{ii} '.mat'];
-    outFiles{ii} = fullfile(hints.outputDataFolder, ...
-        hints.outputSubfolder, hints.renderer, outName);
+    outFiles{ii} = fullfile(GetOutputPath('outputDataFolder', hints), ...
+        hints.renderer, outName);
     
     % save sensor image and some metadata
     save(outFiles{ii}, ...

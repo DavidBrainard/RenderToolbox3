@@ -135,7 +135,7 @@ end
 % create a temp folder for each renderer.
 for ii = 1:numel(renderers)
     renderer = renderers{ii};
-    tempFolder = fullfile(hints.tempFolder, hints.outputSubfolder, renderer);
+    tempFolder = fullfile(GetOutputPath('tempFolder', hints), renderer);
     if ~exist(tempFolder, 'dir')
         mkdir(tempFolder);
     end
@@ -251,7 +251,7 @@ if any(isMatch)
 end
 
 % copy the collada file and reduce it to known characters and elements
-tempFolder = fullfile(hints.tempFolder, hints.outputSubfolder, hints.renderer);
+tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
 colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
 [isSuccess, result] = copyfile(colladaFile, colladaCopy);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
