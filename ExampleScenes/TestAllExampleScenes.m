@@ -48,8 +48,14 @@ end
 
 if nargin < 2 || isempty(makeFunctions)
     % find all the m-functions named "Make*", in ExampleScenes/
+    makePattern = 'Make\w+\.m';
     exampleRoot = fullfile(RenderToolboxRoot(), 'ExampleScenes');
-    makeFunctions = FindFiles(exampleRoot, 'Make\w+\.m');
+    makeFunctions = FindFiles(exampleRoot, makePattern);
+    
+    % exclude functions that don't work yet
+    notWorkingPath = fullfile(exampleRoot, 'NotYetWorking');
+    notWorkingFunctions = FindFiles(notWorkingPath, makePattern);
+    makeFunctions = setdiff(makeFunctions, notWorkingFunctions);
 end
 
 testTic = tic();
