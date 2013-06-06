@@ -43,10 +43,14 @@ end
 
 %% Top-level PBRT configuration
 
-% choose the film, based on hints
-writeFilm(pbrtFID, hints);
+% get the film, integrator, sampler, and filter from document nodes
+filmNodeID = getNodesByIdentifier(idMap, 'Film');
+if isempty(filmNodeID)
+    warning('Scene does not specify a film!');
+else
+    writeFilm(pbrtFID, idMap, filmNodeID{1}, hints);
+end
 
-% get the integrator sampler, and filter, from document nodes
 integreatorNodeID = getNodesByIdentifier(idMap, 'SurfaceIntegrator');
 if isempty(integreatorNodeID)
     warning('Scene does not specify a surface integrator!');
@@ -230,13 +234,14 @@ for ii = 1:numel(transforms)
 end
 
 
-function writeFilm(fid, hints)
-params = struct( ...
-    'name', {'xresolution', 'yresolution'}, ...
-    'type', {'integer', 'integer'}, ...
-    'value', {hints.imageWidth, hints.imageHeight});
+function writeFilm(fid, idMap, filmNodeID, hints)
+% scan the film document node
+node = idMap(filmNodeID);
+[identifier, type] = getIdentifierAndType(node);
+params = getParameters(node);
+
 fprintf(fid, '# Film\n');
-PrintPBRTStatement(fid, 'Film', hints.filmType, params);
+PrintPBRTStatement(fid, identifier, type, params);
 fprintf(fid, '\n');
 
 

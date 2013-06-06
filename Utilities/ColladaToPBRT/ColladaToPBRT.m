@@ -70,15 +70,31 @@ cd(pbrtPath);
 % read the collada file
 [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
 
-% create a new PBRT-XML file
-%   merge in nodes from the adjustments file
+% create a new PBRT-XML document
 [pbrtDoc, pbrtIDMap] = CreateStubDOM(colladaIDMap, 'pbrt_xml');
-adjustmentsDoc = ReadSceneDOM(adjustmentsFile);
 PopulateStubDOM(pbrtIDMap, colladaIDMap, hints);
+
+% add a film node to the to the adjustments document
+filmNodeID = 'film';
+filmPBRTIdentifier = 'Film';
+[adjustmentsDoc, adjustmentsIDMap] = ReadSceneDOM(adjustmentsFile);
+adjustmentsRoot = adjustmentsDoc.getDocumentElement();
+filmNode = CreateElementChild( ...
+    adjustmentsRoot, filmPBRTIdentifier, filmNodeID);
+adjustmentsIDMap(filmNodeID) = filmNode;
+
+% fill in the film parameters
+SetType(adjustmentsIDMap, filmNodeID, filmPBRTIdentifier, hints.filmType);
+AddParameter(adjustmentsIDMap, filmNodeID, ...
+    'xresolution', 'integer', hints.imageWidth);
+AddParameter(adjustmentsIDMap, filmNodeID, ...
+    'yresolution', 'integer', hints.imageHeight);
+
+% write the adjusted PBRT-XML document to file
 MergeAdjustments(pbrtDoc, adjustmentsDoc);
 WriteSceneDOM(pbrtXMLFile, pbrtDoc);
 
-% dump the PBRT-XML file into a .pbrt text file
+% dump the PBRT-XML document into a .pbrt text file
 WritePBRTFile(pbrtFile, pbrtXMLFile, hints);
 
 cd(originalFolder)
