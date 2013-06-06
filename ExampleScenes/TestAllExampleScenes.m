@@ -14,8 +14,7 @@
 % @details
 % @a outputRoot is the base path under which all output data should be
 % saved.  If outputRoot is missing or empty, uses default folders from
-% getpref('RenderToolbox3').  Outputs will be saved in subfolders of @a
-% outputRoot, one for each rendering script.
+% getpref('RenderToolbox3').
 %
 % @details
 % Returns a struct with information about each rendering script, such as
@@ -85,10 +84,7 @@ end
 % try to render each example scene
 for ii = 1:numel(makeFunctions)
     
-    % choose subfolder name for this scene
     [makePath, makeName, makeExt] = fileparts(makeFunctions{ii});
-    setpref('RenderToolbox3', ...
-        'outputSubfolder', makeName);
     
     try
         % make the example scene!
@@ -130,11 +126,17 @@ setpref('RenderToolbox3', ...
 
 %% Save lots of results to a .mat file.
 hints = GetDefaultHints();
-if ~isempty(outputRoot) && ~exist(outputRoot, 'dir')
-    mkdir(outputRoot);
+if isempty(outputRoot)
+    resultsPath = getpref('RenderToolbox3', 'outputDataFolder');
+else
+    resultsPath = outputRoot;
+end
+
+if ~isempty(resultsPath) && ~exist(resultsPath, 'dir')
+    mkdir(resultsPath);
 end
 baseName = mfilename();
 dateTime = datestr(now(), 30);
 resultsBase = sprintf('%s-%s', baseName, dateTime);
-resultsFile = fullfile(outputRoot, resultsBase);
+resultsFile = fullfile(resultsPath, resultsBase);
 save(resultsFile, 'outputRoot', 'makeFunctions', 'results', 'hints');

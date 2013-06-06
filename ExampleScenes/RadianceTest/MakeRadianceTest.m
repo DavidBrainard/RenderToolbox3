@@ -28,6 +28,7 @@ WriteSpectrumFile(wls, magnitudes, name);
 hints.whichConditions = [];
 hints.imageWidth = 100;
 hints.imageHeight = 100;
+hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer

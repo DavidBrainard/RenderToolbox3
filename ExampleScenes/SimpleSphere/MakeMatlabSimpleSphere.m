@@ -30,8 +30,7 @@ else
 end
 
 %% Create new files in a subfolder next to renderer outputs.
-dataFolder = fullfile(getpref('RenderToolbox3', 'outputDataFolder'), ...
-    getpref('RenderToolbox3', 'outputSubolder'));
+dataFolder = GetOutputPath('outputDataFolder');
 working = fullfile(dataFolder, 'SphereRenderer');
 if ~exist(working, 'dir')
     mkdir(working)

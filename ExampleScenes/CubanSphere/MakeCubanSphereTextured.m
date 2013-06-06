@@ -14,6 +14,7 @@ mappingsFile = 'CubanSphereTexturedMappings.txt';
 hints.whichConditions = 1:4:36;
 hints.imageWidth = 200;
 hints.imageHeight = 160;
+hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 100;

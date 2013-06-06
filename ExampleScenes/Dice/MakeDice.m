@@ -13,6 +13,7 @@ mappingsFile = 'DiceMappings.txt';
 hints.whichConditions = [];
 hints.imageWidth = 640;
 hints.imageHeight = 480;
+hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 100;

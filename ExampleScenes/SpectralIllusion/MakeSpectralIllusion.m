@@ -16,6 +16,7 @@ hints = GetDefaultHints();
 hints.renderer = 'Mitsuba';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
+hints.outputSubfolder = mfilename();
 
 toneMapFactor = 100;
 isScale = true;

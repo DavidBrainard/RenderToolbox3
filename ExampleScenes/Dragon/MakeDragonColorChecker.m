@@ -33,6 +33,7 @@ hints.whichConditions = [];
 % pixel size of each rendering
 hints.imageWidth = 150;
 hints.imageHeight = 120;
+hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT.
 

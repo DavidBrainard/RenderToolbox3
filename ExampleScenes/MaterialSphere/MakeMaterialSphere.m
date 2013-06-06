@@ -18,6 +18,9 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 
+% put outputs in a subfolder named like this script
+hints.outputSubfolder = mfilename();
+
 %% Choose some color matching functions to make sensor images.
 % choose several Pyschtoolbox matching functions
 %   these are the names of Pyschtoolbox colorimetric .mat files
