@@ -11,6 +11,7 @@ conditionsFile = 'DragonGradedConditions.txt';
 mappingsFile = 'DragonGradedMappings.txt';
 
 %% Choose batch renderer options.
+nSteps = 6;
 hints.whichConditions = 1:nSteps;
 hints.imageWidth = 320;
 hints.imageHeight = 240;
@@ -30,7 +31,6 @@ spectrumB = 'mccBabel-9.spd';
 [wlsB, srfB] = ReadSpectrum(spectrumB);
 
 % grade linearly from a to b
-nSteps = 6;
 alpha = linspace(0, 1, nSteps);
 imageNames = cell(nSteps, 1);
 fileNames = cell(nSteps, 1);
