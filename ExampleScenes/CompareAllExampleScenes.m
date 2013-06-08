@@ -17,6 +17,17 @@
 % data and computes the difference of multispectral images, A minus B.
 %
 % @details
+% Data sets must use an expected folder structure.  For each data file, the
+% expected path is:
+% @code
+%   outputRoot/script-name/renderer-name/data-name.mat
+% @end
+% outputRoot is either @a outputRootA or @a outputRootB.  script-name must
+% be the name of a rendering script such as "MakeDragon".  renderer-name
+% must be the name of a renderer, either "PBRT" or "Mitsuba".  data-name
+% must be the name of a multi-spectral data file, such as "Dragon-001".
+%
+% @details
 % By default, compares all data files found in @a outputRootA, and @a
 % outputRootB.  If @a filterExpression is provided, it must be a regular
 % expression used to match file names.  Only data files that match this
@@ -98,12 +109,11 @@ if isempty(filesB)
     return;
 end
 
-% strip out the known root from each file path
-%   get relative name that can be compared between sets A and B
-[relativeA, imageA, scriptA, rendererA] = ...
-    scanDataPaths(filesA, outputRootA);
-[relativeB, imageB, scriptB, rendererB] = ...
-    scanDataPaths(filesB, outputRootB);
+% get expected path parts for each file:
+%   root path/relative path, where
+%   relative path = script-name/renderer-name/data-file-name
+[rootA, relativeA, scriptA, rendererA, dataNameA] = scanDataPaths(filesA);
+[rootB, relativeB, scriptB, rendererB, dataNameB] = scanDataPaths(filesB);
 
 % report unmatched files
 [setMatch, indexA, indexB] = intersect(relativeA, relativeB, 'stable');
@@ -121,10 +131,6 @@ matchInfo = struct( ...
     'outputRootB', outputRootB, ...
     'relativeA', relativeA(indexA), ...
     'relativeB', relativeB(indexB), ...
-    'imageA', imageA(indexA), ...
-    'imageB', imageB(indexB), ...
-    'scriptA', scriptA(indexA), ...
-    'scriptB', scriptB(indexB), ...
     'samplingA', [], ...
     'samplingB', [], ...
     'maxDiff', nan, ...
@@ -228,29 +234,62 @@ if visualize > 0
 end
 
 
-% Scan paths for expected parts, stripping off the given root path.
-%   expect: root/script/renderer/image.mat
-function [relative, image, script, renderer] = scanDataPaths(paths, root)
+% Scan paths for expected parts:
+%   root/script-name/renderer-name/data-name.mat
+function [root, relative, script, renderer, dataName] = scanDataPaths(paths)
 n = numel(paths);
+root = cell(1, n);
 relative = cell(1, n);
-image = cell(1, n);
 script = cell(1, n);
 renderer = cell(1, n);
-rootLength = numel(root);
+dataName = cell(1, n);
 for ii = 1:n
-    % bite off the relative path after the root path
-    relative{ii} = paths{ii}(rootLength+2:end);
+    % break the path by file separator and "."
+    separators = find(paths{ii} == filesep());
+    nSeparators = numel(separators);
     
-    % bite off the file name as the image name
-    [filePath, fileBase, fileExt] = fileparts(paths{ii});
-    image{ii} = [fileBase fileExt];
+    if nSeparators >= 3
+        % take root path
+        first = 1;
+        last = separators(nSeparators-2);
+        root{ii} = paths{ii}(first:last);
+    else
+        root{ii} = '';
+    end
     
-    % take the script name as the second-to-last subfolder in the path
-    seps = find(filesep() == filePath);
-    script{ii} = filePath(seps(end-1)+1:seps(end)-1);
+    if nSeparators >= 2
+        % take the script name
+        first = separators(nSeparators-2) + 1;
+        last = separators(nSeparators-1) - 1;
+        script{ii} = paths{ii}(first:last);
+    else
+        script{ii} = '';
+    end
     
-    % take the renderer as the last subfolder in the path
-    renderer{ii} = filePath(seps(end)+1:end);
+    if nSeparators >= 1
+        % take the renderer name
+        first = separators(nSeparators-1) + 1;
+        last = separators(nSeparators) - 1;
+        renderer{ii} = paths{ii}(first:last);
+        
+        % take the data file name
+        first = separators(nSeparators) + 1;
+        last = numel(paths{ii});
+        dataName{ii} = paths{ii}(first:last);
+    else
+        % take the data file name
+        renderer{ii} = '';
+        dataName{ii} = paths{ii};
+    end
+    
+    % take extension off the dataName
+    dots = find(dataName{ii} == '.');
+    if ~isempty(dots)
+        dataName{ii} = dataName{ii}(1:dots(1)-1);
+    end
+    
+    % build a relative path, omitting any root
+    relative{ii} = fullfile(script{ii}, renderer{ii}, dataName{ii});
 end
 
 
