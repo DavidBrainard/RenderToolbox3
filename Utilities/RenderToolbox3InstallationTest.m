@@ -47,7 +47,7 @@ if isempty(userFolder) || ~ischar(userFolder)
 end
 
 if isempty(userFolder) || ~ischar(userFolder)
-    error('You must choose a folder for RenderToolbox3.');
+    error('You must choose a folder that you own for RenderToolbox3 outputs.');
 end
 
 % make sure Matlab can write to the folder
