@@ -148,4 +148,7 @@ if ~isempty(referenceRoot)
     fprintf('with reference renderings\n  %s\n', referenceRoot);
     fprintf('You should see several more figures.\n\n');
     comparison = CompareAllExampleScenes(localRoot, referenceRoot, '', 2);
+else
+    fprintf('\nNo referenceRoot provided.  Local renderings\n');
+    fprintf('will not be compared with reference renderings.\n');
 end
