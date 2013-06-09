@@ -13,6 +13,7 @@ mappingsFile = 'InteriorMappings.txt';
 
 %% Choose batch renderer options.
 hints.whichConditions = [];
+hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

@@ -38,6 +38,9 @@ if nargin < 3
     filename = 'spectrum.spd';
 end
 [filePath, fileBase, fileExt] = fileparts(filename);
+if ~isempty(filePath) && ~exist(filePath, 'dir')
+    mkdir(filePath);
+end
 if isempty(fileExt)
     filename = fullfile(filePath, [fileBase, '.spd']);
 end

@@ -21,6 +21,9 @@ hints.imageHeight = 160;
 % resources like images and spectrum files should use relative paths
 hints.isAbsoluteResourcePaths = false;
 
+% put output files in a subfolder named like this script
+hints.outputSubfolder = mfilename();
+
 %% Create scene files for Mistuba and PBRT.
 %   this could happen on "machine A"
 startFolder = pwd();

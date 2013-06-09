@@ -69,7 +69,13 @@
 % @ingroup BatchRenderer
 function [SRGBMontage, XYZMontage] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
 
-%% Parameters
+SRGBMontage = [];
+XYZMontage = [];
+
+if nargin < 1 || isempty(inFiles)
+    return;
+end
+
 if nargin < 2 || isempty(outFile)
     [inPath, inBase, inExt] = fileparts(inFiles{1});
     outFile = [inBase '-montage.png'];
@@ -92,8 +98,6 @@ end
 
 %% If this is a dry run, skip the montage.
 if hints.isDryRun
-    SRGBMontage = [];
-    XYZMontage = [];
     return;
 end
 
@@ -129,11 +133,12 @@ end
 SRGBMontage = XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
 
 %% Save to disk.
-if ~exist(hints.outputImageFolder, 'dir')
-    mkdir(hints.outputImageFolder)
+imageFolder = fullfile(GetOutputPath('outputImageFolder', hints));
+if ~exist(imageFolder, 'dir')
+    mkdir(imageFolder)
 end
 
-outFullPath = fullfile(hints.outputImageFolder, [outBase outExt]);
+outFullPath = fullfile(imageFolder, [outBase outExt]);
 if strcmp(outExt, '.mat')
     % write multi-spectral data
     save(outFullPath, 'SRGBMontage', 'XYZMontage');

@@ -17,6 +17,17 @@
 % data and computes the difference of multispectral images, A minus B.
 %
 % @details
+% Data sets must use an expected folder structure.  For each data file, the
+% expected path is:
+% @code
+%   outputRoot/script-name/renderer-name/data-name.mat
+% @end
+% outputRoot is either @a outputRootA or @a outputRootB.  script-name must
+% be the name of a rendering script such as "MakeDragon".  renderer-name
+% must be the name of a renderer, either "PBRT" or "Mitsuba".  data-name
+% must be the name of a multi-spectral data file, such as "Dragon-001".
+%
+% @details
 % By default, compares all data files found in @a outputRootA, and @a
 % outputRootB.  If @a filterExpression is provided, it must be a regular
 % expression used to match file names.  Only data files that match this
@@ -98,12 +109,11 @@ if isempty(filesB)
     return;
 end
 
-% strip out the known root from each file path
-%   get relative name that can be compared between sets A and B
-[relativeA, imageA, scriptA, rendererA] = ...
-    scanDataPaths(filesA, outputRootA);
-[relativeB, imageB, scriptB, rendererB] = ...
-    scanDataPaths(filesB, outputRootB);
+% get expected path parts for each file:
+%   root path/relative path, where
+%   relative path = script-name/renderer-name/data-file-name
+[rootA, relativeA, scriptA, rendererA, dataNameA] = scanDataPaths(filesA);
+[rootB, relativeB, scriptB, rendererB, dataNameB] = scanDataPaths(filesB);
 
 % report unmatched files
 [setMatch, indexA, indexB] = intersect(relativeA, relativeB, 'stable');
@@ -111,7 +121,7 @@ filesMatched = filesA(indexA);
 [unmatched, unmatchedIndex] = setdiff(relativeA, relativeB);
 unmatchedA = filesA(unmatchedIndex);
 [unmatched, unmatchedIndex] = setdiff(relativeB, relativeA);
-unmatchedB = filesA(unmatchedIndex);
+unmatchedB = filesB(unmatchedIndex);
 
 % allocate an info struct for image comparisons
 matchInfo = struct( ...
@@ -119,18 +129,21 @@ matchInfo = struct( ...
     'fileB', filesB(indexB), ...
     'outputRootA', outputRootA, ...
     'outputRootB', outputRootB, ...
-    'relativeA', relativeA, ...
-    'relativeB', relativeB, ...
-    'imageA', imageA, ...
-    'imageB', imageB, ...
-    'scriptA', scriptA, ...
-    'scriptB', scriptB, ...
+    'relativeA', relativeA(indexA), ...
+    'relativeB', relativeB(indexB), ...
     'samplingA', [], ...
     'samplingB', [], ...
     'maxDiff', nan, ...
     'minDiff', nan, ...
+    'denominatorThreshold', 0.2, ...
+    'maxDiffProportion', nan, ...
+    'minDiffProportion', nan, ...
+    'maxRatio', nan, ...
+    'minRatio', nan, ...
+    'corrcoef', nan, ...
     'diffHistCenters', [], ...
     'diffHistCounts', [], ...
+    'isGoodComparison', false, ...
     'error', '');
 
 % any comparisons to make?
@@ -195,18 +208,31 @@ for ii = 1:nMatches
         continue;
     end
     
+    % comparison passes all sanity checks
+    matchInfo(ii).isGoodComparison = true;
+    
     % compute the difference image
-    multispectralDifference = multispectralA - multispectralB;
-    matchInfo(ii).maxDiff = max(multispectralDifference(:));
-    matchInfo(ii).minDiff = min(multispectralDifference(:));
-    [histCounts, histCenters] = hist(multispectralDifference(:), nHistBins);
+    multispectralDiff = multispectralA - multispectralB;
+    multispectralDiffProportion = multispectralDiff ./ multispectralA;
+    cutoff = matchInfo(ii).denominatorThreshold;
+    multispectralDiffProportion(multispectralA < cutoff) = nan;
+    multispectralRatio = multispectralA ./ multispectralB;
+    matchInfo(ii).maxDiff = max(multispectralDiff(:));
+    matchInfo(ii).minDiff = min(multispectralDiff(:));
+    matchInfo(ii).maxDiffProportion = max(multispectralDiffProportion(:));
+    matchInfo(ii).minDiffProportion = min(multispectralDiffProportion(:));
+    matchInfo(ii).maxRatio = max(multispectralRatio(:));
+    matchInfo(ii).minRatio = min(multispectralRatio(:));
+    r = corrcoef(multispectralA(:), multispectralB(:));
+    matchInfo(ii).corrcoef = r(1, 2);
+    [histCounts, histCenters] = hist(multispectralDiff(:), nHistBins);
     matchInfo(ii).diffHistCounts = histCounts;
     matchInfo(ii).diffHistCenters = histCenters;
     
     % plot difference image?
     if visualize > 1
         showDifferenceImage(matchInfo(ii), ...
-            multispectralA, multispectralB, multispectralDifference);
+            multispectralA, multispectralB, multispectralDiff);
     end
 end
 
@@ -216,29 +242,62 @@ if visualize > 0
 end
 
 
-% Scan paths for expected parts, stripping off the given root path.
-%   expect: root/script/renderer/image.mat
-function [relative, image, script, renderer] = scanDataPaths(paths, root)
+% Scan paths for expected parts:
+%   root/script-name/renderer-name/data-name.mat
+function [root, relative, script, renderer, dataName] = scanDataPaths(paths)
 n = numel(paths);
+root = cell(1, n);
 relative = cell(1, n);
-image = cell(1, n);
 script = cell(1, n);
 renderer = cell(1, n);
-rootLength = numel(root);
+dataName = cell(1, n);
 for ii = 1:n
-    % bite off the relative path after the root path
-    relative{ii} = paths{ii}(rootLength+2:end);
+    % break the path by file separator and "."
+    separators = find(paths{ii} == filesep());
+    nSeparators = numel(separators);
     
-    % bite off the file name as the image name
-    [filePath, fileBase, fileExt] = fileparts(paths{ii});
-    image{ii} = [fileBase fileExt];
+    if nSeparators >= 3
+        % take root path
+        first = 1;
+        last = separators(nSeparators-2);
+        root{ii} = paths{ii}(first:last);
+    else
+        root{ii} = '';
+    end
     
-    % take the script name as the second-to-last subfolder in the path
-    seps = find(filesep() == filePath);
-    script{ii} = filePath(seps(end-1)+1:seps(end)-1);
+    if nSeparators >= 2
+        % take the script name
+        first = separators(nSeparators-2) + 1;
+        last = separators(nSeparators-1) - 1;
+        script{ii} = paths{ii}(first:last);
+    else
+        script{ii} = '';
+    end
     
-    % take the renderer as the last subfolder in the path
-    renderer{ii} = filePath(seps(end)+1:end);
+    if nSeparators >= 1
+        % take the renderer name
+        first = separators(nSeparators-1) + 1;
+        last = separators(nSeparators) - 1;
+        renderer{ii} = paths{ii}(first:last);
+        
+        % take the data file name
+        first = separators(nSeparators) + 1;
+        last = numel(paths{ii});
+        dataName{ii} = paths{ii}(first:last);
+    else
+        % take the data file name
+        renderer{ii} = '';
+        dataName{ii} = paths{ii};
+    end
+    
+    % take extension off the dataName
+    dots = find(dataName{ii} == '.');
+    if ~isempty(dots)
+        dataName{ii} = dataName{ii}(1:dots(1)-1);
+    end
+    
+    % build a relative path, omitting any root
+    relative{ii} = fullfile(script{ii}, renderer{ii}, dataName{ii});
 end
 
 
@@ -281,28 +340,49 @@ drawnow();
 
 % Show a summary of all difference images.
 function showDifferenceSummary(info)
-f = figure('Name', 'Output Differences');
+figureName = sprintf('A: %s vs B: %s', ...
+    info(1).outputRootA, info(1).outputRootB);
+f = figure('Name', figureName, 'NumberTitle', 'off');
+
+% only summarize good comparisons
+info = info([info.isGoodComparison]);
+
 names = {info.relativeA};
-maxes = [info.maxDiff];
-mins = [info.minDiff];
 n = numel(names);
 
-ax = axes( ...
+% summarize data correlation coefficients
+ax = subplot(1, 2, 1, ...
     'Parent', f, ...
     'YLim', [0 n+1], ...
     'YTick', 1:n, ...
     'YTickLabel', names);
-line(mins, 1:n, ...
+line([info.corrcoef], 1:n, ...
     'Parent', ax, ...
     'LineStyle', 'none', ...
     'Marker', 'o', ...
     'Color', [0 0 1])
-line(maxes, 1:n, ...
+title(ax, 'image correlation');
+xlabel(ax, 'corrcoef of all pixel components A vs B');
+
+% summarize min and max pixel differences
+ax = subplot(1, 2, 2, ...
+    'Parent', f, ...
+    'YLim', [0 n+1], ...
+    'YTick', 1:n, ...
+    'YTickLabel', {});
+line([info.minDiffProportion], 1:n, ...
     'Parent', ax, ...
     'LineStyle', 'none', ...
     'Marker', '+', ...
     'Color', [1 0 0])
-title(ax, sprintf('A: %s, B: %s', ...
-    info(1).outputRootA, info(1).outputRootB));
-xlabel(ax, 'Multispectral pixel components A - B');
-legend(ax, 'difference min', 'difference max', 'Location', 'northeast');
+line([info.maxDiffProportion], 1:n, ...
+    'Parent', ax, ...
+    'LineStyle', 'none', ...
+    'Marker', 'o', ...
+    'Color', [0 0 0])
+legend(ax, 'min', 'max', 'Location', 'northeast');
+title(ax, 'extreme pixel components');
+label = sprintf('relative difference (A - B) / A, if A >= %.1f', ...
+    info(1).denominatorThreshold);
+xlabel(ax, label);
+

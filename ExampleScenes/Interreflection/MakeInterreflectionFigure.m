@@ -7,7 +7,7 @@
 %% Render the scene.
 MakeInterreflection;
 
-%% Get multi-spectral data each sphere rendering.
+%% Get multi-spectral data from each interreflection rendering.
 
 % look in the conditions file for image names
 conditionsFile = 'InterreflectionConditions.txt';
@@ -26,7 +26,7 @@ pbrt = struct( ...
 mitsuba = pbrt;
 
 % choose where to look for renderings
-dataFolder = getpref('RenderToolbox3', 'outputDataFolder');
+dataFolder = GetOutputPath('outputDataFolder');
 
 % fill in multi-spectral data for each condition
 for ii = 1:nImages

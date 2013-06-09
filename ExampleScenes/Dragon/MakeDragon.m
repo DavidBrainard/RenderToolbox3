@@ -12,6 +12,7 @@ mappingsFile = 'DragonMappings.txt';
 %% Choose batch renderer options.
 hints.imageWidth = 320;
 hints.imageHeight = 240;
+hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

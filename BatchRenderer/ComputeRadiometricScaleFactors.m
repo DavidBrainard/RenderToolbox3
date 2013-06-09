@@ -87,7 +87,7 @@ irradiance_PowerPerUnitAreaUnitWl = ...
 radiance_PowerPerAreaSrUnitWl = irradiance_PowerPerUnitAreaUnitWl/(pi);
 
 %% Compute a radiometric unit scale factor for each render.
-dataFolder = getpref('RenderToolbox3', 'outputDataFolder');
+dataFolder = GetOutputPath('outputDataFolder');
 renderers = {'PBRT', 'Mitsuba'};
 for ii = 1:numel(renderers)
     % locate RadianceTest "reference" data file

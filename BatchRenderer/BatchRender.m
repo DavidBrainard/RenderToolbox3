@@ -89,7 +89,7 @@ else
 end
 
 %% Create the output folder for this renderer.
-outPath = fullfile(hints.outputDataFolder, hints.renderer);
+outPath = fullfile(GetOutputPath('outputDataFolder', hints), hints.renderer);
 if ~exist(outPath, 'dir')
     mkdir(outPath);
 end
@@ -217,7 +217,7 @@ switch hints.renderer
 end
 
 % save a .mat file with multispectral data and metadata
-outPath = fullfile(hints.outputDataFolder, hints.renderer);
+outPath = fullfile(GetOutputPath('outputDataFolder', hints), hints.renderer);
 outFile = fullfile(outPath, [sceneBase '.mat']);
 save(outFile, 'multispectralImage', 'S', 'radiometricScaleFactor', ...
     'hints', 'sceneFile', 'versionInfo', 'commandResult');

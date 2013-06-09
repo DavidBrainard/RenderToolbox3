@@ -18,6 +18,9 @@
 % current path.  Ignores ".svn" and ".git" path entries.
 %
 % @details
+% If @a working does not exist, creates it.
+%
+% @details
 % Does not invoke savepath(), so changes to the Matlab path will remain
 % only for the current Matlab session.
 %
@@ -35,6 +38,10 @@ function [updatedPath, newEntries] = AddWorkingPath(working, isRecursive)
 if 2 == exist(working, 'file')
     % get the folder of the file
     working = fileparts(which(working));
+end
+
+if ~isempty(working) && ~exist(working, 'dir');
+    mkdir(working);
 end
 
 if nargin < 2 || isempty(isRecursive)

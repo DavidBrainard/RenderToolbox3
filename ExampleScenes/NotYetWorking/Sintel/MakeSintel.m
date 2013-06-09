@@ -11,6 +11,7 @@ sceneFile = 'sintel_lite_cycles_v2.dae';
 %% Choose batch renderer options.
 hints.imageWidth = 320;
 hints.imageHeight = 240;
+hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 100;

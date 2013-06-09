@@ -10,6 +10,19 @@ sceneFile = 'Dragon.dae';
 conditionsFile = 'DragonGradedConditions.txt';
 mappingsFile = 'DragonGradedMappings.txt';
 
+%% Choose batch renderer options.
+nSteps = 6;
+hints.whichConditions = 1:nSteps;
+hints.imageWidth = 320;
+hints.imageHeight = 240;
+hints.outputSubfolder = mfilename();
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
+
 %% Write graded spectrum files.
 % choose two spectrums to grade between
 spectrumA = 'mccBabel-6.spd';
@@ -18,7 +31,6 @@ spectrumB = 'mccBabel-9.spd';
 [wlsB, srfB] = ReadSpectrum(spectrumB);
 
 % grade linearly from a to b
-nSteps = 6;
 alpha = linspace(0, 1, nSteps);
 imageNames = cell(nSteps, 1);
 fileNames = cell(nSteps, 1);
@@ -33,11 +45,6 @@ end
 varNames = {'imageName', 'dragonColor'};
 varValues = cat(2, imageNames, fileNames);
 WriteConditionsFile(conditionsFile, varNames, varValues);
-
-%% Choose batch renderer options.
-hints.whichConditions = 1:nSteps;
-hints.imageWidth = 320;
-hints.imageHeight = 240;
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;
@@ -54,3 +61,5 @@ for renderer = {'Mitsuba'}
         ShowXYZAndSRGB([], SRGBMontage, montageName);
     end
 end
+
+cd(originalFolder);

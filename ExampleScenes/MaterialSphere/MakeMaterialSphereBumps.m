@@ -18,6 +18,9 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 
+% put outputs in a subfolder named like this script
+hints.outputSubfolder = mfilename();
+
 %% Render with Mitsuba and PBRT.
 
 % how to convert multi-spectral images to sRGB

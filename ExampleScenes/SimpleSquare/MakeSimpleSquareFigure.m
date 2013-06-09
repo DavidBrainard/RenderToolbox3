@@ -45,7 +45,7 @@ mitsuba = pbrt;
 predicted = pbrt;
 
 % choose where to look for renderings
-dataFolder = getpref('RenderToolbox3', 'outputDataFolder');
+dataFolder = GetOutputPath('outputDataFolder');
 
 % fill in multi-spectral data for each Color Checker condition.
 for ii = 1:nImages

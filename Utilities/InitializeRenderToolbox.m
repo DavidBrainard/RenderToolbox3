@@ -146,6 +146,7 @@ if isForce || ~ispref('RenderToolbox3')
     RenderToolbox3.tempFolder = fullfile(userOutputs, 'temp');
     RenderToolbox3.outputDataFolder = fullfile(userOutputs, 'data');
     RenderToolbox3.outputImageFolder = fullfile(userOutputs, 'images');
+    RenderToolbox3.outputSubfolder = '';
     
     % default hints
     RenderToolbox3.renderer = 'Mitsuba';

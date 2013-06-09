@@ -9,6 +9,17 @@ AddWorkingPath(mfilename('fullpath'));
 sceneFile = 'Checkerboard.dae';
 mappingsFile = 'CheckerboardMappings.txt';
 
+%% Choose batch renderer options.
+hints.imageWidth = 640;
+hints.imageHeight = 480;
+hints.outputSubfolder = mfilename();
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
+
 %% Write scene parameters to a new conditions file.
 distance = 76.4;
 eyeSep = 6.4;
@@ -25,10 +36,6 @@ conditionsPath = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'Checkerboard');
 conditionsFile = fullfile(conditionsPath, 'CheckerboardConditions.txt');
 conditionsFile = WriteConditionsFile(conditionsFile, names, values);
 
-%% Choose batch renderer options.
-hints.imageWidth = 640;
-hints.imageHeight = 480;
-
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;
 isScaleGamma = true;
@@ -42,3 +49,5 @@ for renderer = {'Mitsuba', 'PBRT'}
         MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
+
+cd(originalFolder);

@@ -11,23 +11,28 @@ sceneFile = 'RadianceTest.dae';
 conditionsFile = 'RadianceTestConditions.txt';
 mappingsFile = 'RadianceTestMappings.txt';
 
-%% Choose illuminant spectra.
-% uniform white spectrum sampled every 5mn
-wls = 300:5:800;
-magnitudes = ones(size(wls));
-name = fullfile(examplePath, 'uniformSpectrum5nm.spd');
-WriteSpectrumFile(wls, magnitudes, name);
-
-% uniform white spectrum sampled every 10mn
-wls = 300:10:800;
-magnitudes = ones(size(wls));
-name = fullfile(examplePath, 'uniformSpectrum10nm.spd');
-WriteSpectrumFile(wls, magnitudes, name);
-
 %% Choose batch renderer options.
 hints.whichConditions = [];
 hints.imageWidth = 100;
 hints.imageHeight = 100;
+hints.outputSubfolder = mfilename();
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
+
+%% Choose illuminant spectra.
+% uniform white spectrum sampled every 5mn
+wls = 300:5:800;
+magnitudes = ones(size(wls));
+WriteSpectrumFile(wls, magnitudes, 'uniformSpectrum5nm.spd');
+
+% uniform white spectrum sampled every 10mn
+wls = 300:10:800;
+magnitudes = ones(size(wls));
+WriteSpectrumFile(wls, magnitudes, 'uniformSpectrum10nm.spd');
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer
@@ -51,3 +56,5 @@ for renderer = {'Mitsuba', 'PBRT'}
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
+
+cd(originalFolder);

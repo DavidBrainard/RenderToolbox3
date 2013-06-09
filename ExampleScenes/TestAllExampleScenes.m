@@ -14,8 +14,7 @@
 % @details
 % @a outputRoot is the base path under which all output data should be
 % saved.  If outputRoot is missing or empty, uses default folders from
-% getpref('RenderToolbox3').  Outputs will be saved in subfolders of @a
-% outputRoot, one for each rendering script.
+% getpref('RenderToolbox3').
 %
 % @details
 % Returns a struct with information about each rendering script, such as
@@ -48,8 +47,14 @@ end
 
 if nargin < 2 || isempty(makeFunctions)
     % find all the m-functions named "Make*", in ExampleScenes/
+    makePattern = 'Make\w+\.m';
     exampleRoot = fullfile(RenderToolboxRoot(), 'ExampleScenes');
-    makeFunctions = FindFiles(exampleRoot, 'Make\w+\.m');
+    makeFunctions = FindFiles(exampleRoot, makePattern);
+    
+    % exclude functions that don't work yet
+    notWorkingPath = fullfile(exampleRoot, 'NotYetWorking');
+    notWorkingFunctions = FindFiles(notWorkingPath, makePattern);
+    makeFunctions = setdiff(makeFunctions, notWorkingFunctions);
 end
 
 testTic = tic();
@@ -62,34 +67,24 @@ results = struct( ...
     'elapsed', []);
 
 % remember original folder and preferences
-%   which might change during testing
+%   since they change during testing
 originalFolder = pwd();
 originalPrefs = getpref('RenderToolbox3');
 
 % choose where to write all outputs
-if isempty(outputRoot)
-    tempRoot = getpref('RenderToolbox3', 'tempFolder');
-    dataRoot = getpref('RenderToolbox3', 'outputDataFolder');
-    imageRoot = getpref('RenderToolbox3', 'outputImageFolder');
-    
-else
-    tempRoot = fullfile(outputRoot, 'temp');
-    dataRoot = fullfile(outputRoot, 'data');
-    imageRoot = fullfile(outputRoot, 'images');
+if ~isempty(outputRoot)
+    setpref('RenderToolbox3', ...
+        'tempFolder', fullfile(outputRoot, 'temp'));
+    setpref('RenderToolbox3', ...
+        'outputDataFolder', fullfile(outputRoot, 'data'));
+    setpref('RenderToolbox3', ...
+        'outputImageFolder', fullfile(outputRoot, 'images'));
 end
-
 
 % try to render each example scene
 for ii = 1:numel(makeFunctions)
     
-    % choose where to write outputs for this scene
     [makePath, makeName, makeExt] = fileparts(makeFunctions{ii});
-    subfolder = makeName;
-    
-    % let the Make* function use new default output folders
-    setpref('RenderToolbox3', 'tempFolder', fullfile(tempRoot, subfolder));
-    setpref('RenderToolbox3', 'outputDataFolder', fullfile(dataRoot, subfolder));
-    setpref('RenderToolbox3', 'outputImageFolder', fullfile(imageRoot, subfolder));
     
     try
         % make the example scene!
@@ -125,18 +120,23 @@ end
 toc(testTic)
 
 % restore original folder and preferences
-%   which might have changed
 cd(originalFolder)
 setpref('RenderToolbox3', ...
     fieldnames(originalPrefs), struct2cell(originalPrefs));
 
 %% Save lots of results to a .mat file.
 hints = GetDefaultHints();
-if ~isempty(outputRoot) && ~exist(outputRoot, 'dir')
-    mkdir(outputRoot);
+if isempty(outputRoot)
+    resultsPath = getpref('RenderToolbox3', 'outputDataFolder');
+else
+    resultsPath = outputRoot;
+end
+
+if ~isempty(resultsPath) && ~exist(resultsPath, 'dir')
+    mkdir(resultsPath);
 end
 baseName = mfilename();
 dateTime = datestr(now(), 30);
 resultsBase = sprintf('%s-%s', baseName, dateTime);
-resultsFile = fullfile(outputRoot, resultsBase);
+resultsFile = fullfile(resultsPath, resultsBase);
 save(resultsFile, 'outputRoot', 'makeFunctions', 'results', 'hints');

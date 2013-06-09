@@ -16,9 +16,16 @@ hints = GetDefaultHints();
 hints.renderer = 'Mitsuba';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
+hints.outputSubfolder = mfilename();
 
 toneMapFactor = 100;
 isScale = true;
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
 
 %% Write some initial spectrum files.
 % get basis CIE daylight basis vectors
@@ -198,3 +205,5 @@ if hints.isPlot
         'Marker', '*', ...
         'Color', [1 0 0])
 end
+
+cd(originalFolder);

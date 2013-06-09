@@ -9,6 +9,17 @@ AddWorkingPath(mfilename('fullpath'));
 %sceneFile = 'cup.dae';
 sceneFile = 'interior.dae';
 
+%% Choose batch renderer options.
+hints.imageHeight = 480;
+hints.imageWidth = 640;
+hints.outputSubfolder = mfilename();
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
+
 %% Use the automatic, default mappings file.
 colors = { ...
     'mccBabel-1.spd', ...
@@ -17,10 +28,6 @@ colors = { ...
     'mccBabel-4.spd', ...
     };
 mappingsFile = WriteDefaultMappingsFile(sceneFile, '', '', colors);
-
-%% Choose batch renderer options.
-hints.imageHeight = 480;
-hints.imageWidth = 640;
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;
@@ -35,3 +42,5 @@ for renderer = {'Mitsuba', 'PBRT'}
         MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
+
+cd(originalFolder);
