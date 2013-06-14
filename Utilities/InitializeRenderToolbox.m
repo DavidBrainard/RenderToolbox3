@@ -86,7 +86,12 @@ end
 
 
 %% For Mitsuba
-if isForce || ~ispref('Mitsuba')
+if isForce
+    % remove stale config
+    if ispref('Mitsuba')
+        rmpref('Mitsuba');
+    end
+    
     % default config
     Mitsuba.app = '/Applications/Mitsuba.app';
     Mitsuba.executable = fullfile('Contents', 'MacOS', 'mitsuba');
@@ -103,7 +108,12 @@ end
 
 
 %% For PBRT
-if isForce || ~ispref('PBRT')
+if isForce
+    % remove stale config
+    if ispref('PBRT')
+        rmpref('PBRT');
+    end
+    
     % default config
     PBRT.executable = '/usr/local/bin/pbrt';
     PBRT.S = [400 10 31];
@@ -119,7 +129,12 @@ end
 
 
 %% For RenderToolbox3
-if isForce || ~ispref('RenderToolbox3')
+if isForce
+    % remove stale config
+    if ispref('RenderToolbox3')
+        rmpref('RenderToolbox3');
+    end
+    
     % choose dynamic library path names and default values
     %   these are applied automatically, via SetRenderToolboxLibraryPath()
     if ispc()
@@ -142,10 +157,10 @@ if isForce || ~ispref('RenderToolbox3')
     end
     
     % default output locations
-    userOutputs = fullfile(GetUserFolder(), 'render-toolbox');
-    RenderToolbox3.tempFolder = fullfile(userOutputs, 'temp');
-    RenderToolbox3.outputDataFolder = fullfile(userOutputs, 'data');
-    RenderToolbox3.outputImageFolder = fullfile(userOutputs, 'images');
+    userFolder = fullfile(GetUserFolder(), 'render-toolbox');
+    RenderToolbox3.tempFolder = fullfile(userFolder, 'temp');
+    RenderToolbox3.outputDataFolder = fullfile(userFolder, 'data');
+    RenderToolbox3.outputImageFolder = fullfile(userFolder, 'images');
     RenderToolbox3.outputSubfolder = '';
     
     % default hints
