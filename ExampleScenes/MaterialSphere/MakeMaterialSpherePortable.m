@@ -42,6 +42,7 @@ end
 % how to convert multi-spectral images to sRGB
 toneMapFactor = 100;
 isScaleGamma = true;
+originalFolder = pwd();
 portableFolder = fullfile(GetOutputPath('tempFolder'), 'portable-scenes');
 for renderer = {'Mitsuba', 'PBRT'}
     % choose one renderer
@@ -65,4 +66,4 @@ for renderer = {'Mitsuba', 'PBRT'}
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
 
-cd(sceneFolder);
+cd(originalFolder);
