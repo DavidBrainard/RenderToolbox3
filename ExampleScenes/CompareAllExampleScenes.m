@@ -21,17 +21,29 @@
 % expected path is:
 % @code
 %   outputRoot/script-name/renderer-name/data-name.mat
-% @end
+% @endcode
 % outputRoot is either @a outputRootA or @a outputRootB.  script-name must
 % be the name of a rendering script such as "MakeDragon".  renderer-name
 % must be the name of a renderer, either "PBRT" or "Mitsuba".  data-name
 % must be the name of a multi-spectral data file, such as "Dragon-001".
 %
 % @details
+% If @a outputRootA or @a outputRootB is omitted or empty, uses the default
+% output data folder from GetOutputPath('outputDataFolder').
+%
+% @details
 % By default, compares all data files found in @a outputRootA, and @a
 % outputRootB.  If @a filterExpression is provided, it must be a regular
 % expression used to match file names.  Only data files that match this
 % expression will be compared.
+%
+% @details
+% For example, you could use @a filterExpression to match only those
+% renderings that came from the CoordinatesTest and Checherboard example
+% scenes:
+% @code
+% CompareAllExampleScenes(outputRootA, outputRootB, 'CoordinatesTest|Checkerboard', 2);
+% @endcode
 %
 % @details
 % If @a visualize is greater than 0 (the default), plots a grand summary
@@ -81,6 +93,14 @@
 %
 % @ingroup ExampleScenes
 function [matchInfo, unmatchedA, unmatchedB] = CompareAllExampleScenes(outputRootA, outputRootB, filterExpression, visualize)
+
+if nargin < 1 || isempty(outputRootA)
+    outputRootA = GetOutputPath('outputDataFolder');
+end
+
+if nargin < 2 || isempty(outputRootB)
+    outputRootB = GetOutputPath('outputDataFolder');
+end
 
 if nargin < 3 || isempty(filterExpression)
     filterExpression = '';
@@ -149,7 +169,7 @@ matchInfo = struct( ...
 % any comparisons to make?
 nMatches = numel(matchInfo);
 if nMatches > 0
-    fprintf('Comparing %d matched pairs.\n', nMatches);
+    fprintf('Found %d matched pairs of data files.\n', nMatches);
 else
     fprintf('Found no matched pairs.\n');
     return;
