@@ -26,13 +26,13 @@ hints.outputSubfolder = mfilename();
 
 %% Create scene files for Mistuba and PBRT.
 %   this could happen on "machine A"
-startFolder = pwd();
+portableFolder = fullfile(GetOutputPath('tempFolder'), 'portable-scenes');
 for renderer = {'Mitsuba', 'PBRT'}
     % choose one renderer
     hints.renderer = renderer{1};
     
     % save scene files and auxiliary files in a custom folder
-    outFolder = fullfile(startFolder, 'portable-scenes', hints.renderer);
+    outFolder = fullfile(portableFolder, hints.renderer);
     MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints, outFolder);
 end
 
@@ -42,12 +42,13 @@ end
 % how to convert multi-spectral images to sRGB
 toneMapFactor = 100;
 isScaleGamma = true;
+portableFolder = fullfile(GetOutputPath('tempFolder'), 'portable-scenes');
 for renderer = {'Mitsuba', 'PBRT'}
     % choose one renderer
     hints.renderer = renderer{1};
     
     % locate scene ".xml" files in the custom folder
-    sceneFolder = fullfile(startFolder, 'portable-scenes', hints.renderer);
+    sceneFolder = fullfile(portableFolder, hints.renderer);
     sceneFiles = FindFiles(sceneFolder, '\.xml');
     
     % render from the custom folder so renderers can find auxiliary files
@@ -64,4 +65,4 @@ for renderer = {'Mitsuba', 'PBRT'}
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
 
-cd(startFolder);
+cd(sceneFolder);
