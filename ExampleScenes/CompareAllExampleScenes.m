@@ -48,15 +48,14 @@
 % @details
 % If @a visualize is greater than 0 (the default), plots a grand summary
 % of all matched output pairs.  The summary shows the name of each pair,
-% and the minimuim and maximum difference between multispectral pixel
-% components (A minus B).
+% and some difference statistics for multi-spectral data A vs B.
 %
 % @details
 % If @a visualize is greater than 1, makes a detailed figure for each
 % matched pair.  Each detailed figure shows an sRGB representation of the
 % rendering from A set, the B set, and the difference between the sets (A
-% minus B).  The plot also shows a histogram of the differences between
-% multispectral pixel components (A minus B).
+% minus B).  The plot also shows a summary statistics of the differences
+% between multi-spectral pixel components (A minus B).
 %
 % @details
 % This function is intended to help validate RenderToolbox3 installations
@@ -153,17 +152,17 @@ matchInfo = struct( ...
     'relativeB', relativeB(indexB), ...
     'samplingA', [], ...
     'samplingB', [], ...
-    'maxDiff', nan, ...
-    'minDiff', nan, ...
     'denominatorThreshold', 0.2, ...
-    'maxDiffProportion', nan, ...
-    'minDiffProportion', nan, ...
-    'maxRatio', nan, ...
-    'minRatio', nan, ...
+    'subpixelsA', [], ...
+    'subpixelsB', [], ...
+    'normA', [], ...
+    'normB', [], ...
+    'normDiff', [], ...
+    'absNormDiff', [], ...
+    'relNormDiff', [], ...
     'corrcoef', nan, ...
-    'diffHistCenters', [], ...
-    'diffHistCounts', [], ...
     'isGoodComparison', false, ...
+    'detailFigure', nan, ...
     'error', '');
 
 % any comparisons to make?
@@ -176,7 +175,8 @@ else
 end
 
 % compare matched images!
-nHistBins = 30;
+comparisonFolder = fullfile( ...
+    GetOutputPath('outputImageFolder'), 'comparison');
 for ii = 1:nMatches
     fprintf('%d of %d: %s\n', ii, nMatches, matchInfo(ii).relativeA);
     
@@ -231,34 +231,54 @@ for ii = 1:nMatches
     % comparison passes all sanity checks
     matchInfo(ii).isGoodComparison = true;
     
-    % compute the difference image
-    multispectralDiff = multispectralA - multispectralB;
-    multispectralDiffProportion = multispectralDiff ./ multispectralA;
+    % compute per-pixel component difference stats
+    normA = multispectralA / max(multispectralA(:));
+    normB = multispectralB / max(multispectralB(:));
+    normDiff = normA - normB;
+    absNormDiff = abs(normDiff);
+    relNormDiff = absNormDiff ./ normA;
     cutoff = matchInfo(ii).denominatorThreshold;
-    multispectralDiffProportion(multispectralA < cutoff) = nan;
-    multispectralRatio = multispectralA ./ multispectralB;
-    matchInfo(ii).maxDiff = max(multispectralDiff(:));
-    matchInfo(ii).minDiff = min(multispectralDiff(:));
-    matchInfo(ii).maxDiffProportion = max(multispectralDiffProportion(:));
-    matchInfo(ii).minDiffProportion = min(multispectralDiffProportion(:));
-    matchInfo(ii).maxRatio = max(multispectralRatio(:));
-    matchInfo(ii).minRatio = min(multispectralRatio(:));
+    relNormDiff(normA < cutoff) = nan;
+    
+    % summarize differnece stats
+    matchInfo(ii).subpixelsA = summarizeData(multispectralA);
+    matchInfo(ii).subpixelsB = summarizeData(multispectralB);
+    matchInfo(ii).normA = summarizeData(normA);
+    matchInfo(ii).normB = summarizeData(normB);
+    matchInfo(ii).normDiff = summarizeData(normDiff);
+    matchInfo(ii).absNormDiff = summarizeData(absNormDiff);
+    matchInfo(ii).relNormDiff = summarizeData(relNormDiff);
+    
+    % compute correlation among pixel components
     r = corrcoef(multispectralA(:), multispectralB(:));
     matchInfo(ii).corrcoef = r(1, 2);
-    [histCounts, histCenters] = hist(multispectralDiff(:), nHistBins);
-    matchInfo(ii).diffHistCounts = histCounts;
-    matchInfo(ii).diffHistCenters = histCenters;
     
     % plot difference image?
     if visualize > 1
-        showDifferenceImage(matchInfo(ii), ...
-            multispectralA, multispectralB, multispectralDiff);
+        f = showDifferenceImage(matchInfo(ii), ...
+            multispectralA, multispectralB, normDiff);
+        matchInfo(ii).detailFigure = f;
+        
+        % save detail figure to disk
+        [imagePath, imageName] = fileparts(matchInfo(ii).relativeA);
+        compPath = fullfile(comparisonFolder, imagePath);
+        if ~exist(compPath)
+            mkdir(compPath);
+        end
+        figName = fullfile(compPath, [imageName '.fig']);
+        saveas(f, figName, 'fig');
+        pngName = fullfile(compPath, [imageName '.png']);
+        saveas(f, pngName, 'png');
     end
 end
 
 % plot a grand summary?
 if visualize > 0
     showDifferenceSummary(matchInfo);
+end
+
+if visualize > 1
+    fprintf('\nSee comparison images saved in:\n  %s\n', comparisonFolder);
 end
 
 
@@ -321,8 +341,8 @@ for ii = 1:n
 end
 
 
-% Show sRGB images and difference image, plot difference histogram.
-function showDifferenceImage(info, A, B, difference)
+% Show sRGB images and difference image, plot difference statistics.
+function f = showDifferenceImage(info, A, B, difference)
 toneMapFactor = 0;
 
 % make SRGB images
@@ -345,16 +365,30 @@ ax = subplot(2, 2, 1, 'Parent', f);
 imshow(uint8(sRGBDiff), 'Parent', ax);
 title(ax, 'Difference (A - B)');
 
-ax = subplot(2, 2, 4, ...
+% display summary statistics in a table
+rows = {'subpixelsA', 'subpixelsB', 'absNormDiff', 'relNormDiff', 'corrcoef'};
+cols = {'max', 'mean', 'min'};
+nRows = numel(rows);
+nCols = numel(cols);
+data = cell(nRows, nCols);
+for ii = 1:nRows
+    summary = info.(rows{ii});
+    for jj = 1:nCols
+        if isstruct(summary)
+            value = summary.(cols{jj});
+        else
+            value = summary;
+        end
+        data{ii,jj} = value;
+    end
+end
+uitable( ...
     'Parent', f, ...
-    'XLim', [min(info.diffHistCenters), max(info.diffHistCenters)], ...
-    'YLim', [0, max(info.diffHistCounts)]);
-line(info.diffHistCenters, info.diffHistCounts, ...
-    'Parent', ax, ...
-    'LineStyle', 'none', ...
-    'Marker', '+');
-title(ax, 'Difference Histogram');
-
+    'Data', data, ...
+    'Units', 'normalized', ...
+    'Position', [0.56 0.1, 0.35, 0.35], ...
+    'RowName', rows, ...
+    'ColumnName', cols);
 drawnow();
 
 
@@ -381,28 +415,35 @@ line([info.corrcoef], 1:n, ...
     'LineStyle', 'none', ...
     'Marker', 'o', ...
     'Color', [0 0 1])
-title(ax, 'image correlation');
-xlabel(ax, 'corrcoef of all pixel components A vs B');
+title(ax, 'rendering correlation');
+xlabel(ax, 'corrcoef of pixel components A vs B');
 
-% summarize min and max pixel differences
+% summarize mean and max max pixel differences
+diffSummary = [info.relNormDiff];
 ax = subplot(1, 2, 2, ...
     'Parent', f, ...
     'YLim', [0 n+1], ...
     'YTick', 1:n, ...
     'YTickLabel', {});
-line([info.minDiffProportion], 1:n, ...
+line([diffSummary.max], 1:n, ...
     'Parent', ax, ...
     'LineStyle', 'none', ...
     'Marker', '+', ...
     'Color', [1 0 0])
-line([info.maxDiffProportion], 1:n, ...
+line([diffSummary.mean], 1:n, ...
     'Parent', ax, ...
     'LineStyle', 'none', ...
     'Marker', 'o', ...
     'Color', [0 0 0])
-legend(ax, 'min', 'max', 'Location', 'northeast');
+legend(ax, 'max', 'mean', 'Location', 'northeast');
 title(ax, 'extreme pixel components');
-label = sprintf('relative difference (A - B) / A, if A >= %.1f', ...
+label = sprintf('relative diff |A-B|/A, where A/max(A) > %.1f', ...
     info(1).denominatorThreshold);
 xlabel(ax, label);
 
+% Summarize a distribuition of data with a struct of stats
+function summary = summarizeData(data)
+finiteData = data(isfinite(data));
+summary.min = min(finiteData);
+summary.mean = mean(finiteData);
+summary.max = max(finiteData);
