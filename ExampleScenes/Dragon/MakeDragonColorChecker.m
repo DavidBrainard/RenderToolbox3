@@ -10,6 +10,21 @@ sceneFile = 'Dragon.dae';
 conditionsFile = 'DragonColorCheckerConditions.txt';
 mappingsFile = 'DragonColorCheckerMappings.txt';
 
+%% Choose batch renderer options.
+% which colors to use, [] means all
+hints.whichConditions = [];
+
+% pixel size of each rendering
+hints.imageWidth = 150;
+hints.imageHeight = 120;
+hints.outputSubfolder = mfilename();
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
+
 %% Make a fresh conditions file.
 % choose spectrum file names and output image names
 nSpectra = 24;
@@ -24,16 +39,6 @@ end
 varNames = {'imageName', 'dragonColor'};
 varValues = cat(2, imageNames, fileNames);
 WriteConditionsFile(conditionsFile, varNames, varValues);
-
-%% Choose batch renderer options.
-
-% which colors to use, [] means all
-hints.whichConditions = [];
-
-% pixel size of each rendering
-hints.imageWidth = 150;
-hints.imageHeight = 120;
-hints.outputSubfolder = mfilename();
 
 %% Render with Mitsuba and PBRT.
 
@@ -60,3 +65,5 @@ for renderer = {'Mitsuba', 'PBRT'}
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
+
+cd(originalFolder);
