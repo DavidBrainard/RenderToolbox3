@@ -38,92 +38,86 @@ end
 renderResults = [];
 comparison = [];
 
-%% Get a user folder with write permission.
-% get the default user folder, or let the user choose
-userFolder = GetUserFolder();
-if isempty(userFolder) || ~ischar(userFolder)
-    title = 'Choose a folder that you own.';
-    userFolder = uigetdir(pwd(), title);
-end
+%% Check output folders for write permission.
+% locate and test 3 different folders
+outPrefs(1).prefGroup = 'RenderToolbox3';
+outPrefs(1).prefName = 'tempFolder';
+outPrefs(2).prefGroup = 'RenderToolbox3';
+outPrefs(2).prefName = 'outputDataFolder';
+outPrefs(3).prefGroup = 'RenderToolbox3';
+outPrefs(3).prefName = 'outputImageFolder';
 
-if isempty(userFolder) || ~ischar(userFolder)
-    error('You must choose a folder for RenderToolbox3.');
+% try to write into each folder
+for ii = 1:numel(outPrefs)
+    outPath = getpref(outPrefs(ii).prefGroup, outPrefs(ii).prefName);
+    
+    fprintf('\nChecking %s:\n', outPrefs(ii).prefName);
+    
+    % make sure the folder exists
+    if exist(outPath, 'dir')
+        fprintf(' folder exists: %s\n', outPath);
+    else
+        fprintf('  creating folder: %s\n', outPath);
+        [status, message] = mkdir(outPath);
+        if 1 == status
+            fprintf('  OK.\n');
+        else
+            error('Could not create folder %s:\n  %s\n', ...
+                outPath, message);
+        end
+    end
+    
+    % make sure Matlab can write to the folder
+    fprintf('Trying to write to %s:\n', outPrefs(ii).prefName);
+    testFile = fullfile(outPath, 'test.txt');
+    [fid, message] = fopen(testFile, 'w');
+    if fid < 0
+        error('Could not write to folder %s:\n  %s\n', ...
+            outPath, message);
+    end
+    fclose(fid);
+    delete(testFile);
+    fprintf('  OK.\n');
 end
-
-% make sure Matlab can write to the folder
-fprintf('\nChecking user folder for write permission:\n  %s\n', userFolder);
-testFile = fullfile(userFolder, 'test.txt');
-[fid, message] = fopen(testFile, 'w');
-if fid < 0
-    error('Could not write to folder:\n  %s\n', message)
-end
-fclose(fid);
-delete(testFile);
-fprintf('  OK.\n');
-
-%% Initialize RenderToolbox3 preferences.
-InitializeRenderToolbox(true);
 
 %% Locate Mitsuba and pbrt executables.
 if ismac()
-    % must locate Mitsuba.app
-    executable(1).prefGroup = 'Mitsuba';
-    executable(1).prefName = 'app';
-    executable(1).fileName = 'Mitsuba.app';
+    % locate Mitsuba.app
+    execPrefs(1).prefGroup = 'Mitsuba';
+    execPrefs(1).prefName = 'app';
     
-    % locate Mitsuba executables relative to the app
-    setpref('Mitsuba', 'executable', 'Contents/MacOS/mitsuba');
-    setpref('Mitsuba', 'importer', 'Contents/MacOS/mtsimport');
-    
-    % must locate pbrt
-    executable(2).prefGroup = 'PBRT';
-    executable(2).prefName = 'executable';
-    executable(2).fileName = 'pbrt';
+    % locate pbrt
+    execPrefs(2).prefGroup = 'PBRT';
+    execPrefs(2).prefName = 'executable';
     
 else
-    % must locate Mitsuba executable
-    executable(1).prefGroup = 'Mitsuba';
-    executable(1).prefName = 'executable';
-    executable(1).fileName = 'mitsuba';
+    % locate Mitsuba executable
+    execPrefs(1).prefGroup = 'Mitsuba';
+    execPrefs(1).prefName = 'executable';
     
-    % must locate Mitsuba importer
-    executable(2).prefGroup = 'Mitsuba';
-    executable(2).prefName = 'importer';
-    executable(2).fileName = 'mtsimport';
+    % locate Mitsuba importer
+    execPrefs(2).prefGroup = 'Mitsuba';
+    execPrefs(2).prefName = 'importer';
     
-    % there is no Mitsuba.app
-    setpref('Mitsuba', 'app', '');
-    
-    % must locate pbrt
-    executable(3).prefGroup = 'PBRT';
-    executable(3).prefName = 'executable';
-    executable(3).fileName = 'pbrt';
+    % locate pbrt
+    execPrefs(3).prefGroup = 'PBRT';
+    execPrefs(3).prefName = 'executable';
 end
 
 % locate each executable or let the user choose
-for ii = 1:numel(executable)
+for ii = 1:numel(execPrefs)
     % get the default executable path from preferences
-    execPath = getpref(executable(ii).prefGroup, executable(ii).prefName);
-    if ~exist(execPath)
-        title = sprintf('Choose the %s %s: "%s"', ...
-            executable(ii).prefGroup, ...
-            executable(ii).prefName, ...
-            executable(ii).fileName);
-        [getFile, getPath] = uigetfile('*.*', title, 'MultiSelect', 'off');
-        execPath = fullfile(getPath, getFile);
-    end
+    execFile = getpref(execPrefs(ii).prefGroup, execPrefs(ii).prefName);
     
-    if isempty(execPath) || ~ischar(execPath) || ~exist(execPath)
-        error('Could not find any %s %s', ...
-            executable(ii).prefGroup, ...
-            executable(ii).prefName)
+    fprintf('\nChecking %s %s:\n', ...
+        execPrefs(ii).prefGroup, execPrefs(ii).prefName);
+    
+    % make sure the executable exists
+    if exist(execFile, 'file')
+        fprintf(' %s exists: %s\n', execPrefs(ii).prefName, execFile);
     else
-        
-        fprintf('\nFound %s %s:\n  %s\n', ...
-            executable(ii).prefGroup, ...
-            executable(ii).prefName, ...
-            execPath);
-        setpref(executable(ii).prefGroup, executable(ii).prefName, execPath);
+        error('Could not find %s %s:\n  %s\n', ...
+            execPrefs(ii).prefGroup, execPrefs(ii).prefName, execFile);
     end
 end
 
@@ -148,4 +142,7 @@ if ~isempty(referenceRoot)
     fprintf('with reference renderings\n  %s\n', referenceRoot);
     fprintf('You should see several more figures.\n\n');
     comparison = CompareAllExampleScenes(localRoot, referenceRoot, '', 2);
+else
+    fprintf('\nNo referenceRoot provided.  Local renderings\n');
+    fprintf('will not be compared with reference renderings.\n');
 end
