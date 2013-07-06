@@ -109,9 +109,9 @@ targPixel = squeeze(rendering.multispectralImage(targY, targX, :));
 destPixel = squeeze(rendering.multispectralImage(destY, destX, :));
 
 % compute the target and destination apparent illumination
-targPixelResampled = SplineSpd(rendering.S, targPixel, targWls);
+targPixelResampled = SplineRaw(rendering.S, targPixel, targWls);
 targIllum = targPixelResampled ./ targReflect;
-destPixelResampled = SplineSpd(rendering.S, destPixel, destWls);
+destPixelResampled = SplineRaw(rendering.S, destPixel, destWls);
 destIllum = destPixelResampled ./ destReflect;
 
 %% Plot target and destination pixels and apparent illumination.
@@ -185,7 +185,7 @@ width = size(rendering.multispectralImage, 2);
 destPixel = squeeze(rendering.multispectralImage(destY, destX, :));
 
 % compute the destination pixel apparent illumination
-destPixelResampled = SplineSpd(rendering.S, destPixel, destWls);
+destPixelResampled = SplineRaw(rendering.S, destPixel, destWls);
 destIllum = destPixelResampled ./ cleverReflect;
 
 %% Plot clever destination pixel spectrum and apparent illumination.
