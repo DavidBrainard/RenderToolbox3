@@ -21,6 +21,23 @@ hints.imageHeight = 160;
 % put outputs in a subfolder named like this script
 hints.outputSubfolder = mfilename();
 
+%% Choose some color matching functions to make sensor images.
+% choose several Pyschtoolbox matching functions
+%   these are the names of Pyschtoolbox colorimetric .mat files
+matchFuncs = {'T_xyz1931.mat', 'T_cones_ss2', 'T_rods'};
+
+% invent a new matching function that extracts a narrow wavelength band
+bandName = 'narrow-band-matching';
+nBands = 81;
+bandSampling = [380 5 nBands];
+bandFunction = zeros(1, nBands);
+bandFunction(round(nBands/2)) = 1;
+
+% choose the invented matching function, along with descriptive metadata
+matchFuncs{4} = bandFunction;
+matchSampling{4} = bandSampling;
+matchNames{4} = bandName;
+
 %% Render with Mitsuba and PBRT.
 
 % how to convert multi-spectral images to sRGB
@@ -45,4 +62,8 @@ for renderer = {'Mitsuba', 'PBRT'}
     
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);
+
+    % make some sensor images, in addition to the sRGB montage
+    sensorImages = MakeSensorImages( ...
+        outFiles, matchFuncs, matchSampling, matchNames, hints);
 end
