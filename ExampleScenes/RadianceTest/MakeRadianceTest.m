@@ -16,6 +16,8 @@ hints.whichConditions = [];
 hints.imageWidth = 100;
 hints.imageHeight = 100;
 hints.outputSubfolder = mfilename();
+hints.PBRTRadiometricScale = 1;
+hints.MitsubaRadiometricScale = 1;
 
 %% Move to temp folder before creating new files.
 originalFolder = pwd();
