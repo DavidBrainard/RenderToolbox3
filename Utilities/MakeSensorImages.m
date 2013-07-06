@@ -65,7 +65,7 @@
 % @ingroup Utilities
 function outFiles = MakeSensorImages(inFiles, matchingFunctions, matchingS, matchingNames, hints)
 
-if nargin < 4 || isempty(matchingS)
+if nargin < 4 || isempty(matchingNames)
     matchingNames = cell(size(matchingFunctions));
 end
 
