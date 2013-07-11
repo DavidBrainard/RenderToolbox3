@@ -35,14 +35,6 @@ catch err
     info.BrainardLabToolboxSVNInfo = err;
 end
 
-% SVN info about Brainard Lab HDR toolbox
-try
-    toolboxPath = fileparts(which('ReadEXR'));
-    info.BrainardLabHDRToolboxSVNInfo = GetSVNInfo(toolboxPath);
-catch err
-    info.BrainardLabHDRToolboxSVNInfo = err;
-end
-
 % Matlab version
 try
     info.MatlabVersion = version();
@@ -66,9 +58,11 @@ end
 
 % RenderToolbox3 preferences
 try
+    info.PBRTPreferences = getpref('RenderToolbox3');
     info.PBRTPreferences = getpref('PBRT');
     info.MitsubaPreferences = getpref('Mitsuba');
 catch err
+    info.PBRTPreferences = err;
     info.PBRTPreferences = err;
     info.MitsubaPreferences = err;
 end
