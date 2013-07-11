@@ -31,7 +31,7 @@ end
 
 %% Create new files in a subfolder next to renderer outputs.
 dataFolder = GetOutputPath('outputDataFolder');
-working = fullfile(dataFolder, 'SphereRenderer');
+working = fullfile(dataFolder, 'MakeSimpleSphere', 'SphereRenderer');
 if ~exist(working, 'dir')
     mkdir(working)
 end
@@ -79,7 +79,7 @@ params.numLights = 1;
 toneMapProfile = render(params);
 
 % save multi-spectral data in RenderToolbox3 format
-outFile = 'MatlabSphere.mat';
+outFile = 'SimpleSphere.mat';
 sphereData = load('sphereRenderer_imageData.mat');
 multispectralImage = sphereData.imageData;
 save(outFile, 'multispectralImage', 'S');

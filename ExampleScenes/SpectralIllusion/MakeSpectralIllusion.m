@@ -50,7 +50,7 @@ originalSpectrum = 'mccBabel-11.spd';
 [wls, originalReflect] = ReadSpectrum(originalSpectrum);
 scale = 1;
 srf = scale * originalReflect;
-WriteSpectrumFile(wls, srf, sprintf('SpectralIllusionTarget.spd', temp));
+WriteSpectrumFile(wls, srf, 'SpectralIllusionTarget.spd');
 
 %% Plot the initial target and destination reflectances.
 % read target and destination reflectances from conditions file
@@ -61,7 +61,7 @@ destSpectrum = values{strcmp(names, 'destinationColor')};
 [destWls, destReflect] = ReadSpectrum(destSpectrum);
 
 if hints.isPlot
-    f = figure();
+    f = figure('UserData', 'SpectralIllusion');
     axReflect = subplot(5, 1, 3, 'Parent', f);
     plot(axReflect, ...
         targWls, targReflect, 'square', ...
@@ -70,6 +70,7 @@ if hints.isPlot
     ylabel(axReflect, 'reflectance');
     legend(axReflect, 'target', 'destination', ...
         'Location', 'northwest')
+    set(axReflect,  'UserData', 'reflectance');
     drawnow();
 end
 
@@ -91,6 +92,7 @@ if hints.isPlot
     axInitial = subplot(5, 2, [1 3], 'Parent', f);
     imshow(uint8(SRGBMontage), 'Parent', axInitial);
     title('initial');
+    set(axInitial, 'UserData', 'initial');
     drawnow();
 end
 
@@ -133,6 +135,7 @@ if hints.isPlot
         destWls, destIllum, 'o');
     ylabel(axIllum, 'illumination');
     xlim(axIllum, [350 750]);
+    set(axIllum, 'UserData', 'illumination');
     drawnow();
     
     % show rendered pixel spectra
@@ -143,6 +146,7 @@ if hints.isPlot
         wls, destPixel, 'o');
     ylabel(axPixel, 'pixel');
     xlim(axPixel, [350 750]);
+    set(axPixel, 'UserData', 'reflected');
     drawnow();
 end
 
@@ -158,7 +162,7 @@ if hints.isPlot
         'LineStyle', 'none', ...
         'Marker', '*', ...
         'Color', [1 0 0])
-    legend(axReflect, 'target', 'destination', 'clever destination', ...
+    legend(axReflect, 'target', 'destination', 'illusion destination', ...
         'Location', 'northwest')
 end
 
@@ -174,7 +178,8 @@ montageFile = [montageName '.png'];
 if hints.isPlot
     axClever = subplot(5, 2, [2 4], 'Parent', f);
     imshow(uint8(SRGBMontage), 'Parent', axClever);
-    title('clever');
+    title('illusion');
+    set(axClever,  'UserData', 'illusion');
     drawnow();
 end
 
