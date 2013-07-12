@@ -110,14 +110,18 @@ for ii = 1:nImages
     plotCount = 1 + 3*(ii-1);
     
     % PBRT image
+    tag = sprintf('PBRT-%s', pbrt(ii).imageName);
     axPBRT = subplot(nImages, 3, plotCount, ...
         'Parent', fig);
     imshow(uint8(pbrt(ii).imageSRGB), 'Parent', axPBRT);
+    set(axPBRT, 'UserData', tag);
     
     % Mitsuba image
+    tag = sprintf('Mitsuba-%s', pbrt(ii).imageName);
     axMitsuba = subplot(nImages, 3, plotCount + 1, ...
         'Parent', fig);
     imshow(uint8(mitsuba(ii).imageSRGB), 'Parent', axMitsuba);
+    set(axMitsuba, 'UserData', tag);
     
     % plots of power
     slicePBRT = pbrt(ii).imageSpectral(sliceRow, :, sliceBand) * pbrt(ii).scaleSRGB;
