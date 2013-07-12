@@ -40,11 +40,11 @@ Generic metalGroup {
 Generic {
     % load an image into a texture
     earthTexture:floatTexture:bitmap
-    earthTexture:filename.string = Earthmap1000x500-gray.exr
+    earthTexture:filename.string = earthbump1k-stretch-rgb.exr
 
     % add bumps to the existing sphere material
     earthBumpMap:material:bumpmap
     earthBumpMap:materialID.string = Material-material
     earthBumpMap:textureID.string = earthTexture
-    earthBumpMap:scale.float = 0.05
+    earthBumpMap:scale.float = 0.1
 }
