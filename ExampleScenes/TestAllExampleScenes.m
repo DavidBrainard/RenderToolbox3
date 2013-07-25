@@ -2,14 +2,15 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Run all "Make*" functions in the ExampleScenes/ folder.
+% Run all "Make*" executive scripts in the ExampleScenes/ folder.
 %   @param outputRoot base path where to save output data
-%   @param makeFunctions cell array of rendering scripts to invoke
+%   @param makeFunctions cell array of executive scripts to invoke
 %
 % @details
-% By default, renders example scenes by invoking all of the "Make*" scripts
-% found within the ExampleScenes/ folder.  If @a makeFunctions is provided,
-% it must be a cell array of rendering scripts to invoke instead.
+% By default, renders example scenes by invoking all of the "Make*"
+% executive sripts found within the ExampleScenes/ folder.  If @a
+% makeFunctions is provided, it must be a cell array of executive scripts
+% to invoke instead.
 %
 % @details
 % @a outputRoot is the base path under which all output data should be
@@ -17,12 +18,12 @@
 % getpref('RenderToolbox3').
 %
 % @details
-% Returns a struct with information about each rendering script, such as
-% whether the script executed successfully, any Matlab error struct that
-% was thrown, and when the script completed.
+% Returns a struct with information about each executive script, such as
+% whether the script executed successfully, any Matlab error that was
+% thrown, and when the script completed.
 %
 % @details
-% Saves a .mat file with several variables about the test parameters and
+% Saves a mat-file with several variables about test parameters and
 % results:
 %   - outputRoot, the given @a outputRoot
 %   - makeFunctions, the given @a makeFunctions
@@ -30,9 +31,10 @@
 %   - results, the returned struct of results about rendering scripts
 % .
 % @details
-% The .mat file will be saved in the given @a outputRoot folder.  It will
+% The mat-file will be saved in the given @a outputRoot folder.  It will
 % have a name that that includes the name of this m-file, plus the date and
-% time.
+% time.  If @a outputRoot is omited, uses getpref('RenderToolbox3',
+% 'outputDataFolder').
 %
 % @details
 % Usage:

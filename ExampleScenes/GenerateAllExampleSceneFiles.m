@@ -15,8 +15,8 @@
 % This script is useful for generating lots and lots of scene files, to be
 % rendererd later with RenderAllExampleScenes.  In some production
 % settings, like computer clusters, it's useful to have a top-level script
-% that takes no arguments, like this one.  You should edit parameter values
-% in this script to agree with your system.
+% that takes no arguments, like this one.  You should copy this script and
+% edit variables to agree with your system.
 %
 % For Mitsuba scene files, this script must be run from a machine that has
 % OpenGL support.  This might not be the case for computer cluster worker
@@ -29,7 +29,7 @@ setpref('RenderToolbox3', 'isDryRun', true);
 setpref('RenderToolbox3', 'isReuseSceneFiles', false);
 setpref('RenderToolbox3', 'isPlot', false);
 
-%% Invoke rendering scripts.
+%% Invoke execcutive scripts.
 % choose where to put output files
 %   for example '/Users/myName/epic-scene-test'
 %   or empty '' for default folders (see GetDefaultHints())

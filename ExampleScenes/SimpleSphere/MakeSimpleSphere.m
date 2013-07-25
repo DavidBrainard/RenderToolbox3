@@ -2,11 +2,11 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Render a Ward sphere under a point light and orthogonal optics.
+%% Render a Ward sphere under a point light and orthogonal camera.
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'SimpleSphere.dae';
+parentSceneFile = 'SimpleSphere.dae';
 mappingsFile = 'SimpleSphereMappings.txt';
 
 %% Choose batch renderer options.
@@ -19,11 +19,11 @@ toneMapFactor = 10;
 isScale = true;
 for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
-    sceneFiles = MakeSceneFiles(sceneFile, '', mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, '', mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     montageName = sprintf('%s (%s)', 'SimpleSphere', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end

@@ -6,8 +6,8 @@
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-%sceneFile = 'cup.dae';
-sceneFile = 'interior.dae';
+%parentSceneFile = 'cup.dae';
+parentSceneFile = 'interior.dae';
 
 %% Choose batch renderer options.
 hints.imageHeight = 480;
@@ -27,19 +27,19 @@ colors = { ...
     'mccBabel-3.spd', ...
     'mccBabel-4.spd', ...
     };
-mappingsFile = WriteDefaultMappingsFile(sceneFile, '', '', colors);
+mappingsFile = WriteDefaultMappingsFile(parentSceneFile, '', '', colors);
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;
 isScale = true;
 for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
-    sceneFiles = MakeSceneFiles(sceneFile, '', mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, '', mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     montageName = sprintf('%s (%s)', 'ComplexScene', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
 

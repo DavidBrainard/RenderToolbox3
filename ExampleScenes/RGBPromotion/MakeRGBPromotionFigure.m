@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Probe the RGB spectral promotion algortigms of renderers.
+%% Probe the RGB spectral promotion algortigms of renderers.
 
 %% Move to temp folder before creating new files.
 originalFolder = pwd();

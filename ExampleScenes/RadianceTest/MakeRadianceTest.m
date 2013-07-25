@@ -2,12 +2,12 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render a perfect reflector and check physics of radiance units.
+%% Render a perfect reflector and check physical principles.
 
 %% Choose example files, make sure they're on the Matlab path.
 examplePath = fileparts(mfilename('fullpath'));
 AddWorkingPath(examplePath);
-sceneFile = 'RadianceTest.dae';
+parentSceneFile = 'RadianceTest.dae';
 conditionsFile = 'RadianceTestConditions.txt';
 mappingsFile = 'RadianceTestMappings.txt';
 
@@ -46,14 +46,14 @@ for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
     
     % make 3 multi-spectral renderings, saved in .mat files
-    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('%s (%s)', 'RadianceTest', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScaleGamma, hints);
     
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);

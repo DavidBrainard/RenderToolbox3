@@ -6,7 +6,7 @@
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'MaterialSphere.dae';
+parentSceneFile = 'MaterialSphere.dae';
 conditionsFile = 'MaterialSphereConditions.txt';
 mappingsFile = 'MaterialSphereBumpsMappings.txt';
 
@@ -33,7 +33,7 @@ for renderer = {'Mitsuba', 'PBRT'}
     
     % save scene files and auxiliary files in a custom folder
     outFolder = fullfile(portableFolder, hints.renderer);
-    MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints, outFolder);
+    MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints, outFolder);
 end
 
 %% Render with Mitsuba and PBRT.
@@ -50,17 +50,17 @@ for renderer = {'Mitsuba', 'PBRT'}
     
     % locate scene ".xml" files in the custom folder
     sceneFolder = fullfile(portableFolder, hints.renderer);
-    sceneFiles = FindFiles(sceneFolder, '\.xml');
+    nativeSceneFiles = FindFiles(sceneFolder, '\.xml');
     
     % render from the custom folder so renderers can find auxiliary files
     cd(sceneFolder);    
-    outFiles = BatchRender(sceneFiles, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('MaterialSpherePortable (%s)', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScaleGamma, hints);
     
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);

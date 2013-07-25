@@ -79,9 +79,7 @@ Generic {
 
 	Red-material:material:matte
 	Red-material:diffuseReflectance.spectrum = mccBabel-22.spd
-
 }
-
 
 % lights
 Generic {

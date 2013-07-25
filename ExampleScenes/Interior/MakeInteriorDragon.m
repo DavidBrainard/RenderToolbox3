@@ -2,16 +2,16 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render a furnished interior scene from Nextwave Multimedia, plus dragon!
+%% Render a furnished interior scene from Nextwave Multimedia, plus dragon.
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
 scenePath = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'Interior');
-sceneFile = fullfile(scenePath, 'interior/source/interio-dragon.dae');
+parentSceneFile = fullfile(scenePath, 'interior/source/interio-dragon.dae');
 mappingsFile = 'InteriorDragonMappings.txt';
 
 % generate a fresh mappings file
-%WriteDefaultMappingsFile(sceneFile, mappingsFile)
+%WriteDefaultMappingsFile(parentSceneFile, mappingsFile)
 
 %% Choose batch renderer options.
 hints.imageHeight = 480;
@@ -52,12 +52,12 @@ toneMapFactor = 4;
 isScale = true;
 for renderer = {'Mitsuba'}
     hints.renderer = renderer{1};
-    sceneFiles = MakeSceneFiles(sceneFile, '', mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, '', mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     montageName = sprintf('Interior Dragon (%s)', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
 
