@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Merge a PBRT-XML scene document with an adjustments document.
+% Merge an XML scene document with an adjustments document.
 %   @param sceneDoc document node that represents a scene file
 %   @param adjustmentsDoc document node that represents an adjustments file
 %   @param excludePattern regular expression to filter adjustments elements
@@ -16,7 +16,10 @@
 %
 % @details
 % @a sceneDoc @a adjustmentsDoc must be XML document nodes as returned from
-% ReadSceneDOM().
+% ReadSceneDOM().  @a sceneDoc may be a Collada parent scene file, a
+% Mitsuba-native xml-file, or a RenderToolbox3 PBRT-XML file.  @a
+% adjustmentsSoc shouls use the same format as @a sceneDoc, and should
+% contain elements that supplement or replace elements in @a sceneDoc.
 %
 % @details
 % Nodes in the adjustment file are matched with nodes in the scene file
@@ -27,9 +30,10 @@
 %
 % @details
 % By default, merges all nodes from @a adjustmentsDoc, in depth first
-% order.  If @a excludePattern is provided, it must be a it must be a
-% regular expression to match against element node names.  Elements whose
-% names match @a excludePattern will not be merged.
+% order.  If @a excludePattern is provided, it must be a regular expression
+% to match against element node names (node names are not the same as id
+% attributes). Elements whose node names match @a excludePattern will not
+% be merged. 
 %
 % @details
 % Usage:

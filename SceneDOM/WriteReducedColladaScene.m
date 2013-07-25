@@ -7,12 +7,12 @@
 %   @param reducedFile file name or path of the new, reuduced scene
 %
 % @details
-% Traverses the Collada document in the given @a colladaFile and creates a
-% new, reduced version of the document, at the given @a reducedFile.  The
-% reduced document will contain all of the basic scene elements including
-% cameras, some types of lights, and geometry.  It will not contain
-% fancier scene elemnets like textured materials, animations, controllers,
-% and physics.
+% Traverses the Collada document in the given @a colladaFile and writes a
+% new, reduced version of the document, with the given @a reducedFile name.
+% The reduced document will contain all of the basic scene elements
+% including cameras, some types of lights, and geometry.  It will not
+% contain fancier scene elemnets like textured materials, animations,
+% controllers, and physics.
 %
 % @details
 % Attempts to obey the Collada 1.4 schema, so that the new @a reducedFile

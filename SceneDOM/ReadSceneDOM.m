@@ -22,9 +22,10 @@
 %
 % @details
 % Also returns an "id map" that represent the document in terms of elements
-% that have unique identifiers.  If @a excludePattern is provided, it must
-% be a regular expression to match against element node names.  Elements
-% whose names match @a excludePattern will not be added to the id map.
+% that have unique identifiers (id attributes).  If @a excludePattern is
+% provided, it must be a regular expression to match against element node
+% names.  Elements whose names match @a excludePattern will not be added to
+% the id map.
 %
 % @details
 % Usage:
