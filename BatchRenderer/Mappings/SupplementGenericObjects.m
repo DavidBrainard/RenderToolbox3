@@ -18,7 +18,7 @@
 % Usage:
 %   objects = SupplementGenericObjects(objects)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function objects = SupplementGenericObjects(objects)
 
 % fill in properties for each object, by type

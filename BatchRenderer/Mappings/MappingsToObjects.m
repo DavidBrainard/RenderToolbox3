@@ -20,7 +20,7 @@
 % Usage:
 %   objects = MappingsToObjects(mappings)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function objects = MappingsToObjects(mappings)
 
 % create an object for each id used in mappings

@@ -17,7 +17,7 @@
 % Usage:
 %   objects = GenericObjectsToPBRT(objects)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function objects = GenericObjectsToPBRT(objects)
 
 for ii = 1:numel(objects)

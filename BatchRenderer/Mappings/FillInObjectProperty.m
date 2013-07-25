@@ -20,7 +20,7 @@
 % Usage:
 %   obj = FillInObjectProperty(obj, name, type, value)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function obj = FillInObjectProperty(obj, name, type, value)
 if isempty(obj.properties)
     % make the first property

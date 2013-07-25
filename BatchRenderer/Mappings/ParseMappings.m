@@ -38,7 +38,7 @@
 % Usage:
 %   mappings = ParseMappings(mappingsFile)
 %
-% @ingroup BatchRenderer
+% @ingroup Mappings
 function mappings = ParseMappings(mappingsFile)
 
 %% Make a default mappints struct.

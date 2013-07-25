@@ -17,7 +17,7 @@
 % Usage:
 %   value = GetObjectProperty(obj, name)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function value = GetObjectProperty(obj, name)
 value = [];
 if ~isempty(obj.properties)

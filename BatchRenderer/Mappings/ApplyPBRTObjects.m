@@ -18,7 +18,7 @@
 % Usage:
 %   ApplyPBRTObjects(idMap, objects)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function ApplyPBRTObjects(idMap, objects)
 
 for ii = 1:numel(objects)

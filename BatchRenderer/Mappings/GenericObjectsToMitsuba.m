@@ -17,7 +17,7 @@
 % Usage:
 %   objects = GenericObjectsToMitsuba(objects)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function objects = GenericObjectsToMitsuba(objects)
 
 for ii = 1:numel(objects)

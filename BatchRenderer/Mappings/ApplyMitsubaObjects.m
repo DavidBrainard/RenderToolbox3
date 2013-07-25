@@ -19,7 +19,7 @@
 % Usage:
 %   ApplyMitsubaObjects(idMap, objects)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function ApplyMitsubaObjects(idMap, objects)
 
 for ii = 1:numel(objects)

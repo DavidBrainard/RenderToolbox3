@@ -17,7 +17,7 @@
 % Usage:
 %   obj = SetObjectProperty(obj, name, value)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function obj = SetObjectProperty(obj, name, value)
 if ~isempty(obj.properties)
     isProp = strcmp(name, {obj.properties.name});
