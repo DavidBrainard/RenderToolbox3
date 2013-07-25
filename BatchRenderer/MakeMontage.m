@@ -2,15 +2,15 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Condense several multi-spectral images into one sRGB montage.
-%   @param inFiles cell array of input .mat file names
+% Condense several multi-spectral renderings into one sRGB montage.
+%   @param inFiles cell array of input mat-file names
 %   @param outFile output montage file name (optional)
 %   @param toneMapFactor how to truncate montage luminance (optional)
 %   @param isScale whether or not to scale montage luminance (optional)
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Condenses several multi-spectral images stored in .mat files into a
+% Condenses several multi-spectral renderings stored in mat-files into a
 % single sRGB montage.  Tiles the input images so that the montage has
 % roughly the same aspect ratio as the input images.
 %
@@ -19,14 +19,14 @@
 % image at a time.
 %
 % @details
-% @a inFiles must be a cell array of .mat file names, each of which must
+% @a inFiles must be a cell array of mat-file names, each of which must
 % contain multi-spectral renderer output.  BatchRender() returns such a
 % cell array.
 %
 % @details
 % @a outFile determines the file name of the new montage.  The file
 % extension determines the file format:
-%   - If the extension is '.mat', the montage XYZ and sRGB matrices are
+%   - If the extension is '.mat', the montage XYZ and sRGB matrices
 %   will be saved to a .mat data file.
 %   - If the extension matches a standard image format, like '.tiff' or
 %   '.png' (default), the sRGB image will be saved in that format, using
@@ -34,13 +34,10 @@
 %   .
 %
 % @details
-% @a outFile does not determine where the montage will be saved.  If @a
-% hints is provided and contains a @b outputImageFolder field, the montage
-% will be saved in that folder.  Otherwise, the montage will be saved in a
-% default location given by:
-% @code
-%   folder = getpref('RenderToolbox3', 'outputImageFolder')
-% @endcode
+% @a outFile does not determine where the montage will be saved.  The
+% montage will be saved in the folder given by
+% GetOutputPath('outputImageFolder', @a hints), or if @a hints is not
+% provided, GetOutputPath('outputImageFolder', GetDefaultHints()).
 %
 % @details
 % If @a toneMapFactor is provided and greater than 0, montage luminances
@@ -133,7 +130,7 @@ end
 SRGBMontage = XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
 
 %% Save to disk.
-imageFolder = fullfile(GetOutputPath('outputImageFolder', hints));
+imageFolder = GetOutputPath('outputImageFolder', hints);
 if ~exist(imageFolder, 'dir')
     mkdir(imageFolder)
 end

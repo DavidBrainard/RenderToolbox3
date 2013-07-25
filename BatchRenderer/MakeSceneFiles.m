@@ -2,60 +2,64 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert a Collada file to renderer scene files, with changing varibles.
-%   @param colladaFile file name or path of a Collada scene file
+% Make a family of renderer-native scene files based on a Collada parent scene file.
+%   @param colladaFile file name or path of a Collada parent scene file
 %   @param conditionsFile file name or path of a conditions file
 %   @param mappingsFile file name or path of a mappings file
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %   @param outPath path where to copy new scene files
 %
 % @details
-% Creates multiple renderer-specific scene files, based on the given @a
+% Creates a family of renderer-native scene files, based on the given @a
 % colladaFile, @a conditionsFile, and @a mappingsFile.  @a hints.renderer
 % specifies which renderer to make scene files for.  @a outPath is
-% optional, and may specify a folder path that should receive copies of the
-% new scene files.
+% optional, and may specify a folder path that where renderer-native scene
+% files should be writen.
 %
 % @details
-% @a colladaFile should be a Collada XML scene file.  @a colladaFile may be
-% left empty, if the @a conditionsFile contains a 'colladaFile' variable.
+% @a colladaFile should be a Collada XML parent scene file.  @a colladaFile
+% may be left empty, if the @a conditionsFile contains a 'colladaFile'
+% variable.
 %
 % @details
 % @a conditionsFile must be a RenderToolbox3 <a
 % href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Conditions-File-Format">Conditions File</a>.
-% @a conditionsFile may be omitted or left empty, if the scene
-% is to be rendered only once.
+% @a conditionsFile may be omitted or left empty, if only one
+% renderer-native scene file is to be produced.
 %
 % @details
 % @a mappingsFile must be a RenderToolbox3 <a
 % href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Mappings-File-Format">Mappings File</a>.
-% @a mappingsFile may be omitted or left empty, if the scene
-% is to be rendered only once, or if the @a conditionsFile contains a
-% 'mappingsFile' variable.
+% @a mappingsFile may be omitted or left empty if only one
+% renderer-native scene file is to be produced, or if @a conditionsFile
+% contains a 'mappingsFile' variable.
 %
 % @details
-% @a hints may be a struct with options that affect the conversion process,
-% as returned from GetDefaultHints().  If @a hints is omitted, default
-% options are used.  For example:
-%   - @a hints.renderer specifies which renderer to make scene files for.
-%   - @a hints.tempFolder is the default location for new scene files.
-%   - @a hints.adjustmentsFile is a partial scene file with
-%   renderer-specific values
-%   - @a hints.filmType is a renderer-specific film type to specify in the
+% @a hints may be a struct with options that affect the process generating
+% of renderer-native scene files.  If @a hints is omitted, values are taken
+% from GetDefaultHints().
+%   - @a hints.renderer specifies which renderer to make native scene files
+%   for.
+%   - @a hints.tempFolder is the default location for new renderer-native
 %   scene files.
+%   - @a hints.adjustmentsFile is a partial scene XML file with
+%   renderer-specific values.
+%   - @a hints.filmType is a renderer-specific film type to use in the
+%   new renderer-native scene files.
 %   - @a hints.imageHeight and @a hints.imageWidth specify the image pixel
-%   dimensions to specify in the scene files.
+%   dimensions to use in the new renderer-native scene files.
 %   - @a hints.whichConditions is an array of condition numbers used to
-%   select lines from the @a conditionsFile.
+%   select rows from the @a conditionsFile.
 %   .
 %
 % @details
 % @a outPath is optional.  If provided, it should be the path to a folder
-% where new scene files and auxiliary files should be copied.  New scene
-% files will also be written to @a hints.tempFolder.
+% where new renderer-native scene files and related auxiliary files should
+% be copied.  The renderer-native scene files will also be written to @a
+% hints.tempFolder.
 %
 % @details
-% Returns a cell array of file names for new renderer-specific scene
+% Returns a cell array of file names for new renderer-native scene
 % files.  By default, each scene file will have the same base name as @a
 % the given @a colladaFile, plus a numeric suffix.  If @a conditionsFile
 % contains an 'imageName' variable, each scene file be named with the value
@@ -63,12 +67,14 @@
 %
 % @details
 % Also retrurns a cell array of file names for auxiliary files on which the
-% scene files depend, like images, spectrum files, and geometry files.
+% renderer-native scene files depend, such as image files, spectrum data
+% files, and object geometry files.
 %
 % @details
-% For Mitsuba, renderer-specific scene files will be in Mitsuba's native
-% .xml format.  For PBRT, files will be in RenderToolbox3's custom PBRT-XML
-% .xml format.  PBRT-XML files can be converted to PBRT's native text
+% Mitsuba-native scene files will use Mitsuba's own .xml file format.
+% PBRT-native scene files will use RenderToolbox3's custom PBRT-XML 
+% .xml format.  PBRT-XML files can be passed to BatchRender() for
+% rendering.  The can also be converted to PBRT's native text
 % format using WritePBRTFile().
 %
 % @details

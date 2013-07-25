@@ -10,8 +10,9 @@
 % @details
 % Scales the given "raw" @a mitsubaData into physical radiance units.  The
 % scaling depends on a Mitsuba-specific scale factor computed previously
-% with ComputeRadiometricScaleFactors(), and may also depend on particulars
-% of the scene.
+% with ComputeRadiometricScaleFactors().  In principle, the scaling might
+% also depend on non-radiometric scene parameters, although this does not
+% seem to be the case for Mitsuba.
 %
 % @details
 % @a mitsubaData should be a matrix of multi-spectral data obtained from
@@ -29,10 +30,7 @@
 % rendering.  In particular, @a hints.MitsubaRadiometricScale may contain
 % the mitsuba-specific scale factor for converting multi-spectral data to
 % radiance units.  If @a hints does not contain this field, the default
-% value will be taken from
-% @code
-%   scaleFactor = getpref('RenderToolbox3', 'MitsubaRadiometricScale');
-% @endcode
+% value will be taken from GetDefaultHints().
 %
 % @details
 % Returns the given "raw" @a mitsubaData, scaled into physical radiance

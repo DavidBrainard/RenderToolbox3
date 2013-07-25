@@ -2,8 +2,8 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Write a default mappings file for the given Collada scene file.
-%   @param colladaFile file name or path of the Collada scene file
+% Write a default mappings file for the given Collada parent scene file.
+%   @param colladaFile file name or path of the Collada parent scene file
 %   @param mappingsFile file name or path for a new mappings file
 %   @param includeFile file name or path for a mappings file to include
 %   @param reflectances cell array of matte material reflectances

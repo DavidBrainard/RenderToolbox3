@@ -7,7 +7,7 @@
 % @details
 % Calculates a radiometric unit scale factor to bring the "raw" output from
 % each renderer into physical radiance units.  Uses the
-% ExampleScenes/RadiaceTest scene to generate renderings with known
+% ExampleScenes/RadiaceTest recipe to generate renderings with known
 % radiometric properties.
 %
 % @details
@@ -27,8 +27,8 @@
 %
 % @details
 % PBRTDataToRadiance() and MitsubaDataToRadiance() use the stored scale
-% factors to convert renderer-specific ouput data into common radiance
-% units.  BatchRender() applies these conversions automatically.
+% factors to convert renderer-specific ouput data into consistent, physical
+% radiance units.  BatchRender() applies these conversions automatically.
 %
 % @details
 % Custom scale factors can be used instead of stored scale factors, if they
