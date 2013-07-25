@@ -2,10 +2,10 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert a Collada scene file to a PBRT scene file.
-%   @param colladaFile input Collada file name or path
-%   @param pbrtFile output PBRT file name or path (optional)
-%   @param adjustmentsFile adjustments file name or path (optional)
+% Convert a Collada parent scene file to a PBRT-native scene file.
+%   @param colladaFile input Collada parent scene file name or path
+%   @param pbrtFile output PBRT-native scene file name or path (optional)
+%   @param adjustmentsFile PBRT-native adjustments file name or path (optional)
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
@@ -14,7 +14,7 @@
 %
 % @details
 % If @a adjustmentsFile is provided, it should be the name of a PBRT-XML
-% adjustments file in .xml format.  Elements of @a adjustmentsFile will
+% adjustments xml-file.  Elements of @a adjustmentsFile will
 % replace or modify elements of the converted scene file according to
 % matching "id" attributes.
 %
@@ -23,11 +23,11 @@
 % See GetDefaultHints() for more about batch renderer hints.
 %
 % @details
-% Returns the file name of the new PBRT file, which might be the same as
-% the given @a pbrtFile.  Also returns the PBRT-XML file and XML Document
-% Object Model (DOM) document object from which the PBRT file was
-% generated.  Also returns a cell array of file names for auxiliary files,
-% like geometry files that the PBRT files depends on.
+% Returns the file name of the new PBRT-native scene file, which might be
+% the same as the given @a pbrtFile.  Also returns the PBRT-XML file and
+% XML Document Object Model (DOM) document object from which the PBRT file
+% was generated.  Also returns a cell array of file names for auxiliary
+% files, like geometry files that the PBRT files depends on.
 %
 % @details
 % Usage:

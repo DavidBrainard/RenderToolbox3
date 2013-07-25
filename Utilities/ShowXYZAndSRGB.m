@@ -11,8 +11,7 @@
 % @details
 % Quick plotter for XYZ and sRGB image representations.  The given @a
 % XYZImage and @a SRGB image will be plotted in new figures.  If @a name is
-% provided, it will appear as the image title.  This might help distinguish
-% similar plots.
+% provided, it will appear as the image title.
 %
 % @details
 % If @a hints is provided, it must be a struct of RenderToolbox3 options,

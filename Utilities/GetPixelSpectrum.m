@@ -2,8 +2,8 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Get wavelengths and magnitudes from a multispectral image pixel.
-%   @param image multispectral image matrix of size [height width n]
+% Get wavelengths and magnitudes from a multi-spectral image pixel.
+%   @param image multispectral data matrix of size [height width n]
 %   @param spectrum description of the n spectrum bands of @a image
 %   @param x x-coordinate of the pixel to probe
 %   @param y y-coordinate of the pixel to probe

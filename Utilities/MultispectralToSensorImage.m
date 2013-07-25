@@ -2,18 +2,18 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert multi-spectral image data to a sensor image representation.
-%   @param multispectralImage multispectral image matrix
+% Convert multi-spectral data to a sensor image representation.
+%   @param multispectralData multispectral image matrix
 %   @param imageS image spectral sampling description
 %   @param matchingFunction color matching funciton matrix or filename
 %   @param matchingS matching function spectral sampling description
 %
 % @details
-% Convert the given @a multispectralImage to a sensor image representation,
-% based on the given @a matchingFunction.  @a multispectralImage should
+% Convert the given @a multispectralData to a sensor image representation,
+% based on the given @a matchingFunction.  @a multispectralData should
 % have size [height width nImageSpecralSamples] and spectral sampling
 % described by @a imageS of the form [start delta nImageSpecralSamples].
-% @a multispectralImage should contain data in units of Power per Unit
+% @a multispectralData should contain data in units of Power per Unit
 % Wavelength.
 %
 % @details
@@ -38,15 +38,15 @@
 %   Psychtoolbox/PsychColorimetricData/PsychColorimetricMatFiles/Contents.m
 %
 % @details
-% Returns a sensor image representation of the given @a multispectralImage,
+% Returns a sensor image representation of the given @a multispectralData,
 % with size [height width nMatchingSpecralSamples].
 %
 % @details
 % Usage:
-%   sensorImage = MultispectralToSensorImage(multispectralImage, imageS, matchingFunction, matchingS)
+%   sensorImage = MultispectralToSensorImage(multispectralData, imageS, matchingFunction, matchingS)
 %
 % @ingroup Utilities
-function sensorImage = MultispectralToSensorImage(multispectralImage, imageS, matchingFunction, matchingS)
+function sensorImage = MultispectralToSensorImage(multispectralData, imageS, matchingFunction, matchingS)
 % load matchingFunction and matchingS from Psychtoolbox .mat file?
 if ischar(matchingFunction)
     [matchingFunction, matchingS] = ...
@@ -54,8 +54,8 @@ if ischar(matchingFunction)
 end
 
 % "multiply in" to Psychtoolbox convention of Power per Wavelength Band
-multispectralImage = ...
-    SpdPowerPerNmToPowerPerWlBand(multispectralImage, imageS);
+multispectralData = ...
+    SpdPowerPerNmToPowerPerWlBand(multispectralData, imageS);
 
 %% Convert image to arbitrary sensor representation by weighting.
 % resample mathing function to match the image spectral sampling
@@ -65,12 +65,12 @@ matchingResampled = SplineCmf(matchingS, matchingFunction, imageS);
 
 % weight multispectral planes by the matching function,
 %   for each sensor channel
-imageSize = size(multispectralImage);
+imageSize = size(multispectralData);
 nChannels = size(matchingResampled, 1);
 sensorImage = zeros(imageSize(1), imageSize(2), nChannels);
 for ww = 1:imageS(3)
     for jj = 1:nChannels
         sensorImage(:,:,jj) = sensorImage(:,:,jj) ...
-            + matchingResampled(jj,ww)*multispectralImage(:,:,ww);
+            + matchingResampled(jj,ww)*multispectralData(:,:,ww);
     end
 end

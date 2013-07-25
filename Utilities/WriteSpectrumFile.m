@@ -8,8 +8,8 @@
 %   @param filename name of a text file to create or replace
 %
 % @details
-% Writes the given @a wavelengths and @a magnitudes to a text file, with
-% the given @a filename.
+% Writes the given @a wavelengths and @a magnitudes to a spectrum data text
+% file, with the given @a filename.
 %
 % @details
 % The text file will contain a wavelength-magnitude pair on each line.

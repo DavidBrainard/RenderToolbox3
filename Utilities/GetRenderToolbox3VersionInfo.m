@@ -5,8 +5,8 @@
 %
 % @details
 % Gets revision and data information about RenderTooblox3 and its
-% dependencies, including Psychtoolbox, the David Brainard lab toolbox,
-% Matlab, the computer, PBRT, and Mitsuba.
+% dependencies, including Psychtoolbox, Matlab, the computer, PBRT, and
+% Mitsuba.
 %
 % @details
 % Returns a struct that contains information collected about each

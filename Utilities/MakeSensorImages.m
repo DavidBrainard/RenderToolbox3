@@ -10,7 +10,7 @@
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Writes new .mat data files that contain sensor images, one for each of
+% Writes new data mat-files that contain sensor images, one for each of
 % the multi-spectral data files given in @a inFiles.  @a inFiles should be
 % a cell array of multi-spectral .mat data files, as produced by
 % BatchRender().
@@ -20,14 +20,14 @@
 % functions used to convert multi-spectral data to sensor imgaes.  @a
 % matchingFunctions should be a cell array, where each element specifies a
 % separate color matching function.  Each element may have one of two
-% forms: it may be a matrix containing color mathing data, or it may be the
-% name of a Psychtoolbox colorimetric data file.
+% forms: it may be a numeric matrix containing color mathing data, or it
+% may be the string name of a Psychtoolbox colorimetric data file.
 %
 % @details
-% @a matchingS is only required if @a matchingFunctions contains matrices.
-% In that case, each element @a matchingS corresponds to an element of @a
-% matchingFunctions, and must contain a description of the matching
-% function's spectral sampling.
+% @a matchingS is only required if @a matchingFunctions contains numeric
+% matrices.  In that case, each element @a matchingS corresponds to an
+% element of @a matchingFunctions, and must contain a description of the
+% matching function's spectral sampling.
 %
 % @details
 % See MultispectralToSensorImage() for more about matching functions and
@@ -37,9 +37,9 @@
 % "matchingS" argument.
 %
 % @details
-% @a matchingNames is optional.  If provided, each element @a matchingNames
-% corresponds to an element of @a matchingFunctions, and may contain a
-% descriptive name for that matching function.
+% @a matchingNames is optional.  If provided, each element of @a
+% matchingNames corresponds to an element of @a matchingFunctions, and may
+% contain a descriptive name for that matching function.
 %
 % @details
 % @a hints may be a struct with RenderToolbox3 options.  @a
@@ -53,7 +53,7 @@
 % data file name will start with the corresponding @a inFiles name and end
 % with a descriptive suffix.  The suffix will be chosen from available
 % sources, in order of preference:
-%   - an element of the given @a matchingNames
+%   - one of the given @a matchingNames
 %   - the name of a Psychtoolbox colorimetric data file
 %   - a numeric suffix
 %   .

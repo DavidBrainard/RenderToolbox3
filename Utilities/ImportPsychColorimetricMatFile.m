@@ -2,18 +2,18 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert a Psychtooblox colorimetric .mat file to text .spd files.
+% Convert a Psychtooblox colorimetric mat-file to text spd-files.
 %   @param inFile input .mat file with Psychtooblox colorimetric data
 %   @param outFile output file name for new text file(s)
 %   @param isDivideBands whether to divide spectrum samples by band width
 %
 % @details
-% Converts the Psychtoolbox colorimetric .mat file @a inFile to one or more
-% text .spd files named @a outFile.  Text .spd files are suitable for use
+% Converts the Psychtoolbox colorimetric mat-file @a inFile to one or more
+% text spd-files named @a outFile.  Text spd-files are suitable for use
 % with PBRT and Mitsuba.
 %
 % @details
-% @a inFile should be the name of a .mat file which obeys Psychtoolbox
+% @a inFile should be the name of a mat-file which obeys Psychtoolbox
 % colorimetric mat file conventions.  The name should use a descriptive
 % prefix, followed by an underscore, followed by a specific name.  For
 % example, RenderToolbox includes "sur_mccBabel.mat":
@@ -23,7 +23,7 @@
 %   .
 %
 % @details
-% For more about Psychtooblox colorimetric .mat files and conventions, see
+% For more about Psychtooblox colorimetric mat-files and conventions, see
 % the <a
 % href="http://docs.psychtoolbox.org/PsychColorimetricMatFiles">Psychtoolbox web documentation</a>
 % or the file
@@ -53,7 +53,7 @@
 % attempts to follow Psychtoolbox conventions.
 %
 % @details
-% Returns a cell array of file names for new text .spd files.
+% Returns a cell array of file names for new text spd-files.
 %
 % @details
 % Usage:
