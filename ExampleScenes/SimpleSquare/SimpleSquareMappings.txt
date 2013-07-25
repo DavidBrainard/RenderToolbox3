@@ -7,4 +7,3 @@ Generic {
     Sun-light:light:directional
     Sun-light:intensity.spectrum = D65.spd
 }
-
