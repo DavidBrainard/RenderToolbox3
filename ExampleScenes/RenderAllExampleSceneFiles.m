@@ -22,6 +22,9 @@
 % that does not have OpenGL support, or one that delegates to worker nodes
 % that don't have OpenGL support.
 %
+% See
+% https://github.com/DavidBrainard/RenderToolbox3/wiki/Generate-and-RenderAllExampleSceneFiles.
+%
 
 %% Choose global RenderToolbox3 behavior.
 setpref('RenderToolbox3', 'isParallel', true);

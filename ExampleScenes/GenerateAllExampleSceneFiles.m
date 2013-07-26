@@ -22,6 +22,9 @@
 % OpenGL support.  This might not be the case for computer cluster worker
 % nodes.
 %
+% See
+% https://github.com/DavidBrainard/RenderToolbox3/wiki/Generate-and-RenderAllExampleSceneFiles.
+%
 
 %% Choose global RenderToolbox3 behavior.
 setpref('RenderToolbox3', 'isParallel', false);
