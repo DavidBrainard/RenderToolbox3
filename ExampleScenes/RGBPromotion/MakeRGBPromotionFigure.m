@@ -2,7 +2,15 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Probe the RGB spectral promotion algortigms of renderers.
+%% Probe the RGB spectral promotion algortigms of renderers.
+
+%% Move to temp folder before creating new files.
+originalFolder = pwd();
+hints = GetDefaultHints();
+hints.outputSubfolder = mfilename();
+tempFolder = GetOutputPath('tempFolder', hints);
+AddWorkingPath(tempFolder);
+cd(tempFolder);
 
 %% Choose some illuminants and RGB colors to render
 % yellow daylight
@@ -168,3 +176,5 @@ l = legend(axRGB, RGBLegend, 'Location', 'southeast');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
 l = legend(axSpectra, renderers, 'Location', 'southwest');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
+
+cd(originalFolder)

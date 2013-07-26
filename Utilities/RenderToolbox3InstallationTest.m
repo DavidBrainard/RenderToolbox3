@@ -7,7 +7,7 @@
 %
 % @details
 % Initialize RenderToolbox3 after installation and then put it through some
-% basic tests.  If this functin runs properly, you're off to the races.
+% basic tests.  If this function runs properly, you're off to the races.
 %
 % @details
 % If @a referenceRoot is provided, it must be the path to a set of
@@ -27,9 +27,6 @@
 %
 % @ingroup Utilities
 function [renderResults, comparison] = RenderToolbox3InstallationTest(referenceRoot)
-% 5/30/13  ncp  Wrote.
-% 5/31/13  dhb  Expanded and tweaked.
-% 6/6/13   bsh  Changed to RenderToolbox3 code style.
 
 if nargin < 1
     referenceRoot = '';

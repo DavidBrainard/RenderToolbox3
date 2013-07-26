@@ -9,7 +9,7 @@
 % Reads an OpenEXR image with an arbitrary number of spectral slices.
 %
 % @details
-% The given @a exrFile should be an OpenEXR multispectral image data, with
+% The given @a exrFile should be an OpenEXR multi-spectral data file, with
 % color data stored as evenly spaced slices through the spectrum, not as
 % RGB or RGBA.  Each slice must have a name that identifies the wavelengths
 % of that particular slice.  The name should be formatted like this:

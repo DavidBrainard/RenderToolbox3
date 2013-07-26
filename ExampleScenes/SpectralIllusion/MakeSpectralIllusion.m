@@ -6,7 +6,7 @@
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'SpectralIllusion.dae';
+parentSceneFile = 'SpectralIllusion.dae';
 mappingsFile = 'SpectralIllusionMappings.txt';
 initialConditionsFile = 'SpectralIllusionConditionsInitial.txt';
 cleverConditionsFile = 'SpectralIllusionConditionsClever.txt';
@@ -75,12 +75,12 @@ if hints.isPlot
 end
 
 %% Do the initial rendering.
-sceneFiles = MakeSceneFiles(sceneFile, initialConditionsFile, mappingsFile, hints);
-outFiles = BatchRender(sceneFiles, hints);
+nativeSceneFiles = MakeSceneFiles(parentSceneFile, initialConditionsFile, mappingsFile, hints);
+radianceDataFiles = BatchRender(nativeSceneFiles, hints);
 montageName = sprintf('SpectralIllusionInitial (%s)', hints.renderer);
 montageFile = [montageName '.png'];
 [SRGBMontage, XYZMontage] = ...
-    MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
+    MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
 
 % only makes sense to proceed with fresh renderings and scene files
 if hints.isReuseSceneFiles || hints.isDryRun
@@ -98,7 +98,7 @@ end
 
 %% Read the initial rendering and compute a clever destination spectrum.
 % locate the target and destination pixels in the rendering
-rendering = load(outFiles{1});
+rendering = load(radianceDataFiles{1});
 height = size(rendering.multispectralImage, 1);
 width = size(rendering.multispectralImage, 2);
 targX = round(width * (165/320));
@@ -167,12 +167,12 @@ if hints.isPlot
 end
 
 %% Render the illusion using the clever destination spectrum.
-sceneFiles = MakeSceneFiles(sceneFile, cleverConditionsFile, mappingsFile, hints);
-outFiles = BatchRender(sceneFiles, hints);
+nativeSceneFiles = MakeSceneFiles(parentSceneFile, cleverConditionsFile, mappingsFile, hints);
+radianceDataFiles = BatchRender(nativeSceneFiles, hints);
 montageName = sprintf('SpectralIllusionClever (%s)', hints.renderer);
 montageFile = [montageName '.png'];
 [SRGBMontage, XYZMontage] = ...
-    MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
+    MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
 
 %% Plot the clever rendering.
 if hints.isPlot
@@ -184,7 +184,7 @@ if hints.isPlot
 end
 
 %% Read the destination pixel from the clever rendering.
-rendering = load(outFiles{1});
+rendering = load(radianceDataFiles{1});
 height = size(rendering.multispectralImage, 1);
 width = size(rendering.multispectralImage, 2);
 destPixel = squeeze(rendering.multispectralImage(destY, destX, :));

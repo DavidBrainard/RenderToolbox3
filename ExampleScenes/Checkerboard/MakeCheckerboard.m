@@ -6,7 +6,7 @@
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'Checkerboard.dae';
+parentSceneFile = 'Checkerboard.dae';
 mappingsFile = 'CheckerboardMappings.txt';
 
 %% Choose batch renderer options.
@@ -41,12 +41,12 @@ toneMapFactor = 10;
 isScaleGamma = true;
 for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
-    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     montageName = sprintf('Checkerboard (%s)', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScaleGamma, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
 

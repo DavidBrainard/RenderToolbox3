@@ -3,13 +3,13 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Invoke the PBRT renderer.
-%   @param sceneFile filename or path of a .pbrt scene file.
+%   @param sceneFile filename or path of a PBRT-native text scene file.
 %   @param isShow whether or not to display the output image in a figure
 %
 % @details
-% Invoke the PBRT renderer on the given .pbrt @a sceneFile.  This function
-% handles some of the boring details of invoking PBRT with Matlab's unix()
-% command.
+% Invoke the PBRT renderer on the given PBRT-native text @a sceneFile.
+% This function handles some of the boring details of invoking PBRT with
+% Matlab's unix() command.
 %
 % @details
 % if @a isShow is provided and true, displays an sRGB representation of the

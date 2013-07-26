@@ -10,7 +10,8 @@
 %
 % @details
 % Convert the given @a multispectralImage of size [height width n] to an
-% sRGB image of size [height width 3], for viewing on a standard monitor.
+% sRGB image of size [height width 3], for viewing on a standard monitor,
+% using the CIE 1931 standard weighting functions.
 %
 % @details
 % The given @a S must describe the n spectral planes of the @a

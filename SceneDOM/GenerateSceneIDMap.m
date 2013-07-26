@@ -26,8 +26,9 @@
 % @details
 % By default, returns all elements with id attributes.  If @a
 % excludePattern is provided, it must be a regular expression to match
-% against element node names.  Elements whose names match @a excludePattern
-% will not be added to the id map.
+% against element node names (note names are not the same as id
+% attributes).  Elements whose node names match @a excludePattern will not
+% be added to the id map, even if they have an id attribute.
 %
 % @details
 % Usage:

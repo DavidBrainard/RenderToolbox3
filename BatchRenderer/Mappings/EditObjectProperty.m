@@ -20,7 +20,7 @@
 % Usage:
 %   obj = EditObjectProperty(obj, oldName, newName, newType)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function obj = EditObjectProperty(obj, oldName, newName, newType)
 if ~isempty(obj.properties)
     isProp = strcmp(oldName, {obj.properties.name});

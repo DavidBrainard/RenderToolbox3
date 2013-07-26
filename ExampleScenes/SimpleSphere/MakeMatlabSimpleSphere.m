@@ -2,7 +2,8 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render a Ward sphere under point light and orthogonal optics.
+%% Render a Ward sphere under point light and orthogonal camera.
+%
 % This renders a sphere using Matlab code writted from scratch as part of
 % Render Toolbox version 2.  It is a sanity check on the "correct" way to
 % render a sphere under a point light and orthogonal projection.
@@ -70,7 +71,7 @@ params.ambientLightIntensity = zeros(size(params.lightIntensity));
 params.lightCoords = 1e3 * [1 1 1];
 params.numLights = 1;
 
-%% Render the sphere!
+%% Render the sphere.
 
 % Matlab sphere renderer creates 3 files:
 % - sphereRenderer_imageData.mat
@@ -79,9 +80,9 @@ params.numLights = 1;
 toneMapProfile = render(params);
 
 % save multi-spectral data in RenderToolbox3 format
-outFile = 'SimpleSphere.mat';
+dataFile = 'SimpleSphere.mat';
 sphereData = load('sphereRenderer_imageData.mat');
 multispectralImage = sphereData.imageData;
-save(outFile, 'multispectralImage', 'S');
+save(dataFile, 'multispectralImage', 'S');
 
 cd(originalPath);

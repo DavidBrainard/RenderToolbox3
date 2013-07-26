@@ -5,8 +5,8 @@
 %
 % @details
 % Gets revision and data information about RenderTooblox3 and its
-% dependencies, including Psychtoolbox, the David Brainard lab toolbox,
-% Matlab, the computer, PBRT, and Mitsuba.
+% dependencies, including Psychtoolbox, Matlab, the computer, PBRT, and
+% Mitsuba.
 %
 % @details
 % Returns a struct that contains information collected about each
@@ -15,24 +15,18 @@ function info = GetRenderToolbox3VersionInfo()
 
 % Git info about RenderToolbox3
 try
-    info.RenderToolbox3GitInfo = GetGitInfo(RenderToolboxRoot());
+    info.RenderToolbox3GitInfo = GetGITInfo(RenderToolboxRoot());
 catch err
     info.RenderToolbox3GitInfo = err;
 end
 
-% SVN info about Psychtoolbox
+% SVN or git info about Psychtoolbox
 try
     info.PsychtoolboxSVNInfo = GetSVNInfo(PsychtoolboxRoot());
+    info.PsychtoolboxGITInfo = GetGITInfo(PsychtoolboxRoot());
+    
 catch err
     info.PsychtoolboxSVNInfo = err;
-end
-
-% SVN info about Brainard Lab common toolbox
-try
-    toolboxPath = fileparts(which('GetSVNInfo'));
-    info.BrainardLabToolboxSVNInfo = GetSVNInfo(toolboxPath);
-catch err
-    info.BrainardLabToolboxSVNInfo = err;
 end
 
 % Matlab version
@@ -61,6 +55,7 @@ try
     info.PBRTPreferences = getpref('RenderToolbox3');
     info.PBRTPreferences = getpref('PBRT');
     info.MitsubaPreferences = getpref('Mitsuba');
+    
 catch err
     info.PBRTPreferences = err;
     info.PBRTPreferences = err;

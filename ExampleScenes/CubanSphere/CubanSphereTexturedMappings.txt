@@ -33,7 +33,7 @@ Generic {
 Generic {
     % make a texture out of an earth image
     earthTexture:spectrumTexture:bitmap
-    earthTexture:filename.string = Earthmap1000x500.exr
+    earthTexture:filename.string = earthbump1k-stretch-rgb.exr
 
     % assign the earth texture to the sphere's reflectance
     SphereMaterial-material:material:anisoward

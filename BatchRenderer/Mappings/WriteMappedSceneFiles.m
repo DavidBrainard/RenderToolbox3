@@ -2,25 +2,28 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Apply condition values and mappings to scene and adjustments files.
+% Apply conditions and mappings to Collada file and and adjustments file.
 %   @param workingPath
 %   @param name
-%   @param originalScene
+%   @param originalCollada
 %   @param originalAdjust
 %   @param mappings
 %   @param varNames
 %   @param varValues
 %
 % @details
-% Apply variable values and mappings to scene and adjustments files.
+% Apply conditions file and mappings file values to parent scene Collada
+% file and adjustments files.
 %
 % @details
-% @a workingPath must be a folder path name where to put new files.  @a
-% name must be a string name to include in the mapped scene file names.
+% @a workingPath must be a folder path name where to put new parent scene
+% Collada files and adjustments files.  @a name must be a string name to
+% include in the new file names.
 %
 % @details
-% @a originalScene and @a originalAdjust must be XML scene and adjustments
-% files, respectively.  @a originalAdjust is optional.
+% @a originalCollada must be a parent scene Collada file.  @a
+% originalAdjust should be a renderer-native adjustments XML file.  @a
+% originalAdjust is optional.  
 %
 % @details
 % mappings must be a struct array of mapping data as returned from
@@ -35,27 +38,28 @@
 % should be the name of a renderer, either 'Mitsuba', or 'PBRT'.
 %
 % @details
-% Writes copies of the given @a originalScene file and @a
+% Writes copies of the given @a originalCollada file and @a
 % originalAdjustments file, and modifies each as specified by the given
 % @a mappings, @a varNames, and @a varValues.
 %
 % @details
-% Returns the names of the new, mapped scene file and the new, mapped
-% adjustments file.  Also returns a cell array of file names for resources
-% specified in mappings, such as image files and spectrum files.
+% Returns the names of the new parent scene Collada file and the new,
+% adjustments file.  Also returns a cell array of file names for resource
+% files that were specified in the conditions file and mappings file
+% mappings, such as image files and spectrum data files. 
 %
 % @details
 % Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
-%   [mappedScene, mappedAdjust, resources] = WriteMappedSceneFiles( ...
-%       workingPath, name, originalScene, originalAdjust, ...
+%   [newCollada, newAdjust, resources] = WriteMappedSceneFiles( ...
+%       workingPath, name, originalCollada, originalAdjust, ...
 %       mappings, varNames, varValues, hints)
 %
-% @ingroup BatchRenderer
+% @ingroup Mappings
 function [mappedScene, mappedAdjust, resources] = WriteMappedSceneFiles( ...
-    workingPath, name, originalScene, originalAdjust, ...
+    workingPath, name, originalCollada, originalAdjust, ...
     mappings, varNames, varValues, hints)
 
 %% Parameters
@@ -63,7 +67,7 @@ if nargin < 1 || isempty(name)
     name = 'mapped';
 end
 
-[scenePath, sceneBase, sceneExt] = fileparts(originalScene);
+[scenePath, sceneBase, sceneExt] = fileparts(originalCollada);
 
 if nargin < 3 || isempty(originalAdjust)
     originalAdjust = '';
@@ -80,7 +84,7 @@ end
 
 %% Copy and modify the original scene and adjustments XML documents.
 % get original documents into memory
-[sceneDoc, sceneIDMap] = ReadSceneDOM(originalScene);
+[sceneDoc, sceneIDMap] = ReadSceneDOM(originalCollada);
 if ~isempty(originalAdjust)
     [adjustDoc, adjustIDMap] = ReadSceneDOM(originalAdjust);
 end

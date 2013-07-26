@@ -3,7 +3,6 @@ Collada {
     Camera:scale|sid=scale = -1 1 1
 }
 
-% specify a matte sphere
 Generic {
     % beige matte sphere
     Material-material:material:matte

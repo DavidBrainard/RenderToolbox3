@@ -3,15 +3,16 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Convert PBRT multi-spectral data to radiance units.
-%   @param pbrtData "raw" data from a PBRT scene rendering
-%   @param pbrtDoc XML DOM document node representing the PBRT scene
+%   @param pbrtData "raw" data from a PBRT multi-spectral rendering
+%   @param pbrtDoc XML DOM document node representing the PBRT-XML scene
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Scales the given "raw" @a pbrtData into physical radiance units.  The
 % scaling depends on a PBRT-specific scale factor computed previously with
-% ComputeRadiometricScaleFactors(), and may also depend on particulars of
-% the scene.
+% ComputeRadiometricScaleFactors().  The scaling might also depend on some
+% non-radiometric scene parameters.  If these parameters use non-default
+% values, prints a warning that additional scaling might be required.
 %
 % @details
 % @a pbrtData should be a matrix of multi-spectral data obtained from
@@ -20,19 +21,18 @@
 % units.
 %
 % @details
-% @a pbrtDoc should be the "document" node of the XML document that
-% represents the rendered scene.  Particulars of the scene specification
-% might affect how @a pbrtData is scaled.
+% @a pbrtDoc should be the "document" node of the PBRT-XML document that
+% represents the rendered scene, as returned from ColladaToPBRT().
+% Parameters stored in the PBRT-XML document might indicate that the scene
+% should be scaled in order to compensate fot non-radiometric factors, like
+% the number of ray samples used per pixel.
 %
 % @details
 % @a hints should be a struct with additional parameters used during
 % rendering.  In particular, @a hints.PBRTRadiometricScale may contain the
 % PBRT-specific scale factor for converting multi-spectral data to
 % radiance units.  If @a hints does not contain this field, the default
-% value will be taken from
-% @code
-%   scaleFactor = getpref('RenderToolbox3', 'PBRTRadiometricScale');
-% @endcode
+% value will be taken from GetDefaultHints().
 %
 % @details
 % Returns the given "raw" @a pbrtData, scaled into physical radiance
@@ -67,31 +67,84 @@ end
 
 %% PBRT requires scene-specific adjustments to the scaling factor.
 if isempty(pbrtDoc)
-    disp('PBRT-XML document was not provided.');
-    disp('Multi-spectral image might be incorrectly scaled.');
+    warning('PBRT-XML document was not provided.\nRadiance data might be incorrectly scaled.');
     
 else
-    idMap = GenerateSceneIDMap(pbrtDoc);
+    % compare scene pixel reconstruction filter to default
+    sceneIdMap = GenerateSceneIDMap(pbrtDoc);
+    defaultAdjustments = 'PBRTDefaultAdjustments.xml';
+    [defaultDoc, defaultIdMap] = ReadSceneDOM(defaultAdjustments);
     
-    % PBRT scaling depends on the width of the image reconstruction filter
-    %   this code assumes the gaussian filter
+    nodePath = 'filter.type';
+    sceneFilterType = GetSceneValue(sceneIdMap, nodePath);
+    if ~isempty(sceneFilterType)
+        defaultFilterType = GetSceneValue(defaultIdMap, nodePath);
+        checkSceneParameter('Pixel Filter type', ...
+            sceneFilterType, defaultFilterType);
+    end
+    
     nodePath = 'filter:parameter|name=alpha';
-    filterAlpha = StringToVector(GetSceneValue(idMap, nodePath));
+    sceneAlpha = GetSceneValue(sceneIdMap, nodePath);
+    if ~isempty(sceneAlpha)
+        defaultAlpha = GetSceneValue(defaultIdMap, nodePath);
+        checkSceneParameter('Pixel Filter alpha', sceneAlpha, defaultAlpha);
+    end
     
     nodePath = 'filter:parameter|name=xwidth';
-    filterXWidth = StringToVector(GetSceneValue(idMap, nodePath));
+    sceneXWidth = GetSceneValue(sceneIdMap, nodePath);
+    if ~isempty(sceneXWidth)
+        defaultXWidth = GetSceneValue(defaultIdMap, nodePath);
+        factor = StringToVector(defaultXWidth) / StringToVector(sceneXWidth);
+        checkSceneParameter('Pixel Filter xwidth', ...
+            sceneXWidth, defaultXWidth, factor);
+    end
     
     nodePath = 'filter:parameter|name=ywidth';
-    filterYWidth = StringToVector(GetSceneValue(idMap, nodePath));
+    sceneYWidth = GetSceneValue(sceneIdMap, nodePath);
+    if ~isempty(sceneYWidth)
+        defaultYWidth = GetSceneValue(defaultIdMap, nodePath);
+        factor = StringToVector(defaultYWidth) / StringToVector(sceneYWidth);
+        checkSceneParameter('Pixel Filter ywidth', ...
+            sceneYWidth, defaultYWidth, factor);
+    end
     
-    % TODO: how do we use filter params to modify scaleFactor?
+    % TODO: apply non-radiometric scale corrections for filter
     
-    % PBRT scaling depends on the number of samples used per pixel
-    %   this code assumes the lowdiscrepancy sampler
+    % compare scene ray sampler to default
+    nodePath = 'sampler.type';
+    sceneSamplerType = GetSceneValue(sceneIdMap, nodePath);
+    if ~isempty(sceneSamplerType)
+        defaultSamplerType = GetSceneValue(defaultIdMap, nodePath);
+        checkSceneParameter('Sampler type', sceneSamplerType, defaultSamplerType);
+    end
+    
     nodePath = 'sampler:parameter|name=pixelsamples';
-    samplesPerPixel = StringToVector(GetSceneValue(idMap, nodePath));
+    sceneSamplesPerPixel = GetSceneValue(sceneIdMap, nodePath);
+    if ~isempty(sceneSamplesPerPixel)
+        defaultSamplesPerPixel = GetSceneValue(defaultIdMap, nodePath);
+        factor = StringToVector(defaultSamplesPerPixel) / StringToVector(sceneSamplesPerPixel);
+        checkSceneParameter('Sampler samples per pixel', ...
+            sceneSamplesPerPixel, defaultSamplesPerPixel, factor);
+    end
     
-    % TODO: how do we use number of samples to modify scaleFactor?
+    % TODO: apply non-radiometric scale corrections for sampler
 end
 
 radianceData = scaleFactor .* pbrtData;
+
+
+% Warn if scene and default properties don't match.
+function checkSceneParameter(paramName, sceneValue, defaultValue, scale)
+
+if ~strcmp(sceneValue, defaultValue)
+    warningMessage = sprintf('%s (%s) does not match default (%s).', ...
+        paramName, sceneValue, defaultValue);
+    if nargin >= 4 && ~isempty(scale)
+        warningMessage = sprintf('%s\n Radiance data might need to be scaled by a factor of %f.', ...
+            warningMessage, scale);
+    else
+        warningMessage = sprintf('%s\n Radiance data might be incorrectly scaled.', ...
+            warningMessage);
+    end
+    warning(warningMessage);
+end

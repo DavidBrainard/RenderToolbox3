@@ -28,7 +28,7 @@
 % string, with the following fields
 %   - text - the raw text before parsing
 %   - enclosing - the enclosing brackets, if any, '[]', '<>', or ''
-%   - value - the text found within enclising brackets
+%   - value - the text found within enclosing brackets
 %   .
 %
 % @details
@@ -38,7 +38,7 @@
 % Usage:
 %   mappings = ParseMappings(mappingsFile)
 %
-% @ingroup BatchRenderer
+% @ingroup Mappings
 function mappings = ParseMappings(mappingsFile)
 
 %% Make a default mappints struct.

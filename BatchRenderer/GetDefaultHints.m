@@ -2,20 +2,20 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Get default hints to pass to the batch renderer.
+% Get default hints that affect the RenderToolbox3 utilities.
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Creates a struct of options for the batch renderer to use, or fills in
-% missing parts of a the given @a hints struct.  Batch renderer options
-% include things like renderer name, image film size, and whether or not to
-% delete intermediate files used in the batch rendering process.
+% Creates a struct of options that affect the behavior of RenderToolbox3
+% utilities, or fills in missing parts of a the given @a hints struct.
+% RenderToolbox3 options include things like renderer name, output image
+% size, and whether to use Matlab's Distributed Computing "parfor" loops.
 %
 % @details
 % If provided, @a hints should be a struct of renderer options with option
-% names as fields.  Fills in any missing options with default values.  If
-% @a hints is missing or not a struct, creates a new struct with all
-% default values.
+% names as fields.  Any missing options will be filled in with default
+% values.  If @a hints is missing or not a struct, creates a new struct
+% with all default values.
 %
 % @details
 % Default hint values can be set with Matlab's setpref() function.  For
@@ -35,7 +35,7 @@
 % @endcode
 %
 % @details
-% Returns a new or modified struct of batch renderer options.
+% Returns a new or modified struct of batch renderer hints.
 %
 % @details
 % Usage:
@@ -43,8 +43,8 @@
 %
 % Usage examples:
 % @code
-%   hints = GetDefaultHints(hints);
 %   hints.whichConditions = [1 3 5];
+%   hints = GetDefaultHints(hints);
 %   BatchRender(..., hints);
 %   MakeMontage(..., hints);
 % @endcode

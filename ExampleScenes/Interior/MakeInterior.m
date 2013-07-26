@@ -7,7 +7,7 @@
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
 scenePath = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'Interior');
-sceneFile = fullfile(scenePath, 'interior/source/interio.dae');
+parentSceneFile = fullfile(scenePath, 'interior/source/interio.dae');
 conditionsFile = 'InteriorConditions.txt';
 mappingsFile = 'InteriorMappings.txt';
 
@@ -49,16 +49,16 @@ toneMapFactor = 10;
 isScale = true;
 for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
-    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     
     % write each condition to a separate image file
-    for ii = 1:numel(outFiles)
-        [outPath, outBase, outExt] = fileparts(outFiles{ii});
+    for ii = 1:numel(radianceDataFiles)
+        [outPath, outBase, outExt] = fileparts(radianceDataFiles{ii});
         montageName = sprintf('%s (%s)', outBase, hints.renderer);
         montageFile = [montageName '.png'];
         [SRGBMontage, XYZMontage] = MakeMontage( ...
-            outFiles(ii), montageFile, toneMapFactor, isScale, hints);
+            radianceDataFiles(ii), montageFile, toneMapFactor, isScale, hints);
         ShowXYZAndSRGB([], SRGBMontage, montageName);
     end
 end

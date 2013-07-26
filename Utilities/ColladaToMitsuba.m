@@ -2,10 +2,10 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert a Collada scene file to a Mitusuba scene file.
-%   @param colladaFile input Collada file name or path
-%   @param mitsubaFile output Mitsuba file name or path (optional)
-%   @param adjustmentsFile adjustments file name or path (optional)
+% Convert a Collada parent scene file to a Mitusuba-native scene file.
+%   @param colladaFile input Collada parent scene file name or path
+%   @param mitsubaFile output Mitsuba-native scene file name or path (optional)
+%   @param adjustmentsFile Mitsuba-native adjustments file name or path (optional)
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
@@ -14,7 +14,7 @@
 %
 % @details
 % If @a adjustmentsFile is provided, it should be the name of a partial
-% Mitsuba scence file in .xml format.  Elements of @a adjustmentsFile will
+% Mitsuba scence xml-file.  Elements of @a adjustmentsFile will
 % replace or modify elements of the converted scene file according to
 % matching "id" attributes.
 %

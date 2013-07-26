@@ -6,7 +6,7 @@
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'Dragon.dae';
+parentSceneFile = 'Dragon.dae';
 conditionsFile = 'DragonMaterialsConditions.txt';
 mappingsFile = 'DragonMaterialsMappings.txt';
 
@@ -21,11 +21,11 @@ toneMapFactor = 10;
 isScale = true;
 for renderer = {'PBRT', 'Mitsuba'}
     hints.renderer = renderer{1};
-    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     montageName = sprintf('%s (%s)', 'DragonMaterials', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end

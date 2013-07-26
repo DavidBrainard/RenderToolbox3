@@ -6,7 +6,7 @@
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'SimpleSquare.dae';
+parentSceneFile = 'SimpleSquare.dae';
 mappingsFile = 'SimpleSquareMappings.txt';
 conditionsFile = 'SimpleSquareConditions.txt';
 
@@ -21,12 +21,12 @@ toneMapFactor = 0;
 isScale = true;
 for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
-    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     
     montageName = sprintf('%s (%s)', 'SimpleSquare', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScale, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end

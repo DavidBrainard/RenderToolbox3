@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Remove move some environment path entries to the end of the path.
+% Move some environment path entries to the end of the path.
 %   @param variable name of an environment variable that contains a path
 %   @param matching regular expression to match path entries
 %
@@ -26,7 +26,7 @@
 % @details
 % Example usage:
 % @code
-% % put "matlab" entries last for OS X "DYLD_LIBRARY_PATH"
+% % put "matlab" entries last for the OS X "DYLD_LIBRARY_PATH"
 % variable = 'DYLD_LIBRARY_PATH';
 % matching = 'matlab|MATLAB';
 % [sortedPath, originalPath] = DemoteEnvPathEntries(variable, matching);

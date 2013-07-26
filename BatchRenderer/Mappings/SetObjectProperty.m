@@ -2,28 +2,27 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Get a mappings object property value.
+% Set a mappings object property value.
 %   @param obj
 %   @param name
+%   @param value
 %
 % @details
-% Get the value of a property value of a mappings object.  Returns the
-% value.
+% Set a property value for a mappings object.  Returns the updated object.
 %
 % @details
 % Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
-%   value = GetObjectProperty(obj, name)
+%   obj = SetObjectProperty(obj, name, value)
 %
-% @ingroup MappingsObjects
-function value = GetObjectProperty(obj, name)
-value = [];
+% @ingroup Mappings
+function obj = SetObjectProperty(obj, name, value)
 if ~isempty(obj.properties)
     isProp = strcmp(name, {obj.properties.name});
     if any(isProp)
         index = find(isProp, 1, 'first');
-        value = obj.properties(index).value;
+        obj.properties(index).value = value;
     end
 end

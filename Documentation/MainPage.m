@@ -3,12 +3,29 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % @defgroup BatchRenderer Batch Renderer
-% Render scenes multiple times with changing variables.
+% Render a family of related scenes based on a Collada parent scene.
 % @details
-% These functions make up the RenderToolox3 batch renderer, which can
-% render the same basic scene multiple times, with changing variables.
-% Users should not use most of these functions directly.  Just use the
-% MakeSceneFiles(), BatchRender(), and MakeMontage() functions.
+% These functions make up the RenderToolox3 batch renderer, which takes a
+% Collada parent scene file, applies manipulations specified in a
+% conditions file and a mappings file, and produces a family of
+% renderer-native scene files and renderings.
+%
+% @defgroup Mappings Mappings
+% Functions that support the Batch Renderer.
+% @details
+% These functions support the batch renderer.  They mostly deal with
+% reading manipulations specified in teh the conditions file and mappings
+% files, formatting it properly, and applying it to the Collada parent
+% scene.  Users don't usually need to call these functions.
+%
+% @defgroup SceneDOM Scene DOM
+% Work with XML documents.
+% @details
+% These functions are for reading and writing XML documents, like Collada
+% scene files and renderer-native scene XML files.  Notably, these
+% functions deal with <a
+% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Scene-DOM-Paths">Scene
+% DOM Paths</a>.
 %
 % @defgroup Readers
 % Read multi-spectral data from various image file formats.
@@ -21,40 +38,18 @@
 % @defgroup Utilities
 % Miscellaneous utilities.
 %
-% @defgroup SceneDOM Scene DOM
-% Work with XML documents.
-% @details
-% These functions are for reading and writing XML documents, like Collada
-% scene files and renderer adjustments files.  Notably, these functions
-% deal with <a
-% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Scene-DOM-Paths">Scene
-% DOM Paths</a>.
-%
-% @defgroup MappingsObjects Mappings Objects
-% Process mappings and apply them to the scene.
-% @details
-% These functions process the mappings from the <a
-% href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Mappings-File-Format">mappings
-% file</a>.  In particular, they supplement <a
-% https://github.com/DavidBrainard/RenderToolbox3/wiki/Generic-Scene-Elements">generic
-% scene elements with default property values and convert them to
-% renderer-native formats.
-% @details
-% Users should not use these functions directly.  Just use the
-% MakeSceneFiles() function.
-%
-% @defgroup Mex
-% Build Mex-functions from source.
-% @details
-% These functions are the "Make" functions that compile and link
-% Mex-functions for use with a particular platform.
-%
 % @defgroup ColladaToPBRT
 % Convert Collada scenes to PBRT.
 % @details
 % Theses functions make up the RenderToolbox3 Collada to PBRT scene file
 % converter.  Users should not use most of these functions directly.  Just
 % use the ColladaToPBRT() function.
+%
+% @defgroup Mex
+% Build Mex-functions from source.
+% @details
+% These functions are the "Make" functions that compile and link
+% Mex-functions for use with the local hardware and operating system.
 %
 % @defgroup ExampleDocs Example Documentation
 % Dummy functions to Explain Documentation

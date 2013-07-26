@@ -28,8 +28,4 @@ Generic {
     UVLayout-material:material:anisoward
     UVLayout-material:diffuseReflectance.texture = textureColor
     UVLayout-material:specularReflectance.spectrum = 300:0 800:0
-
-    % TODO: add a bump map to the cube
-    %textureBumps:texture:bitmap
-    %textureBumps:filename.string = ColorIllusionUVBumps.exr
 }

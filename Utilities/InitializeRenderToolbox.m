@@ -13,7 +13,11 @@
 % renderer's executable.
 %
 % @details
-% To see all the defaults, try:
+% See RenderToolbox3ConfigurationTemplate.m for examples of how to set up
+% custom RenderToolbox3 preferences.
+%
+% @details
+% To see all the RenderToolbox3 default preferences, try:
 % @code
 %   InitializeRenderToolbox(true);
 %   MitsubaPrefs = getpref('Mitsuba')
@@ -66,8 +70,9 @@
 % @endcode
 %
 % @details
-% Normally you should set these values with a temporary "hints" struct, and
-% not with setpref().  See GetDefaultHints() for more.
+% Setting these values with setpref() makes the changes persistent.
+% Normally you can set the same values in a temporary way, using a "hints"
+% struct.  See GetDefaultHints().
 %
 % @details
 % By default, leaves any existing preferences in place.  If @a isForce is

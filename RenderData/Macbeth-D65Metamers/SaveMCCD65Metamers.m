@@ -2,6 +2,8 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
+%% Save D65 metamers for 24 Macbeth ColorChecker reflectances.
+%
 % Using the IlluminantMetamerExample() demo function, loop through all 24
 % MCC surface spectra and save the computed D65 Metamers.
 

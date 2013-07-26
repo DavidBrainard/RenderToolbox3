@@ -8,13 +8,15 @@
 % Compiles the ReadMultichannelEXR() mex function from source.  Assumes
 % that the OpenEXR libraries have been installed on the system at
 % usr/opt/local or usr/local.  If the libraries are installed somewhere
-% else, you should edit this function.
+% else on your system, you should copy this file and edit the INC and LINC
+% variables to contain the correct include and library paths for your
+% OpenEXR installation.
 %
 % Should produce a new MakeReadMultichannelEXR() function with a
 % platform-specific Mex-function extension.  See Matlab's mexext().
 %
 % Attempts to read a sample OpenEXR image and plot channel data in a new
-% figure, to verify that the funciton compoled successfully.
+% figure, to verify that the funciton compiled successfully.
 %
 % @details
 % Usage:

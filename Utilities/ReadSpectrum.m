@@ -7,7 +7,7 @@
 %
 % @details
 % Scans the given @a spectrum for wavelength-magnitude pairs.  @a spectrum
-% may be a string or a text file that contains spectrum data.
+% may be a string or a spectrum data text file.
 %
 % @details
 % If @a spectrum is a string, it must contain wavelength:magnitude pairs,

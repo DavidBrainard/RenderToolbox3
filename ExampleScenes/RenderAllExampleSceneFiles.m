@@ -15,12 +15,15 @@
 % This script is useful for rendering lots and lots of scene files that
 % were generated previously with  GenerateAllExampleSceneFiles.  In some
 % production settings, like  computer clusters, it's useful to have a
-% top-level script that takes no arguments, like this one.  You should edit
-% parameter values in this script to agree with your system.
+% top-level script that takes no arguments, like this one.  You should copy
+% this script and edit variables to agree with your system.
 %
 % It should be possible to run this script from any machine, including one
 % that does not have OpenGL support, or one that delegates to worker nodes
 % that don't have OpenGL support.
+%
+% See
+% https://github.com/DavidBrainard/RenderToolbox3/wiki/Generate-and-RenderAllExampleSceneFiles.
 %
 
 %% Choose global RenderToolbox3 behavior.
@@ -29,7 +32,7 @@ setpref('RenderToolbox3', 'isDryRun', false);
 setpref('RenderToolbox3', 'isReuseSceneFiles', true);
 setpref('RenderToolbox3', 'isPlot', false);
 
-%% Invoke rendering scripts.
+%% Invoke executive scripts.
 % choose where to put output files
 %   for example '/Users/myName/epic-scene-test'
 %   or empty '' for default folders (see GetDefaultHints())

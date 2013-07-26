@@ -108,7 +108,7 @@ Generic {
 }
 
 Mitsuba {
-    % allow unrealistic reflectances
+    % for demo purposes, allow unrealistic reflectances
 	Side-material:ensureEnergyConservation.boolean = false
 }
 

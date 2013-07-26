@@ -8,13 +8,13 @@
 % @details
 % Returns true if the given @a vertices are wound in clockwise order.  For
 % porposes of this function, "clockwise" is defined arbitrarily and it's
-% only meaningful to compare sets of @a vertices for differences in
+% only meaningful to compare sets of @a vertices for @em differences in
 % winding order.
 %
 % @details
 % @a vertices should contain at least 3 XYZ triples.  Only the first 3 will
 % be checked for winding order.  Subtracts the first vertex from each of
-% the nest two vertices, and takes the cross product of the differences.
+% the next two vertices, and takes the cross product of the differences.
 % If the product has a non-negative z-component, @a vertices are
 % "clockwise".  Otherwise they're "counter-clockwise".
 %

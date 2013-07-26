@@ -45,8 +45,9 @@
 % @details
 % Also by default, stops creating each Scene DOM path at the first node
 % that has an "id" attribute.  If @a childPattern is provided, it must be a
-% regular expression to compare to node names.  Nodes whose names match @a
-% childPattern will allow path creation to continue.
+% regular expression to compare to node names (note names are not the samd
+% as id attributes).  Nodes whose node names match @a childPattern will
+% allow path creation to continue, even if they have an id attribute.
 %
 % @details
 % Usage:

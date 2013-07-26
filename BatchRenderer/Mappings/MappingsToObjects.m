@@ -8,9 +8,10 @@
 % @details
 % Create a struct array of mappings objects, based on the struct array of
 % mappings data as returned from ParseMappings().  Each mappings object
-% incorporates a declaration and property configurations, taken mappings
-% that use the same id, inside the same block.  Returns a new struct array
-% of mappings objects.
+% incorporates one declaration and zero or more property configurations.
+% These are taken from mappings that use the same id value and reside
+% within the same mappings block.  Returns a new struct array of mappings
+% objects.
 %
 % @details
 % Used internally by MakeSceneFiles().
@@ -19,7 +20,7 @@
 % Usage:
 %   objects = MappingsToObjects(mappings)
 %
-% @ingroup MappingsObjects
+% @ingroup Mappings
 function objects = MappingsToObjects(mappings)
 
 % create an object for each id used in mappings

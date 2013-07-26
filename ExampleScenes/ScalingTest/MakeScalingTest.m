@@ -6,7 +6,7 @@
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-sceneFile = 'ScalingTest.dae';
+parentSceneFile = 'ScalingTest.dae';
 conditionsFile = 'ScalingTestConditions.txt';
 mappingsFile = 'ScalingTestMappings.txt';
 
@@ -26,14 +26,14 @@ for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
     
     % make 3 multi-spectral renderings, saved in .mat files
-    sceneFiles = MakeSceneFiles(sceneFile, conditionsFile, mappingsFile, hints);
-    outFiles = BatchRender(sceneFiles, hints);
+    nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('%s (%s)', 'ScalingTest', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
-        MakeMontage(outFiles, montageFile, toneMapFactor, isScaleGamma, hints);
+        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScaleGamma, hints);
     
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);

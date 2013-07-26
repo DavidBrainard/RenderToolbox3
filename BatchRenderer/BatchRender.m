@@ -3,19 +3,23 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Render multiple scenes at once.
-%   @param sceneFiles cell array of renderer-specific scene file names
+%   @param sceneFiles cell array of renderer-native scene file names
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Renders multiple given scene files in one batch.  @a sceneFiles should be
-% a cell array of renderer-specific scene files, for example, as produced
-% by MakeSceneFiles().  All scene files should be intended for the same
-% renderer, specified in @a hints.renderer.
+% Renders multiple renderer-native scene files in one batch.  @a sceneFiles
+% should be a cell array of renderer-native scene files, such as those
+% produced by MakeSceneFiles().  All renderer-native scene files should be
+% intended for the same renderer, which should be specified in @a
+% hints.renderer.
 %
 % @details
-% Mitsuba scene files must be in Mitsuba's native .xml scene file format.
-% PBRT scene files may be in PBRT's native text scene file format, or in
-% RenderToolbox3's custom PBRT-XML format with the extension.
+% Mitsuba-native scene files must use Mitsuba's own .xml file format.
+% PBRT-native scene files should use RenderToolbox3's custom PBRT-XML file
+% format with the extension .pbrt.xml, as produced by ColladaToPBRT().
+% PBRT-native scene files may also use PBRT's own text file format, but
+% these renderings might not be scaled properly into physical radiance
+% units.
 %
 % @details
 % @a hints may be a struct with options that affect the rendering process,
@@ -24,28 +28,29 @@
 %   - @a hints.renderer specifies which renderer to use
 %   - @a hints.isParallel specifies whether to render in a "parfor" loop
 %   - @a hints.outputDataFolder specefies where to store multi-spectral
-%   data files.
+%   radiance data files.
 %   - @a hints.outputImageFolder specifies where to store RGB image files.
-%   - @a hints.isDryRun specefies whether or not to skip rendering
+%   - @a hints.isDryRun specefies whether or not to skip actual rendering.
 %   .
 %
 % @details
-% Renders each scene specified in @a sceneFiles, and writes a .mat file
-% each one.  The .mat file will contain multi-spectral renderer output in
-% two variables:
-%   - multispectralImage - matrix of multispectral image data with size
+% Renders each renderer-native scene file in @a sceneFiles, and writes a
+% new mat-file for each one.  Each mat-file will contain a multi-spectral
+% rendering with two variables:
+%   - multispectralImage - matrix of multi-spectral radiance data with size
 %   [height width n]
-%   - S - spectral plane description, [start delta n]
+%   - S - spectral band description for the rendering with elements [start
+%   delta n]
 %   .
-% where height and width are pixel image dimensions and n is the number of
+% height and width are pixel image dimensions and n is the number of
 % spectral bands in the image.  See the RenderToolbox3 wikiw for more about
 % <a
 % href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands">Spectrum Bands</a>.
 %
 % @details
-% The .mat file will also contain variables with data about how the scene
-% was rendered:
-%   - sceneFile - the the name of the scene file
+% The each mat-file will also contain metadata about how the scene was
+% rendered:
+%   - sceneFile - the the name of the renderer-native scene file
 %   - hints - the given @a hints struct, or default hints struct
 %   - versionInfo - struct of version information about RenderToolbox3 and
 %   its dependencies
@@ -54,18 +59,18 @@
 %   .
 %
 % @details
-% The multi-spectral data in each .mat file will be scaled into radiance
-% units using funtions like PBRTDataToRadiance() and
-% MitsubaDataToRadiance().  These rely on pre-computed renderer-specific
-% scale factors computed in ComputeRadiometricScaleFactors().  The .mat
-% file will also contain the radiometric scale factor that was used to
-% convert data to radiance units:
+% The multi-spectral data in each .mat file will be scaled into physical
+% radiance units using funtions like PBRTDataToRadiance() and
+% MitsubaDataToRadiance().  These rely on renderer-specific scale factors
+% computed previousy with ComputeRadiometricScaleFactors().  Each mat-file
+% will also contain the radiometric scale factor that was used to convert
+% data to radiance units: 
 %   - radiometricScaleFactor - scale factor that was used to bring renderer
-%   ouput into radiance units
+%   ouput into physical radiance units
 %   .
 %
 % @details
-% Returns a cell array of output .mat file names, with the same dimensions
+% Returns a cell array of output mat-file names, with the same dimensions
 % as the given @a sceneFiles.
 %
 % @details

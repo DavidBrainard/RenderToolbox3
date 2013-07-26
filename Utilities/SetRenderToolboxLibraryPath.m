@@ -2,13 +2,17 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Tell the operating system where to find RenderToolbox3 dynamic libraries.
+% Tell the operating system where to find dynamic libraries for RenderToolbox3.
 %
 % @details
 % Configures the operating system environment to locate dynamic libraries
 % that are required for RenderToolbox3.  The correct dynamic library
 % configuration is highly platform-specific. On some machines setting up
 % the library path is trivial, on others it is a pain in the neck.
+%
+% @details
+% This function is invoked automatically by RenderToolbox3 utilities.  Most
+% users should not need to invoke this function.
 %
 % @details
 % Uses configuration values stored with Matlab's built-in getpref() and
@@ -27,10 +31,10 @@
 %   existing library search path.
 %   - setpref('RenderToolbox3', 'libPathLast', matching) - this will set
 %   a regular expression used to sort entries of the library search path.
-%   Path entries that match the given matching expression will be moved so
-%   that they appear last in the library path.  For example, setting
-%   matching to 'matlab|MATLAB' will move built-in Matlab path entries to
-%   the end of the path, allowing user-specified paths entries to take
+%   Path entries that match the given matching expression will be moved to
+%   the end of the library path.  For example, setting matching to
+%   'matlab|MATLAB' will move built-in Matlab path entries to the end of
+%   the library search path, allowing user-specified entries to take
 %   precedence.
 %   .
 %

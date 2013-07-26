@@ -2,14 +2,20 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
+% Make a D65 metamer for a given Macbeth ColorChcekr tile.
+%   @param whichSur the number of a ColorChecker tile, 1-24.
+%
+% Produce a new illuminant that differs in spectrum from D65, but that
+% produces the same XYZ value when reflected from the specified
+% ColorChecker tile. 
+%
+% David Brainard wrote this to demonstrate the idea of metamers.
+%
+% @details
+% Usage:
+%   spd2 = IlluminantMetamerExample(whichSur)
+%
 function spd2 = IlluminantMetamerExample(whichSur)
-% 	spd2 = IlluminantMetamerExample(whichSur)
-%
-% Produce two illuminants that differ in spectra but that produce the same
-% XYZ values from a specified MCC color.
-%
-% David brainard wrote this to demonstrate the idea of metamers.
-%
 
 %% Load in relevant data
 S = [400 10 31];

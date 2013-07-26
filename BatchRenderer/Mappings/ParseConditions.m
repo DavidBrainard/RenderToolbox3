@@ -23,7 +23,7 @@
 % Usage:
 %   [names, values] = ParseConditions(conditionsFile)
 %
-% @ingroup BatchRenderer
+% @ingroup Mappings
 function [names, values] = ParseConditions(conditionsFile)
 
 %% Prepare to read conditions file.

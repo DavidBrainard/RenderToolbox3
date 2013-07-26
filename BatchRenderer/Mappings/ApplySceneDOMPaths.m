@@ -23,7 +23,7 @@
 % Usage:
 %   ApplySceneDOMPaths(idMap, mappings)
 %
-% @ingroup BatchRenderer
+% @ingroup Mappings
 function ApplySceneDOMPaths(idMap, mappings)
 
 for ii = 1:numel(mappings)
