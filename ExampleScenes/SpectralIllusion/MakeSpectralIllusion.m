@@ -70,7 +70,7 @@ if hints.isPlot
     ylabel(axReflect, 'reflectance');
     legend(axReflect, 'target', 'destination', ...
         'Location', 'northwest')
-    set(axReflect,  'UserData', 'reflectance');
+    set(axReflect,  'UserData', 'reflectance', 'Box', 'off');
     drawnow();
 end
 
@@ -135,7 +135,7 @@ if hints.isPlot
         destWls, destIllum, 'o');
     ylabel(axIllum, 'illumination');
     xlim(axIllum, [350 750]);
-    set(axIllum, 'UserData', 'illumination');
+    set(axIllum, 'UserData', 'illumination', 'Box', 'off');
     drawnow();
     
     % show rendered pixel spectra
@@ -146,7 +146,7 @@ if hints.isPlot
         wls, destPixel, 'o');
     ylabel(axPixel, 'pixel');
     xlim(axPixel, [350 750]);
-    set(axPixel, 'UserData', 'reflected');
+    set(axPixel, 'UserData', 'reflected', 'Box', 'off');
     drawnow();
 end
 

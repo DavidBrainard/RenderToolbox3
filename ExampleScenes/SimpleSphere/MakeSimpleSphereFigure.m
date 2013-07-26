@@ -119,7 +119,7 @@ end
 
 % take a slice through each image
 wls = MakeItWls(refData.S);
-bandIndex = 15;
+bandIndex = 13;
 sliceWavelength = wls(bandIndex);
 referenceSlice = refData.multispectralImage(:, sliceX, bandIndex);
 PBRTSlice = PBRTData.multispectralImage(:, sliceX, bandIndex);
@@ -135,7 +135,7 @@ axSlice = subplot(3, 3, 7:9, ...
     'YTick', [0 1], ...
     'YTickLabel', {'0', 'reference max'});
 powerText = sprintf('%dnm power', sliceWavelength);
-ylabel(axSlice, powerText, 'FontSize', labelSize);
+title(axSlice, powerText, 'FontSize', labelSize);
 xlabel(axSlice, 'image row (pixels)', 'FontSize', labelSize);
 
 sliceMax = max(referenceSlice);
