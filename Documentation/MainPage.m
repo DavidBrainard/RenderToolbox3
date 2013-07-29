@@ -14,7 +14,7 @@
 % Functions that support the Batch Renderer.
 % @details
 % These functions support the batch renderer.  They mostly deal with
-% reading manipulations specified in teh the conditions file and mappings
+% reading manipulations specified in the the conditions file and mappings
 % files, formatting it properly, and applying it to the Collada parent
 % scene.  Users don't usually need to call these functions.
 %
