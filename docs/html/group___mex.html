@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Render Toolbox 3
-   &#160;<span id="projectnumber">v0.2</span>
+   &#160;<span id="projectnumber">v1.0</span>
    </div>
   </td>
  </tr>
@@ -90,7 +90,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Build Mex-functions from source. </p>
-<p>These functions are the "Make" functions that compile and link Mex-functions for use with a particular platform. </p>
+<p>These functions are the "Make" functions that compile and link Mex-functions for use with the local hardware and operating system. </p>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="ga7164614f0ae2bd03ecb9f56046e5d7d1"></a>
 <div class="memitem">
@@ -106,9 +106,9 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Compile the MakeReadMultichannelEXR Mex-function. </p>
-<p>Compiles the ReadMultichannelEXR() mex function from source. Assumes that the OpenEXR libraries have been installed on the system at usr/opt/local or usr/local. If the libraries are installed somewhere else, you should edit this function.</p>
+<p>Compiles the ReadMultichannelEXR() mex function from source. Assumes that the OpenEXR libraries have been installed on the system at usr/opt/local or usr/local. If the libraries are installed somewhere else on your system, you should copy this file and edit the INC and LINC variables to contain the correct include and library paths for your OpenEXR installation.</p>
 <p>Should produce a new <a class="el" href="group___mex.html#ga7164614f0ae2bd03ecb9f56046e5d7d1" title="Compile the MakeReadMultichannelEXR Mex-function.">MakeReadMultichannelEXR()</a> function with a platform-specific Mex-function extension. See Matlab's mexext().</p>
-<p>Attempts to read a sample OpenEXR image and plot channel data in a new figure, to verify that the funciton compoled successfully.</p>
+<p>Attempts to read a sample OpenEXR image and plot channel data in a new figure, to verify that the funciton compiled successfully.</p>
 <p>Usage: <a class="el" href="group___mex.html#ga7164614f0ae2bd03ecb9f56046e5d7d1" title="Compile the MakeReadMultichannelEXR Mex-function.">MakeReadMultichannelEXR()</a> </p>
 
 </div>
@@ -116,7 +116,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 2 2013 13:17:15 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 29 2013 10:40:53 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

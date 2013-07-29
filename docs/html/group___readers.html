@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Render Toolbox 3
-   &#160;<span id="projectnumber">v0.2</span>
+   &#160;<span id="projectnumber">v1.0</span>
    </div>
   </td>
  </tr>
@@ -233,7 +233,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Reads an OpenEXR image with an arbitrary number of spectral slices.</p>
-<p>The given <em>exrFile</em> should be an OpenEXR multispectral image data, with color data stored as evenly spaced slices through the spectrum, not as RGB or RGBA. Each slice must have a name that identifies the wavelengths of that particular slice. The name should be formatted like this: </p>
+<p>The given <em>exrFile</em> should be an OpenEXR multi-spectral data file, with color data stored as evenly spaced slices through the spectrum, not as RGB or RGBA. Each slice must have a name that identifies the wavelengths of that particular slice. The name should be formatted like this: </p>
 <div class="fragment"><div class="line">12.34-56.78nm</div>
 </div><!-- fragment --><p> where "12.34" represents any decimal value for the low bound of the slice's spectrum band, and "56.78" represents any decimal value for the high bound. Both values should be in units of nanometers. The "nm" suffix is optional. Image slices with names that don't match this pattern will be ignored.</p>
 <p>Returns an array of image data with size [height width n], where height and width are image sizes in pixels, and n is the number of spectral slices. The n slices will be sorted from low to high wavelength.</p>
@@ -264,7 +264,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Scans the given <em>spectrum</em> for wavelength-magnitude pairs. <em>spectrum</em> may be a string or a text file that contains spectrum data.</p>
+<p>Scans the given <em>spectrum</em> for wavelength-magnitude pairs. <em>spectrum</em> may be a string or a spectrum data text file.</p>
 <p>If <em>spectrum</em> is a string, it must contain wavelength:magnitude pairs, with spaces between pairs. For example: </p>
 <div class="fragment"><div class="line">300:0.1 550:0.5 800:0.9</div>
 </div><!-- fragment --><p> where 300, 550, and 800 are wavelengths in namometers, and 0.1, 0.5, and 0.9 are magnutudes for each wavelength.</p>
@@ -317,7 +317,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Writes the given <em>wavelengths</em> and <em>magnitudes</em> to a text file, with the given <em>filename</em>.</p>
+<p>Writes the given <em>wavelengths</em> and <em>magnitudes</em> to a spectrum data text file, with the given <em>filename</em>.</p>
 <p>The text file will contain a wavelength-magnitude pair on each line. This format is suitable for specifying spectra to PBRT or Mitsuba. For example: </p>
 <div class="fragment"><div class="line">300 0.1</div>
 <div class="line">550 0.5</div>
@@ -331,7 +331,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 2 2013 13:17:15 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 29 2013 10:40:53 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>

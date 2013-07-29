@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Render Toolbox 3
-   &#160;<span id="projectnumber">v0.2</span>
+   &#160;<span id="projectnumber">v1.0</span>
    </div>
   </td>
  </tr>
@@ -112,7 +112,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaa32b05c4394e44c8acff91190f10b478"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the value of an element or attribute in an XML document.  <a href="#gaa32b05c4394e44c8acff91190f10b478"></a><br/></td></tr>
 <tr class="separator:gaa32b05c4394e44c8acff91190f10b478"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga57f4c91992d746e08e6516d0fbc824b1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___scene_d_o_m.html#ga57f4c91992d746e08e6516d0fbc824b1">MergeAdjustments</a> (sceneDoc, adjustmentsDoc, excludePattern)</td></tr>
-<tr class="memdesc:ga57f4c91992d746e08e6516d0fbc824b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merge a PBRT-XML scene document with an adjustments document.  <a href="#ga57f4c91992d746e08e6516d0fbc824b1"></a><br/></td></tr>
+<tr class="memdesc:ga57f4c91992d746e08e6516d0fbc824b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merge an XML scene document with an adjustments document.  <a href="#ga57f4c91992d746e08e6516d0fbc824b1"></a><br/></td></tr>
 <tr class="separator:ga57f4c91992d746e08e6516d0fbc824b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaab2baa5862362693408a86bf6d683f7b"><td class="memItemLeft" align="right" valign="top">pathString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___scene_d_o_m.html#gaab2baa5862362693408a86bf6d683f7b">PathCellToString</a> (pathCell)</td></tr>
 <tr class="memdesc:gaab2baa5862362693408a86bf6d683f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a Scene DOM path cell array to the equivalent string.  <a href="#gaab2baa5862362693408a86bf6d683f7b"></a><br/></td></tr>
@@ -147,7 +147,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Work with XML documents. </p>
-<p>These functions are for reading and writing XML documents, like Collada scene files and renderer adjustments files. Notably, these functions deal with <a href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Scene-DOM-Paths">Scene DOM Paths</a>. </p>
+<p>These functions are for reading and writing XML documents, like Collada scene files and renderer-native scene XML files. Notably, these functions deal with <a href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Scene-DOM-Paths">Scene DOM Paths</a>. </p>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="gade86d91614c2b5110521c5ce70525497"></a>
 <div class="memitem">
@@ -281,7 +281,7 @@ Functions</h2></td></tr>
 <p>Traverses the XML DOM document represented by <em>docNode</em>, and builds a map to elements that have an "id" attribute.</p>
 <p>Returns an "id map" that represents the same document as <em>docNode</em>. An id map is a containers.Map of document elements that have "id" attributes, with the id values as map keys. Nodes with id attributes often correspond to intuitive parts of a scene, like the camera, lights, shapes, and materials.</p>
 <p>Also returns a cell array of element ids in depth first order. This is the order in which elements are encountered during document traversal. This should also be the top-down order of elements as the appear in the XML text file.</p>
-<p>By default, returns all elements with id attributes. If <em>excludePattern</em> is provided, it must be a regular expression to match against element node names. Elements whose names match <em>excludePattern</em> will not be added to the id map.</p>
+<p>By default, returns all elements with id attributes. If <em>excludePattern</em> is provided, it must be a regular expression to match against element node names (note names are not the same as id attributes). Elements whose node names match <em>excludePattern</em> will not be added to the id map, even if they have an id attribute.</p>
 <p>Usage: [idMap, sortedKeys] = <a class="el" href="group___scene_d_o_m.html#gab9d8089f38725bb50bedb9f515db57d0" title="Get uniquely identified XML document elements, and Scene DOM paths.">GenerateSceneIDMap(docNode, excludePattern)</a> </p>
 
 </div>
@@ -338,7 +338,7 @@ Functions</h2></td></tr>
 <p>By default, the Scene DOM paths refer only to element node names. Therefore, the paths may not be unique and some nodes will be ignored. If <em>checkName</em> is provided, it should be the name of an attribute that can disambiguate elements by its value. The attribute name and value will be included in the paths, for all objects that have the attribute.</p>
 <p>A useful value for <em>checkName</em> might be 'id', 'sid', 'name', or 'semantic'. These attributes often distinguish similar nodes in Collada scene files and renderer adjustments files.</p>
 <p>Also by default, all elements and attributes are included in the path map. If <em>filterPattern</em> is provided, it must be a regular expression to compare to each Scene DOM path string. Only nodes whose path strings match the <em>filterPattern</em> will be included in the path map.</p>
-<p>Also by default, stops creating each Scene DOM path at the first node that has an "id" attribute. If <em>childPattern</em> is provided, it must be a regular expression to compare to node names. Nodes whose names match <em>childPattern</em> will allow path creation to continue.</p>
+<p>Also by default, stops creating each Scene DOM path at the first node that has an "id" attribute. If <em>childPattern</em> is provided, it must be a regular expression to compare to node names (note names are not the samd as id attributes). Nodes whose node names match <em>childPattern</em> will allow path creation to continue, even if they have an id attribute.</p>
 <p>Usage: [pathMap, sortedKeys] = <a class="el" href="group___scene_d_o_m.html#gaadff18f21e317a21820394c8da408594" title="Get many XML document nodes and Scene DOM paths.">GenerateScenePathMap(docNode, checkName, filterPattern, childPattern)</a> </p>
 
 </div>
@@ -506,7 +506,7 @@ Functions</h2></td></tr>
 </dl>
 <p>Create a Scene DOM path for the given XML document element or attribute.</p>
 <p>By default, creates a Scene DOM path that only uses element names. If <em>checkName</em> is provided, it must the string name of an attribute to "check". For elements in the path that have an attribute with the given <em>checkName</em>, the name and value will be included in the path.</p>
-<p>Also by default, stops creating a Scene DOM path at the first node that has an "id" attribute. If <em>childPattern</em> is provided, it must be a regular expression to compare to node names. Nodes whose names match <em>childPattern</em> will allow path creation to continue.</p>
+<p>Also by default, stops creating a Scene DOM path at the first node that has an id attribute. If <em>childPattern</em> is provided, it must be a regular expression to compare to node names. Nodes whose names match <em>childPattern</em> will allow path creation to continue, even if they have an id attribute.</p>
 <p>Returns a Scene DOM path cell array for the given node.</p>
 <p>See the RenderToolbox3 wiki for more about <a href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Scene-DOM-Paths">Scene DOM paths</a>.</p>
 <p>Usage: nodePath = <a class="el" href="group___scene_d_o_m.html#gac869c294e48ae005f777949bf14eb090" title="Make a Scene DOM path for an XML document element or attribute.">GetNodePath(node, checkName, childPattern)</a> </p>
@@ -583,7 +583,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Merge a PBRT-XML scene document with an adjustments document. </p>
+<p>Merge an XML scene document with an adjustments document. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sceneDoc</td><td>document node that represents a scene file </td></tr>
@@ -593,10 +593,10 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Merge scene node values from the document represented by <em>adjustmentsDoc</em> into the document represented by <em>sceneDoc</em>. Nodes that exist in both documents will have their values set to the values in the adjustments document. Nodes that don't exist in the scene document will be created as needed.</p>
-<p><em>sceneDoc</em> <em>adjustmentsDoc</em> must be XML document nodes as returned from <a class="el" href="group___scene_d_o_m.html#ga7fea3cfb6fbbc86c78793a4c26f6e59b" title="Read a scene XML document from file.">ReadSceneDOM()</a>.</p>
+<p><em>sceneDoc</em> <em>adjustmentsDoc</em> must be XML document nodes as returned from <a class="el" href="group___scene_d_o_m.html#ga7fea3cfb6fbbc86c78793a4c26f6e59b" title="Read a scene XML document from file.">ReadSceneDOM()</a>. <em>sceneDoc</em> may be a Collada parent scene file, a Mitsuba-native xml-file, or a RenderToolbox3 PBRT-XML file. <em>adjustmentsSoc</em> shouls use the same format as <em>sceneDoc</em>, and should contain elements that supplement or replace elements in <em>sceneDoc</em>.</p>
 <p>Nodes in the adjustment file are matched with nodes in the scene file using the id attribute. A node in the adjustments file with the node name "merge" will merge values and attributes with the matching nodes in the scene file, with the adjustments nodes taking precidence. Other nodes will replace the matching node in the scene file.</p>
-<p>By default, merges all nodes from <em>adjustmentsDoc</em>, in depth first order. If <em>excludePattern</em> is provided, it must be a it must be a regular expression to match against element node names. Elements whose names match <em>excludePattern</em> will not be merged.</p>
-<p>Usage: <a class="el" href="group___scene_d_o_m.html#ga57f4c91992d746e08e6516d0fbc824b1" title="Merge a PBRT-XML scene document with an adjustments document.">MergeAdjustments(sceneDoc, adjustmentsDoc, excludePattern)</a> </p>
+<p>By default, merges all nodes from <em>adjustmentsDoc</em>, in depth first order. If <em>excludePattern</em> is provided, it must be a regular expression to match against element node names (node names are not the same as id attributes). Elements whose node names match <em>excludePattern</em> will not be merged.</p>
+<p>Usage: <a class="el" href="group___scene_d_o_m.html#ga57f4c91992d746e08e6516d0fbc824b1" title="Merge an XML scene document with an adjustments document.">MergeAdjustments(sceneDoc, adjustmentsDoc, excludePattern)</a> </p>
 
 </div>
 </div>
@@ -738,7 +738,7 @@ Functions</h2></td></tr>
 </dl>
 <p>Read the given XML <em>sceneFile</em> (.dae or .xml). The <em>sceneFile</em> should be a Collada scene file, or a renderer adjustments file. <a href="https://collada.org/mediawiki/index.php/COLLADA_-_Digital_Asset_and_FX_Exchange_Schema">Collada</a> is is an XML-based format for exchanging 3D models and assets. Renderer <a href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Adjustments-Files">Adjustments Files</a> introduce scene elements that Collada doesn't know about.</p>
 <p>Returns an XML Document Object Model (DOM) document node. DOM is a programmatic interface for XML files that takes advantage of XML document structure and takes care of reading and writing files.</p>
-<p>Also returns an "id map" that represent the document in terms of elements that have unique identifiers. If <em>excludePattern</em> is provided, it must be a regular expression to match against element node names. Elements whose names match <em>excludePattern</em> will not be added to the id map.</p>
+<p>Also returns an "id map" that represent the document in terms of elements that have unique identifiers (id attributes). If <em>excludePattern</em> is provided, it must be a regular expression to match against element node names. Elements whose names match <em>excludePattern</em> will not be added to the id map.</p>
 <p>Usage: [docNode, idMap] = <a class="el" href="group___scene_d_o_m.html#ga7fea3cfb6fbbc86c78793a4c26f6e59b" title="Read a scene XML document from file.">ReadSceneDOM(sceneFile, excludePattern)</a> </p>
 
 </div>
@@ -962,7 +962,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Traverses the Collada document in the given <em>colladaFile</em> and creates a new, reduced version of the document, at the given <em>reducedFile</em>. The reduced document will contain all of the basic scene elements including cameras, some types of lights, and geometry. It will not contain fancier scene elemnets like textured materials, animations, controllers, and physics.</p>
+<p>Traverses the Collada document in the given <em>colladaFile</em> and writes a new, reduced version of the document, with the given <em>reducedFile</em> name. The reduced document will contain all of the basic scene elements including cameras, some types of lights, and geometry. It will not contain fancier scene elemnets like textured materials, animations, controllers, and physics.</p>
 <p>Attempts to obey the Collada 1.4 schema, so that the new <em>reducedFile</em> will be a valid Collada file. See <a href="http://www.khronos.org/collada/">http://www.khronos.org/collada/</a> for more about the Collada XML schema. This cheat sheet is especially useful: <a href="http://www.khronos.org/files/collada_reference_card_1_4.pdf">http://www.khronos.org/files/collada_reference_card_1_4.pdf</a></p>
 <p>Returns the name of the new, reduced scene file.</p>
 <p>Usage: reducedFile = <a class="el" href="group___scene_d_o_m.html#ga3fb262c636b525c9847903dfede903cf" title="Reduce a Collada scene file to basic geometry and materials.">WriteReducedColladaScene(colladaFile, reducedFile)</a> </p>
@@ -1009,7 +1009,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 2 2013 13:17:15 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 29 2013 10:40:53 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>
