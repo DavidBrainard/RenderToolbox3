@@ -27,7 +27,8 @@ cd $WORKING_FOLDER
 git clone $RTB_REPO
 cd RenderToolbox3
 git checkout master
-git tag -a $RTB_VERSION -m "tag for RenderToolbox3 version $RTB_VERSION"
+git tag --force -a $RTB_VERSION -m "tag for RenderToolbox3 version $RTB_VERSION"
+git push origin
 git push origin --tags
 
 ### generate fresh doxygen documentation based on master branch, stored in gh-pages branch
@@ -53,7 +54,8 @@ echo
 cd $WORKING_FOLDER/RenderToolbox3-gh-pages
 git add .
 git commit -m "fresh docs for RenderToolbox3 version $RTB_VERSION"
-git tag -a $RTB_VERSION-docs -m "tag for RenderToolbox3 version $RTB_VERSION-docs"
+git tag --force  -a $RTB_VERSION-docs -m "tag for RenderToolbox3 version $RTB_VERSION-docs"
+git push origin
 git push origin --tags
 
 ### make a tag for the RenderToolbox3 wiki
@@ -64,5 +66,6 @@ echo
 cd $WORKING_FOLDER
 git clone $RTB_WIKI RenderToolbox3-wiki
 cd RenderToolbox3-wiki
-git tag -a $RTB_VERSION-wiki -m "tag for RenderToolbox3 version $RTB_VERSION-wiki"
+git tag --force -a $RTB_VERSION-wiki -m "tag for RenderToolbox3 version $RTB_VERSION-wiki"
+git push origin
 git push origin --tags
