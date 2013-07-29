@@ -26,6 +26,7 @@ echo
 cd $WORKING_FOLDER
 git clone $RTB_REPO
 cd RenderToolbox3
+git pull
 git checkout master
 git tag --force -a $RTB_VERSION -m "tag for RenderToolbox3 version $RTB_VERSION"
 git push origin
