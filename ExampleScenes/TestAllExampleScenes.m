@@ -83,6 +83,11 @@ if ~isempty(outputRoot)
         'outputImageFolder', fullfile(outputRoot, 'images'));
 end
 
+% turn of warnings about scaling for this run, so as not
+% to alarm the user of the test program.
+warnState(1) = warning('off','RenderToolbox3:PBRTXMLIncorrectlyScaled');
+warnState(2) = warning('off','RenderToolbox3:DefaultParamsIncorrectlyScaled');
+
 % try to render each example scene
 for ii = 1:numel(makeFunctions)
     
@@ -100,8 +105,24 @@ for ii = 1:numel(makeFunctions)
         results(ii).error = err;
     end
     
+    % sometimes the Matlab java heap files up.  If
+    % the jheapcl function is on the path, call it
+    % to clear the Java heap.  This may help a bit.
+    if (exist('jheapcl','file'))
+        jheapcl;
+    end
+    
+    % close figures so as to avoid filling up 
+    % memory
+    close all;
+    
     % keep track of timing
     results(ii).elapsed = toc(testTic);
+end
+
+% restore warning state
+for ii = 1:length(warnState)
+    warning(warnState(ii).state,warnState(ii).identifier);
 end
 
 % how did it go?
