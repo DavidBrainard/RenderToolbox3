@@ -108,9 +108,11 @@ for ii = 1:numel(makeFunctions)
     % sometimes the Matlab java heap files up.  If
     % the jheapcl function is on the path, call it
     % to clear the Java heap.  This may help a bit.
-    if (exist('jheapcl','file'))
-        jheapcl;
-    end
+    %
+    % or it may hurt.  I commented this back out.
+    %if (exist('jheapcl','file'))
+    %    jheapcl;
+    %end
     
     % close figures so as to avoid filling up 
     % memory
