@@ -67,7 +67,7 @@ end
 
 %% PBRT requires scene-specific adjustments to the scaling factor.
 if isempty(pbrtDoc)
-    warning('PBRT-XML document was not provided.\nRadiance data might be incorrectly scaled.');
+    warning('RenderToolbox3:PBRTXMLIncorrectlyScaled','PBRT-XML document was not provided.\nRadiance data might be incorrectly scaled.');
     
 else
     % compare scene pixel reconstruction filter to default
@@ -146,5 +146,5 @@ if ~strcmp(sceneValue, defaultValue)
         warningMessage = sprintf('%s\n Radiance data might be incorrectly scaled.', ...
             warningMessage);
     end
-    warning(warningMessage);
+    warning('RenderToolbox3:DefaultParamsIncorrectlyScaled',warningMessage);
 end
