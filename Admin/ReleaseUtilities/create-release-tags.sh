@@ -41,9 +41,10 @@ cd $WORKING_FOLDER
 cp -r RenderToolbox3 RenderToolbox3-gh-pages
 cd RenderToolbox3-gh-pages
 git checkout gh-pages
+git pull
 cp RenderToolbox3Doxyfile RenderToolbox3Doxyfile-temp
 echo "PROJECT_NUMBER=$RTB_VERSION" >> RenderToolbox3Doxyfile-temp
-rm -r docs
+git rm -r docs
 $DOXYGEN RenderToolbox3Doxyfile-temp
 rm RenderToolbox3Doxyfile-temp
 
