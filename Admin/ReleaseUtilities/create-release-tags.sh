@@ -30,7 +30,7 @@ git pull
 git checkout master
 git tag --force -a $RTB_VERSION -m "tag for RenderToolbox3 version $RTB_VERSION"
 git push origin
-git push origin --tags
+git push origin --tags --force
 
 ### generate fresh doxygen documentation based on master branch, stored in gh-pages branch
 echo
@@ -58,7 +58,7 @@ git add .
 git commit -m "fresh docs for RenderToolbox3 version $RTB_VERSION"
 git tag --force  -a $RTB_VERSION-docs -m "tag for RenderToolbox3 version $RTB_VERSION-docs"
 git push origin
-git push origin --tags
+git push origin --tags --force
 
 ### make a tag for the RenderToolbox3 wiki
 echo
@@ -70,4 +70,4 @@ git clone $RTB_WIKI RenderToolbox3-wiki
 cd RenderToolbox3-wiki
 git tag --force -a $RTB_VERSION-wiki -m "tag for RenderToolbox3 version $RTB_VERSION-wiki"
 git push origin
-git push origin --tags
+git push origin --tags --force
