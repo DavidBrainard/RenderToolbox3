@@ -47,11 +47,13 @@ if ispref('Mitsuba')
     rmpref('Mitsuba');
 end
 
-% 
-Mitsuba.adjustmentsFile = fullfile(RenderToolboxRoot(), 'RenderData', 'MitsubaDefaultAdjustments.xml');
+% choose the file with default adjustments
+adjustmentsFile = fullfile( ...
+    RenderToolboxRoot(), 'RenderData', 'MitsubaDefaultAdjustments.xml');
 
+% choose the default scale factor for radiance units
+radiometricScaleFactor = 0.0795827427;
 
-RenderToolbox3.MitsubaRadiometricScale = 0.0795827427;
 if ismac()
     % on OS X, Mitsuba is an "app bundle"
     
@@ -82,43 +84,30 @@ else
     myMistubaApp = '';
 end
 
-% save paths for Mitsuba
+% save preferences for Mitsuba
+setpref('Mitsuba', 'adjustments', adjustmentsFile);
+setpref('Mitsuba', 'radiometricScaleFactor', radiometricScaleFactor);
 setpref('Mitsuba', 'app', myMistubaApp);
 setpref('Mitsuba', 'executable', myMistubaExecutable);
 setpref('Mitsuba', 'importer', myMistubaImporter);
 
 
-%% Prepare the unix() command environment.
-% prepend renderer executable paths to the unix() PATH
-PATH = getenv('PATH');
-fullMitsuba = fullfile(Mitsuba.app, Mitsuba.executable);
-mitsPATH = fileparts(fullMitsuba);
-if isempty(strfind(PATH, mitsPATH))
-    PATH = sprintf('%s:%s', mitsPATH, PATH);
+%% Set Up PBRT Preferences.
+if ispref('PBRT')
+    % delete any stale preferences
+    rmpref('PBRT');
 end
 
+% choose the file with default adjustments
+adjustmentsFile = fullfile( ...
+    RenderToolboxRoot(), 'RenderData', 'PBRTDefaultAdjustments.xml');
 
-%% Save RenderToolbox3 where you installed PBRT.
+% choose the default scale factor for radiance units
+radiometricScaleFactor = 0.0063831432;
 
-%% For PBRT
-if isForce
-    % remove stale config
-    if ispref('PBRT')
-        rmpref('PBRT');
-    end
-    
-    % default config
-    PBRT.executable = '/usr/local/bin/pbrt';
-    PBRT.S = [400 10 31];
-    PBRT.adjustmentsFile = fullfile(RenderToolboxRoot(), 'RenderData', 'PBRTDefaultAdjustments.xml');
-    
-    % create or overwrite existing values
-    setpref('PBRT', fieldnames(PBRT), struct2cell(PBRT));
-    
-else
-    % use preexisting values
-    PBRT = getpref('PBRT');
-end
+% choose spectral sampling
+%   which was sepcified at PBRT compile time
+S = [400 10 31];
 
 % use the default path for PBRT
 myPBRT = '/usr/local/bin/pbrt';
@@ -126,32 +115,11 @@ myPBRT = '/usr/local/bin/pbrt';
 % or choose where you installed PBRT
 %myPBRT = '/my/path/for/pbrt';
 
-% save the path for PBRT
+% save preferences for Mitsuba
+setpref('PBRT', 'adjustments', adjustmentsFile);
+setpref('PBRT', 'radiometricScaleFactor', radiometricScaleFactor);
+setpref('PBRT', 'S', S);
 setpref('PBRT', 'executable', myPBRT);
 
-% default renderer radiometric unit scale factors
-%   these are in the RenderToolbox3 group so that they appear as hints
-RenderToolbox3.PBRTRadiometricScale = 0.0063831432;
-
-
-
-%% Optional: choose PBRT spectral sampling.
-% if you built PBRT with your own custom spectral sampling
-% then uncomment these lines and edit the "S" value
-% see https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands
-
-% use the default spectral sampling
-%S = [400 10 31];
-
-% or chose your custom sampling
-%S = [371 6 77];
-
-% save PBRT's spectral sampling
-%setpref('PBRT', 'S', S);
-
-pbrtPATH = fileparts(PBRT.executable);
-if isempty(strfind(PATH, pbrtPATH))
-    PATH = sprintf('%s:%s', pbrtPATH, PATH);
-end
-setenv('PATH', PATH);
-
+%% Set Up Another renderer.
+% renderer-specific preferences for any other renderers...

@@ -70,6 +70,25 @@ if isForce
         rmpref('RenderToolbox3');
     end
     
+    % default output locations
+    userFolder = fullfile(GetUserFolder(), 'render-toolbox');
+    RenderToolbox3.tempFolder = fullfile(userFolder, 'temp');
+    RenderToolbox3.outputDataFolder = fullfile(userFolder, 'data');
+    RenderToolbox3.outputImageFolder = fullfile(userFolder, 'images');
+    RenderToolbox3.outputSubfolder = '';
+    
+    % default hints
+    RenderToolbox3.renderer = 'SampleRenderer';
+    RenderToolbox3.filmType = '';
+    RenderToolbox3.imageHeight = 240;
+    RenderToolbox3.imageWidth = 320;
+    RenderToolbox3.whichConditions = [];
+    RenderToolbox3.isDryRun = false;
+    RenderToolbox3.isReuseSceneFiles = false;
+    RenderToolbox3.isParallel = false;
+    RenderToolbox3.isPlot = true;
+    RenderToolbox3.isAbsoluteResourcePaths = true;
+    
     % choose dynamic library path names and default values
     %   these are applied automatically, via SetRenderToolboxLibraryPath()
     if ispc()
@@ -90,26 +109,6 @@ if isForce
         RenderToolbox3.libPath = [];
         RenderToolbox3.libPathLast = 'matlab|MATLAB';
     end
-    
-    % default output locations
-    userFolder = fullfile(GetUserFolder(), 'render-toolbox');
-    RenderToolbox3.tempFolder = fullfile(userFolder, 'temp');
-    RenderToolbox3.outputDataFolder = fullfile(userFolder, 'data');
-    RenderToolbox3.outputImageFolder = fullfile(userFolder, 'images');
-    RenderToolbox3.outputSubfolder = '';
-    
-    % default hints
-    RenderToolbox3.renderer = 'SampleRenderer';
-    RenderToolbox3.filmType = '';
-    RenderToolbox3.adjustmentsFile = '';
-    RenderToolbox3.imageHeight = 240;
-    RenderToolbox3.imageWidth = 320;
-    RenderToolbox3.whichConditions = [];
-    RenderToolbox3.isDryRun = false;
-    RenderToolbox3.isReuseSceneFiles = false;
-    RenderToolbox3.isParallel = false;
-    RenderToolbox3.isPlot = true;
-    RenderToolbox3.isAbsoluteResourcePaths = true;
     
     % create or overwrite existing values
     setpref('RenderToolbox3', ...
