@@ -52,13 +52,13 @@
 % @ingroup RendererPlugins
 function [status, result, multispectralImage, S] = RTB_Render_SampleRenderer(scene, isShow)
 
-disp('SampleRenderer:')
-disp('scene is')
+disp('SampleRenderer Render function.')
+disp('scene is:')
 disp(scene)
-disp('isShow is')
+disp('isShow is:')
 disp(isShow)
 
 status = 0;
-result = 'SampleRenderer result';
+result = 'SampleRenderer Render result';
 S = WlsToS((400:10:700)');
-multispectralImage = zeros(5, 5, S(3));
+multispectralImage = scene.value*ones(scene.height, scene.width, S(3));

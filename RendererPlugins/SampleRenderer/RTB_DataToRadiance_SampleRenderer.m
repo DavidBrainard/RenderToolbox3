@@ -2,46 +2,70 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert PBRT multi-spectral data to radiance units.
-%   @param pbrtData "raw" data from a PBRT multi-spectral rendering
-%   @param pbrtDoc XML DOM document node representing the PBRT-XML scene
-%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
+% Convert Sample Renderer data to units of radiance.
+%   @param multispectralImage numeric rendering data from a Render function
+%   @param sceneData data about the rendered scene to aid conversion
+%   @param hints struct of RenderToolbox3 options
 %
 % @details
-% Scales the given "raw" @a pbrtData into physical radiance units.  The
-% scaling depends on a PBRT-specific scale factor computed previously with
-% ComputeRadiometricScaleFactors().  The scaling might also depend on some
-% non-radiometric scene parameters.  If these parameters use non-default
-% values, prints a warning that additional scaling might be required.
+% This function is a template for a RenderToolbox3 "DataToRadiance"
+% function.
 %
 % @details
-% @a pbrtData should be a matrix of multi-spectral data obtained from
-% the PBRT renderer, and read into Matlab with a function like
-% ReadDAT().  Each element of @a pbrtData will be scaled into radiance
-% units.
+% The name of a DataToRadiance function must match a specific pattern: it
+% must begin with "RTB_DataToRadiance_", and it must end with the name of
+% the renderer, for example, "SampleRenderer".  This pattern allows
+% RenderToolbox3 to automatically locate the DataToRadiance function for
+% each renderer.  DataToRadiance functions should be included in the Matlab
+% path.
 %
 % @details
-% @a pbrtDoc should be the "document" node of the PBRT-XML document that
-% represents the rendered scene, as returned from ColladaToPBRT().
-% Parameters stored in the PBRT-XML document might indicate that the scene
-% should be scaled in order to compensate fot non-radiometric factors, like
-% the number of ray samples used per pixel.
+% A DataToRadiance function must convert the @a multispectralImage data
+% that was returned from a RenderToolbox3 Render function into inits of
+% physical radiance.  It must also accept a @a sceneData parameter, as
+% returned from a RenderToolbox3 ImportCollada function, which may provide
+% scene- and renderer-specific data that informs the conversion to radiance
+% units.  It must also accept a @a hints parameter of RenderTooblox3
+% options, which also may inform the conversion.
 %
 % @details
-% @a hints should be a struct with additional parameters used during
-% rendering.  In particular, @a hints.PBRTRadiometricScale may contain the
-% PBRT-specific scale factor for converting multi-spectral data to
-% radiance units.  If @a hints does not contain this field, the default
-% value will be taken from GetDefaultHints().
+% Converting a multispectralImage to units of physical radiance units is a
+% highly-renderer specific proicess.  Some renderers may be able to return
+% images in radiance units natively, in which case the DataToRadiance
+% function simply return the @a multispectralImage.  Other renderers might
+% return data that is a scaled version of radiance, in which case the
+% DataToRadiance should apply the proper scale factor to the @a
+% multispectralImage.  Determining the proper scale factor probably
+% requires prior investigation.
 %
 % @details
-% Returns the given "raw" @a pbrtData, scaled into physical radiance
-% units.  Also returns the radiance scale factor that was used, which in
-% some cases might differ from @a hints.PBRTRadiometricScale.
+% For some renderers, the proper scale factor may depend on partcular scene
+% parameters, like the nubmer of ray samples used or the type of sample
+% integrator.  In this case, @a sceneData and @a hints should be used to
+% choose or calculate a proper scale factor.  Getting this right may
+% require a lot of prior investigation, which may not be feasible in all
+% cases.  A DataToRadiance should make a best effort to return accurate
+% radiance units, and print a warning when it is unable to do so.
+%
+% @details
+% A DataToRadiance function must return the given @a multispectralImage,
+% scaled into units of physical radiance.  It must also return the scale
+% factor that it applied to the original @a multispectralImage.
 %
 % @details
 % Usage:
-%   [radianceData, scaleFactor] = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
+%   [radianceData, scaleFactor] = RTB_DataToRadiance_SampleRenderer(multispectralImage, sceneData, hints)
 %
-% @ingroup BatchRenderer
-function [radianceData, scaleFactor] = PBRTDataToRadiance(pbrtData, pbrtDoc, hints)
+% @ingroup RendererPlugins
+function [radianceImage, scaleFactor] = RTB_DataToRadiance_SampleRenderer(multispectralImage, sceneData, hints)
+
+disp('SampleRenderer DataToRadiance function')
+disp('multispectralImage is:')
+disp(multispectralImage);
+disp('sceneData is:')
+disp(sceneData);
+disp('hints is:')
+disp(hints);
+
+scaleFactor = 2;
+radianceImage = scaleFactor .* multispectralImage;

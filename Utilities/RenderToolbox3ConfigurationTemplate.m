@@ -2,20 +2,21 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Set up machine-specific RenderToolbox3 configuration, like file paths.
+% Set up machine-specific RenderToolbox3 configuration, like where to write
+% output files and renderer configuration.
 %
-% This script is intended as an example only.  You should make a copy of
+% This script is intended as a template only.  You should make a copy of
 % this script and save it in a folder separate from RenderToolbox3.  You
-% should customize your copy with values that are specific to your machine.
+% should customize that copy with values that are specific to your machine.
 %
-% The goal of this script is to set RenderToolbox3 preference values that
+% The goal of this script is to set Matlab preference values that
 % you want to use for your machine.  These include file paths where
-% RenderToolbox3 should look for renderers, and where it should write
-% ouptut files.
+% RenderToolbox3 should write ouptut files, and renderer-specific
+% preferences for the renderers you want to use.
 %
 % When you first install RenderToolbox3, you should copy this script,
-% customize it, and run it.  You can also run it any time you want to make
-% sure your RenderToolbox3 preferences are correct.
+% customize it, and run it.  You can run it again, any time you want to
+% make sure your RenderToolbox3 preferences are correct.
 %
 % After you run this script, you can run RenderToolbox3InstallationTest()
 % to verify that your configuration is good.
@@ -27,7 +28,6 @@
 %% Start with RenderToolbox3 "fresh out of the box" configuration.
 InitializeRenderToolbox(true);
 
-
 %% Tell RenderToolbox3 where to save outputs.
 % choose Matlab's default "user folder"
 myFolder = fullfile(GetUserFolder(), 'render-toolbox');
@@ -35,24 +35,23 @@ myFolder = fullfile(GetUserFolder(), 'render-toolbox');
 % or choose any folder that you want RenderToolbox3 to write to
 %myFolder = 'choose/your/output/folder';
 
-% save folders for three kinds of output
+% set folders for temp, data, and image outputs
 setpref('RenderToolbox3', 'tempFolder', fullfile(myFolder, 'temp'));
 setpref('RenderToolbox3', 'outputDataFolder', fullfile(myFolder, 'data'));
 setpref('RenderToolbox3', 'outputImageFolder', fullfile(myFolder, 'images'));
 
 
-%% Tell RenderToolbox3 where you installed PBRT.
-% use the default path for PBRT
-myPBRT = '/usr/local/bin/pbrt';
+%% Set Up Mitsuba Preferences.
+if ispref('Mitsuba')
+    % delete any stale preferences
+    rmpref('Mitsuba');
+end
 
-% or choose where you installed PBRT
-%myPBRT = '/my/path/for/pbrt';
-
-% save the path for PBRT
-setpref('PBRT', 'executable', myPBRT);
+% 
+Mitsuba.adjustmentsFile = fullfile(RenderToolboxRoot(), 'RenderData', 'MitsubaDefaultAdjustments.xml');
 
 
-%% Tell RenderToolbox3 where you installed Mitsuba.
+RenderToolbox3.MitsubaRadiometricScale = 0.0795827427;
 if ismac()
     % on OS X, Mitsuba is an "app bundle"
     
@@ -89,6 +88,53 @@ setpref('Mitsuba', 'executable', myMistubaExecutable);
 setpref('Mitsuba', 'importer', myMistubaImporter);
 
 
+%% Prepare the unix() command environment.
+% prepend renderer executable paths to the unix() PATH
+PATH = getenv('PATH');
+fullMitsuba = fullfile(Mitsuba.app, Mitsuba.executable);
+mitsPATH = fileparts(fullMitsuba);
+if isempty(strfind(PATH, mitsPATH))
+    PATH = sprintf('%s:%s', mitsPATH, PATH);
+end
+
+
+%% Save RenderToolbox3 where you installed PBRT.
+
+%% For PBRT
+if isForce
+    % remove stale config
+    if ispref('PBRT')
+        rmpref('PBRT');
+    end
+    
+    % default config
+    PBRT.executable = '/usr/local/bin/pbrt';
+    PBRT.S = [400 10 31];
+    PBRT.adjustmentsFile = fullfile(RenderToolboxRoot(), 'RenderData', 'PBRTDefaultAdjustments.xml');
+    
+    % create or overwrite existing values
+    setpref('PBRT', fieldnames(PBRT), struct2cell(PBRT));
+    
+else
+    % use preexisting values
+    PBRT = getpref('PBRT');
+end
+
+% use the default path for PBRT
+myPBRT = '/usr/local/bin/pbrt';
+
+% or choose where you installed PBRT
+%myPBRT = '/my/path/for/pbrt';
+
+% save the path for PBRT
+setpref('PBRT', 'executable', myPBRT);
+
+% default renderer radiometric unit scale factors
+%   these are in the RenderToolbox3 group so that they appear as hints
+RenderToolbox3.PBRTRadiometricScale = 0.0063831432;
+
+
+
 %% Optional: choose PBRT spectral sampling.
 % if you built PBRT with your own custom spectral sampling
 % then uncomment these lines and edit the "S" value
@@ -102,3 +148,10 @@ setpref('Mitsuba', 'importer', myMistubaImporter);
 
 % save PBRT's spectral sampling
 %setpref('PBRT', 'S', S);
+
+pbrtPATH = fileparts(PBRT.executable);
+if isempty(strfind(PATH, pbrtPATH))
+    PATH = sprintf('%s:%s', pbrtPATH, PATH);
+end
+setenv('PATH', PATH);
+
