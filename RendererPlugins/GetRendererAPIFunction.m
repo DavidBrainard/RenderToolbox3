@@ -25,6 +25,8 @@
 %   - @b Render: the function that invokes the given @a renderer
 %   - @b DataToRadiance: the function that converts @a renderer outputs to
 %   physical radiance units
+%   - @b VersionInfo: the function that returns version information about
+%   a renderer.
 %   .
 %
 % @details
@@ -44,7 +46,7 @@ functionPath = '';
 
 % is functionName part of the RenderToolbox3 renderer API?
 validFunctionNames = ...
-    {'ApplyMappings', 'ImportCollada', 'Render', 'DataToRadiance'};
+    {'ApplyMappings', 'ImportCollada', 'Render', 'DataToRadiance', 'VersionInfo'};
 if ~any(strcmp(validFunctionNames, functionName))
     disp(['rendererName ' functionName ' should be one of the following:'])
     disp(validFunctionNames)
