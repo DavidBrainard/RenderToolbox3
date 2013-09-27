@@ -37,26 +37,21 @@ magnitudes = ones(size(wls));
 WriteSpectrumFile(wls, magnitudes, 'uniformSpectrum10nm.spd');
 
 %% Render with Mitsuba and PBRT.
-% make an sRGB montage with each renderer
+% make an sRGB montage for the default renderer
 toneMapFactor = 10;
 isScaleGamma = true;
-for renderer = {'Mitsuba', 'PBRT'}
-    
-    % choose one renderer
-    hints.renderer = renderer{1};
-    
-    % make 3 multi-spectral renderings, saved in .mat files
-    nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
-    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
-    
-    % condense multi-spectral renderings into one sRGB montage
-    montageName = sprintf('%s (%s)', 'RadianceTest', hints.renderer);
-    montageFile = [montageName '.png'];
-    [SRGBMontage, XYZMontage] = ...
-        MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScaleGamma, hints);
-    
-    % display the sRGB montage
-    ShowXYZAndSRGB([], SRGBMontage, montageName);
-end
+
+% make 3 multi-spectral renderings, saved in .mat files
+nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+radianceDataFiles = BatchRender(nativeSceneFiles, hints);
+
+% condense multi-spectral renderings into one sRGB montage
+montageName = sprintf('RadianceTest (%s)', hints.renderer);
+montageFile = [montageName '.png'];
+[SRGBMontage, XYZMontage] = ...
+    MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScaleGamma, hints);
+
+% display the sRGB montage
+ShowXYZAndSRGB([], SRGBMontage, montageName);
 
 cd(originalFolder);
