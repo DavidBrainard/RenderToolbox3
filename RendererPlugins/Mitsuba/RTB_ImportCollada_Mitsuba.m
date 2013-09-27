@@ -4,9 +4,8 @@
 %
 % Convert a Collada parent scene file the Sample Renderer native format
 %   @param colladaFile input Collada parent scene file name or path
+%   @param outFile output native scene file name or path
 %   @param adjustments native adjustments data, or file name or path
-%   @param outputFolder folder where to write new files
-%   @param imageName the name to use for this scene and new files
 %   @param hints struct of RenderToolbox3 options
 %
 % @details
@@ -24,9 +23,9 @@
 % @details
 % An ImportCollada function must convert the given @a colladaFile ('.dae'
 % or '.xml') to a native format that the renderer can use for rendering.
-% It may write a new native scene file in the specified @a outputFolder,
-% using the given @a imageName.  It may also create a representation of the
-% native scene in Matlab and return the representation directly.
+% It may write a new native scene file at the specified @a outFile.  It may
+% also create a representation of the native scene in Matlab and return the
+% representation directly.
 %
 % @details
 % An ImportCollada function may use the given @a adjustments to modify
@@ -42,31 +41,24 @@
 % @details
 % An ImportCollada function must return a scene description in
 % renderer-native format using a single matlab variable, such as a string,
-% struct or object.  This description should contain all of the information
-% needed to render the scene, including the names of any new files created.
-%
-% @details
-% An ImportCollada function must also return a cell array of names of files
-% that are required for rendering the scene.  These might include text
-% scene files as well as geometry files that contain scene data but are
-% separate from the main scene description.
+% struct or object.  This description should include the name of the @a new 
+% outFile, any other new files that were created, and any other
+% representation of the scene.
 %
 % @details
 % Usage:
-%   [scene, requiredFiles] = RTB_ImportCollada_SampleRenderer(colladaFile, adjustments, outputFolder, imageName, hints)
+%   scene = RTB_ImportCollada_SampleRenderer(colladaFile, outFile, adjustments, hints)
 %
 % @ingroup RendererPlugins
-function [scene, requiredFiles] = RTB_ImportCollada_SampleRenderer(colladaFile, adjustments, outputFolder, imageName, hints)
+function scene = RTB_ImportCollada_SampleRenderer(colladaFile, outFile, adjustments, hints)
 
 disp('SampleRenderer ImportCollada function.');
 disp('colladaFile is:');
 disp(colladaFile);
+disp('outFile is:');
+disp(outFile);
 disp('adjustments is:');
 disp(adjustments);
-disp('outputFolder is:');
-disp(outputFolder);
-disp('imageName is:')
-disp(imageName);
 disp('hints is:');
 disp(hints);
 
@@ -74,5 +66,3 @@ scene.description = 'SampleRenderer scene description';
 scene.height = 5;
 scene.width = 5;
 scene.value = 1;
-
-requiredFiles = {};

@@ -85,7 +85,7 @@ else
 end
 
 % save preferences for Mitsuba
-setpref('Mitsuba', 'adjustments', adjustmentsFile);
+setpref('Mitsuba', 'adjustmentsFile', adjustmentsFile);
 setpref('Mitsuba', 'radiometricScaleFactor', radiometricScaleFactor);
 setpref('Mitsuba', 'app', myMistubaApp);
 setpref('Mitsuba', 'executable', myMistubaExecutable);
@@ -116,7 +116,7 @@ myPBRT = '/usr/local/bin/pbrt';
 %myPBRT = '/my/path/for/pbrt';
 
 % save preferences for Mitsuba
-setpref('PBRT', 'adjustments', adjustmentsFile);
+setpref('PBRT', 'adjustmentsFile', adjustmentsFile);
 setpref('PBRT', 'radiometricScaleFactor', radiometricScaleFactor);
 setpref('PBRT', 'S', S);
 setpref('PBRT', 'executable', myPBRT);

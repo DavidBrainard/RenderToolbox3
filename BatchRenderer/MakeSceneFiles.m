@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Make a family of renderer-native scene files based on a Collada parent scene file.
+% Make a family of renderer-native scenes based on a Collada parent scene.
 %   @param colladaFile file name or path of a Collada parent scene file
 %   @param conditionsFile file name or path of a conditions file
 %   @param mappingsFile file name or path of a mappings file
@@ -10,7 +10,7 @@
 %   @param outPath path where to copy new scene files
 %
 % @details
-% Creates a family of renderer-native scene files, based on the given @a
+% Creates a family of renderer-native scene, based on the given @a
 % colladaFile, @a conditionsFile, and @a mappingsFile.  @a hints.renderer
 % specifies which renderer to make scene files for.  @a outPath is
 % optional, and may specify a folder path that where renderer-native scene
@@ -42,8 +42,6 @@
 %   for.
 %   - @a hints.tempFolder is the default location for new renderer-native
 %   scene files.
-%   - @a hints.adjustmentsFile is a partial scene XML file with
-%   renderer-specific values.
 %   - @a hints.filmType is a renderer-specific film type to use in the
 %   new renderer-native scene files.
 %   - @a hints.imageHeight and @a hints.imageWidth specify the image pixel
@@ -59,30 +57,29 @@
 % hints.tempFolder.
 %
 % @details
-% Returns a cell array of file names for new renderer-native scene
-% files.  By default, each scene file will have the same base name as @a
+% This function uses RenderToolbox3 renderer API functions "ApplyMappings"
+% and "ImportCollada".  These functions, for the renderer specified in @a
+% hints.renderer, must be on the Matlab path.
+%
+% @details
+% Returns a cell array of new renderer-native scene descriptions.  Each
+% scene description may include the name of a new renderer-native scene
+% file.  By default, each scene file will have the same base name as @a
 % the given @a colladaFile, plus a numeric suffix.  If @a conditionsFile
 % contains an 'imageName' variable, each scene file be named with the value
 % of 'imageName'.
 %
 % @details
 % Also retrurns a cell array of file names for auxiliary files on which the
-% renderer-native scene files depend, such as image files, spectrum data
+% renderer-native scenes depend, such as image files, spectrum data
 % files, and object geometry files.
 %
 % @details
-% Mitsuba-native scene files will use Mitsuba's own .xml file format.
-% PBRT-native scene files will use RenderToolbox3's custom PBRT-XML 
-% .xml format.  PBRT-XML files can be passed to BatchRender() for
-% rendering.  The can also be converted to PBRT's native text
-% format using WritePBRTFile().
-%
-% @details
 % Usage:
-%   [sceneFiles, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+%   [scenes, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 %
 % @ingroup BatchRenderer
-function [sceneFiles, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+function [scenes, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 
 InitializeRenderToolbox();
 
@@ -148,7 +145,7 @@ for ii = 1:numel(renderers)
 end
 
 %% Make a scene file for each condition.
-sceneFiles = cell(1, nConditions);
+scenes = cell(1, nConditions);
 auxiliaryFiles = {};
 
 err = [];
@@ -162,8 +159,8 @@ try
         end
         
         % make a the scene file for this condition
-        [sceneFiles{cc}, sceneAux] = ...
-            makeConditionSceneFile(colladaFile, mappingsFile, ...
+        [scenes{cc}, sceneAux] = ...
+            makeSceneForCondition(colladaFile, mappingsFile, ...
             cc, varNames, conditionVarValues, hints);
         
         % append to running list of auxiliary files
@@ -182,10 +179,10 @@ if ~isempty(outPath)
         mkdir(outPath);
     end
     
-    for ii = 1:numel(sceneFiles)
-        [status, result] = copyfile(sceneFiles{ii}, outPath);
+    for ii = 1:numel(scenes)
+        [status, result] = copyfile(scenes{ii}, outPath);
     end
-
+    
     for ii = 1:numel(auxiliaryFiles)
         [status, result] = copyfile(auxiliaryFiles{ii}, outPath);
     end
@@ -196,27 +193,18 @@ if ~isempty(err)
     rethrow(err)
 end
 
-% Render a scene condition and save a .mat data file.
-function [sceneFile, auxiliary] = makeConditionSceneFile( ...
+% Create a renderer-native scene description for one condition.
+function [scene, auxiliary] = makeSceneForCondition( ...
     colladaFile, mappingsFile, ...
     conditionNumber, varNames, varValues, hints)
 
-sceneFile = '';
+scene = '';
 auxiliary = {};
 
 % choose the renderer
 isMatch = strcmp('renderer', varNames);
 if any(isMatch)
     hints.renderer = varValues{find(isMatch, 1, 'first')};
-end
-
-% choose the adjustments file
-isMatch = strcmp('adjustmentsFile', varNames);
-if any(isMatch)
-    hints.adjustmentsFile = varValues{find(isMatch, 1, 'first')};
-end
-if isempty(hints.adjustmentsFile)
-    hints.adjustmentsFile = getpref(hints.renderer, 'adjustmentsFile');
 end
 
 % choose the scene file
@@ -241,7 +229,7 @@ isMatch = strcmp('imageName', varNames);
 if any(isMatch)
     imageName = varValues{find(isMatch, 1, 'first')};
 else
-    imageName = sprintf('%s-%03d', sceneBase, conditionNumber);    
+    imageName = sprintf('%s-%03d', sceneBase, conditionNumber);
 end
 
 % choose the output image size
@@ -263,12 +251,9 @@ colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
 
-% copy the adjustments file
-[adjustPath, adjustBase, adjustExt] = fileparts(hints.adjustmentsFile);
-adjustCopy = fullfile(tempFolder, [adjustBase adjustExt]);
-if ~strcmp(tempFolder, scenePath)
-    copyfile(hints.adjustmentsFile, adjustCopy);
-end
+% process mappings for this condition
+
+% convert the Collada file to renderer-native for this condition
 
 % make a new, modified Collada file and adjustments file
 [sceneTemp, adjustTemp, sceneResources] = WriteMappedSceneFiles( ...
@@ -279,14 +264,14 @@ end
 switch hints.renderer
     case 'Mitsuba'
         % convert Collada to Mitsuba's .xml format
-        sceneFile = fullfile(tempFolder, [imageName '.xml']);
+        scene = fullfile(tempFolder, [imageName '.xml']);
         
-        if hints.isReuseSceneFiles && exist(sceneFile, 'file');
-            disp(sprintf('Reusing %s', sceneFile));
+        if hints.isReuseSceneFiles && exist(scene, 'file');
+            disp(sprintf('Reusing %s', scene));
             sceneAux = {};
         else
-            [sceneFile, sceneDoc, sceneAux] = ColladaToMitsuba( ...
-                sceneTemp, sceneFile, adjustTemp, hints);
+            [scene, sceneDoc, sceneAux] = ColladaToMitsuba( ...
+                sceneTemp, scene, adjustTemp, hints);
         end
         
     case 'PBRT'
@@ -301,7 +286,7 @@ switch hints.renderer
             [pbrtFile, pbrtXMLFile, pbrtDoc, sceneAux] = ColladaToPBRT( ...
                 sceneTemp, pbrtFile, adjustTemp, hints);
         end
-        sceneFile = pbrtXMLFile;
+        scene = pbrtXMLFile;
 end
 
 % combined list of dependencies for this scene
