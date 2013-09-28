@@ -20,9 +20,11 @@
 % @ingroup RendererPlugins
 function adjustments = RTB_ApplyMappings_PBRT(objects, adjustments)
 
-% PBRT default adjustments is an XML adjustments file name.
+% Read in the default PBRT adjustments file.
 if isempty(adjustments)
-    adjustments = getpref('PBRT', 'adjustments');
+    [docNode, idMap] = ReadSceneDOM(getpref('PBRT', 'adjustments'));
+    adjustments.docNode = docNode;
+    adjustments.idMap = idMap;
 end
 
 if isempty(objects)
@@ -35,6 +37,4 @@ if strcmp('Generic', objects(1).blockType)
 end
 
 % add mappings data to the pbrt adjustments XML file
-[adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
-ApplyPBRTObjects(adjustIDMap, objects);
-WriteSceneDOM(adjustments, adjustDoc);
+ApplyPBRTObjects(adjustments.idMap, objects);

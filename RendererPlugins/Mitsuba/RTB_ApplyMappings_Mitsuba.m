@@ -20,9 +20,11 @@
 % @ingroup RendererPlugins
 function adjustments = RTB_ApplyMappings_Mitsuba(objects, adjustments)
 
-% Mitsuba default adjustments is an XML adjustments file name.
+% Read in the default Mitsuba adjustments file.
 if isempty(adjustments)
-    adjustments = getpref('Mitsuba', 'adjustments');
+    [docNode, idMap] = ReadSceneDOM(getpref('Mitsuba', 'adjustments'));
+    adjustments.docNode = docNode;
+    adjustments.idMap = idMap;
 end
 
 if isempty(objects)
@@ -35,6 +37,4 @@ if strcmp('Generic', objects(1).blockType)
 end
 
 % add mappings data to the mitsuba adjustments XML file
-[adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
-ApplyMitsubaObjects(adjustIDMap, objects);
-WriteSceneDOM(adjustments, adjustDoc);
+ApplyMitsubaObjects(adjustments.idMap, objects);

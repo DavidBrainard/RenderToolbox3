@@ -27,9 +27,9 @@ function [scene, requiredFiles] = RTB_ImportCollada_PBRT(colladaFile, adjustment
 scene.colladaFile = colladaFile;
 scene.pbrtFile = fullfile(outputFolder, [imageName '.pbrt']);
 scene.pbrtXMLFile = fullfile(outputFolder, [imageName '.pbrt.xml']);
-scene.adjustments = adjustments;
+scene.adjustmentsFile = fullfile(outputFolder, [imageName 'Adjustments.xml']);
 requiredFiles = {scene.colladaFile, scene.pbrtFile, ...
-    scene.pbrtXMLFile, scene.adjustments};
+    scene.pbrtXMLFile, scene.adjustmentsFile};
 
 % image is a safe default film for PBRT
 if isempty(hints.filmType)
@@ -53,21 +53,21 @@ PopulateStubDOM(pbrtIDMap, colladaIDMap, hints);
 % add a film node to the to the adjustments document
 filmNodeID = 'film';
 filmPBRTIdentifier = 'Film';
-[adjustDoc, adjustIDMap] = ReadSceneDOM(scene.adjustments);
-adjustRoot = adjustDoc.getDocumentElement();
+adjustRoot = adjustments.docNode.getDocumentElement();
 filmNode = CreateElementChild(adjustRoot, filmPBRTIdentifier, filmNodeID);
-adjustIDMap(filmNodeID) = filmNode;
+adjustments.idMap(filmNodeID) = filmNode;
 
 % fill in the film parameters
-SetType(adjustIDMap, filmNodeID, filmPBRTIdentifier, hints.filmType);
-AddParameter(adjustIDMap, filmNodeID, ...
+SetType(adjustments.idMap, filmNodeID, filmPBRTIdentifier, hints.filmType);
+AddParameter(adjustments.idMap, filmNodeID, ...
     'xresolution', 'integer', hints.imageWidth);
-AddParameter(adjustIDMap, filmNodeID, ...
+AddParameter(adjustments.idMap, filmNodeID, ...
     'yresolution', 'integer', hints.imageHeight);
 
 % write the adjusted PBRT-XML document to file
-MergeAdjustments(pbrtDoc, adjustDoc);
+MergeAdjustments(pbrtDoc, adjustments.docNode);
 WriteSceneDOM(scene.pbrtXMLFile, pbrtDoc);
+WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
 
 % dump the PBRT-XML document into a .pbrt text file
 WritePBRTFile(scene.pbrtFile, scene.pbrtXMLFile, hints);

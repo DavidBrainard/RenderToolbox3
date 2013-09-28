@@ -28,9 +28,9 @@ scene.colladaFile = colladaFile;
 scene.mitsubaFile = fullfile(outputFolder, [imageName '.xml']);
 scene.unadjustedMitsubaFile = ...
     fullfile(outputFolder, [imageName 'Unadjusted.xml']);
-scene.adjustments = adjustments;
+scene.adjustmentsFile = fullfile(outputFolder, [imageName 'Adjustments.xml']);
 requiredFiles = {scene.colladaFile, scene.mitsubaFile, ...
-    scene.unadjustedMitsubaFile, scene.adjustments};
+    scene.unadjustedMitsubaFile, scene.adjustmentsFile};
 
 % high-dynamic-range is a good default film for Mitsuba
 if isempty(hints.filmType)
@@ -41,8 +41,7 @@ end
 % set the dynamic library search path
 [newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
 
-% find the Mitsuba importer
-%   don't pass the adjustments file to the converter
+% invoke the Mitsuba importer
 [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
 importer = fullfile( ...
     getpref('Mitsuba', 'app'), ...
@@ -67,13 +66,13 @@ end
 % restore the library search path
 setenv(libPathName, originalLibPath);
 
-%% Apply adjustments file using the RenderToolbox3 custom mechanism.
+%% Apply adjustments using the RenderToolbox3 custom mechanism.
 %   Mitsuba nodes named "ref" have "id" attrubutes, but are not "id" nodes
 excludePattern = '^ref$';
 mitsubaDoc = ReadSceneDOM(scene.unadjustedMitsubaFile, excludePattern);
-adjustmentsDoc = ReadSceneDOM(scene.adjustments, excludePattern);
-MergeAdjustments(mitsubaDoc, adjustmentsDoc, excludePattern);
+MergeAdjustments(mitsubaDoc, adjustments.docNode, excludePattern);
 WriteSceneDOM(scene.mitsubaFile, mitsubaDoc);
+WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
 
 %% Detect auxiliary geometry files.
 auxiliaryFiles = FindFiles(outputFolder, '\.serialized');
