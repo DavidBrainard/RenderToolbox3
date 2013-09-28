@@ -12,13 +12,13 @@
 % objects as returned from MappingsToObjects() or GenericObjectsToPBRT().
 %
 % @details
-% Used internally by MakeSceneFiles().
+% Used internally by RTB_ApplyMappings_PBRT().
 %
 % @details
 % Usage:
 %   ApplyPBRTObjects(idMap, objects)
 %
-% @ingroup Mappings
+% @ingroup RendererPlugins
 function ApplyPBRTObjects(idMap, objects)
 
 for ii = 1:numel(objects)
