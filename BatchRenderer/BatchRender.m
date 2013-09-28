@@ -170,6 +170,6 @@ end
 
 % save a .mat file with multispectral data and metadata
 outPath = fullfile(GetOutputPath('outputDataFolder', hints), hints.renderer);
-outFile = fullfile(outPath, [sceneBase '.mat']);
+outFile = fullfile(outPath, [scene(1).imageName '.mat']);
 save(outFile, 'multispectralImage', 'S', 'radiometricScaleFactor', ...
     'hints', 'scene', 'versionInfo', 'commandResult');

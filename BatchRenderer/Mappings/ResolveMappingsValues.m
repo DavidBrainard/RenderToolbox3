@@ -65,62 +65,68 @@
 function [mappings, requiredFiles] = ResolveMappingsValues(mappings, varNames, varValues, colladaFile, adjustments, hints)
 requiredFiles = {};
 
-% read the colladaFile
-[colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
-
-% read adjustments XML file, if any
-adjustDoc = [];
-adjustIDMap = [];
-if ischar(adjustments)
-    [adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
-end
-
-for mm = 1:numel(mappings)
-    % replace (varName) expressions with varValue values
-    map = mappings(mm);
-    for nn = 1:numel(varNames);
-        varPattern = ['\(' varNames{nn} '\)'];
-        map.left.value = ...
-            regexprep(map.left.value, varPattern, varValues{nn});
-        map.right.value = ...
-            regexprep(map.right.value, varPattern, varValues{nn});
-    end
-    
-    % replace [] and <> expressions with XML node values
-    if strcmp('[]', map.right.enclosing)
-        % '[]' look up a Collada scene path
-        map.right.value = GetSceneValue(colladaIDMap, map.right.value);
-        
-    elseif ~isempty(adjustIDMap) && strcmp('<>', map.right.enclosing)
-        % '<>' look up an adjustments file scne path
-        map.right.value = GetSceneValue(adjustIDMap, map.right.value);
-    end
-    
-    % find files on the Matlab path
-    whichFile = findWhichFile(map.right.value);
-    if ~isempty(whichFile)
-        requiredFiles{end+1} = whichFile;
-        
-        % replace file name expressions with absolute path names
-        if hints.isAbsoluteResourcePaths
-            map.right.value = whichFile;
-        end
-    end
-    
-    mappings(mm) = map;
-end
-
-% Return absolute path if expression is a file on the path or in pwd().
-function whichFile = findWhichFile(expression)
-whichFile = '';
+% temporarily add current directory to the path
+%   try to restore path even with errors
 originalPath = path();
 try
     AddWorkingPath(pwd());
-    if ~isempty(strfind(expression, '.')) && exist(expression, 'file')
-        whichFile = which(expression);
+    
+    % read the colladaFile
+    [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
+    
+    % read adjustments XML file, if any
+    adjustDoc = [];
+    adjustIDMap = [];
+    if ischar(adjustments)
+        [adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
     end
+    
+    for mm = 1:numel(mappings)
+        % replace (varName) expressions with varValue values
+        map = mappings(mm);
+        for nn = 1:numel(varNames);
+            varPattern = ['\(' varNames{nn} '\)'];
+            map.left.value = ...
+                regexprep(map.left.value, varPattern, varValues{nn});
+            map.right.value = ...
+                regexprep(map.right.value, varPattern, varValues{nn});
+        end
+        
+        % replace [] and <> expressions with XML node values
+        if strcmp('[]', map.right.enclosing)
+            % '[]' look up a Collada scene path
+            map.right.value = GetSceneValue(colladaIDMap, map.right.value);
+            
+        elseif ~isempty(adjustIDMap) && strcmp('<>', map.right.enclosing)
+            % '<>' look up an adjustments file scne path
+            map.right.value = GetSceneValue(adjustIDMap, map.right.value);
+        end
+        
+        % find files on the Matlab path
+        whichFile = findWhichFile(map.right.value);
+        if ~isempty(whichFile)
+            requiredFiles{end+1} = whichFile;
+            
+            % replace file name expressions with absolute path names
+            if hints.isAbsoluteResourcePaths
+                map.right.value = whichFile;
+            end
+        end
+        
+        mappings(mm) = map;
+    end
+    
 catch err
-    disp(['Error searching for file on path: ' expression])
+    disp('Error resolving mappings values!')
     disp(err.message)
 end
-cd(originalPath)
+
+path(originalPath);
+
+
+%% Return absolute path if expression is a file on the path.
+function whichFile = findWhichFile(expression)
+whichFile = '';
+if ~isempty(strfind(expression, '.')) && exist(expression, 'file')
+    whichFile = which(expression);
+end

@@ -64,7 +64,7 @@ disp('SampleRenderer DataToRadiance function')
 disp('multispectralImage is:')
 disp(multispectralImage);
 disp('scene is:')
-disp(sceneData);
+disp(scene);
 disp('hints is:')
 disp(hints);
 

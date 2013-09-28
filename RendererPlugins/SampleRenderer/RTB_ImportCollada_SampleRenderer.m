@@ -25,8 +25,8 @@
 % An ImportCollada function must convert the given @a colladaFile ('.dae'
 % or '.xml') to a native format that the renderer can use for rendering.
 % It may write a new native scene file in the specified @a outputFolder,
-% using the given @a imageName.  It may also create a representation of the
-% native scene in Matlab and return the representation directly.
+% using the given @a imageName.  It must also create a Matlab struct that
+% contains a description of the scene, to return directly.
 %
 % @details
 % An ImportCollada function may use the given @a adjustments to modify
@@ -40,10 +40,14 @@
 % GetDefaultHints(), which may inform the conversion process.
 %
 % @details
-% An ImportCollada function must return a scene description in
-% renderer-native format using a single matlab variable, such as a string,
-% struct or object.  This description should contain all of the information
+% An ImportCollada function must return a struct that describes the
+% renderer-native scene.  This struct must contain all of the information
 % needed to render the scene, including the names of any new files created.
+%
+% @details
+% The specific format of the returned struct does not matter, it just has
+% to be a struct.  RenderToolbox3 may add or replace the imageName field of
+% the returned struct automatically.
 %
 % @details
 % An ImportCollada function must also return a cell array of names of files

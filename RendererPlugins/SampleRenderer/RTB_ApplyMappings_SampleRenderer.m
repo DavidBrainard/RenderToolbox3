@@ -56,5 +56,5 @@ disp('adjustments is:')
 disp(adjustments)
 
 if isempty(adjustments)
-    adjustments = 'SampleRenderer adjustments');
+    adjustments.description = 'SampleRenderer adjustments';
 end

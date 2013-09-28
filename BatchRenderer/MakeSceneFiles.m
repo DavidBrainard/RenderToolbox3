@@ -233,6 +233,14 @@ if any(isMatch)
     hints.imageWidth = num;
 end
 
+isMatch = strcmp('groupName', varNames);
+if any(isMatch)
+    groupName = varValues(find(isMatch, 1, 'first'));
+else
+    groupName = '';
+end
+
+
 %% Copy the collada file and reduce to known characters and elements.
 tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
 colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
@@ -264,7 +272,7 @@ if ~isempty(mappings)
         % get all mappings from one block
         blockMappings = mappings(bb == blockNums);
         blockGroup = blockMappings(1).group;
-        blockType = blockMappings(1).type;
+        blockType = blockMappings(1).blockType;
         
         % choose mappings for an active groupName
         isInGroup = isempty(groupName) ...
@@ -314,6 +322,7 @@ end
 tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
 [scene, importRequiredFiles] = feval(importColladaFunction, ...
     colladaCopy, adjustments, tempFolder, imageName, hints);
+[scene.imageName] = deal(imageName);
 
 % full list of required files
 requiredFiles = cat(2, mappingsRequiredFiles, importRequiredFiles);

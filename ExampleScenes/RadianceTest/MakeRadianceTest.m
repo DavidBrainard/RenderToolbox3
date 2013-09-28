@@ -18,6 +18,7 @@ hints.imageHeight = 100;
 hints.outputSubfolder = mfilename();
 hints.PBRTRadiometricScale = 1;
 hints.MitsubaRadiometricScale = 1;
+hints = GetDefaultHints(hints);
 
 %% Move to temp folder before creating new files.
 originalFolder = pwd();

@@ -37,8 +37,8 @@
 % @ingroup BatchRenderer
 function radiometricScaleFactor = ComputeRadiometricScaleFactor(renderer)
 
-%% Temporarily disable radometric scaling.
-setpref(renderer, 'radiometricScale', 1);
+% temporarily disable radometric scaling
+setpref(renderer, 'radiometricScaleFactor', 1);
 
 %% Produce renderingings with known radiometric properties.
 % render the RadianceTest scene
@@ -106,4 +106,4 @@ fprintf('%s scale factor: %0.4g to bring rendered image into physical radiance u
     renderer, rendererRadiometricUnitFactor);
 
 % report the new scale factor
-radiometricScaleFactor = getpref(renderer, 'radiometricScale');
+radiometricScaleFactor = getpref(renderer, 'radiometricScaleFactor');
