@@ -75,5 +75,5 @@ WritePBRTFile(scene.pbrtFile, scene.pbrtXMLFile, hints);
 cd(originalFolder)
 
 %% Detect auxiliary geometry files.
-auxiliaryFiles = FindFiles(outputPath, 'mesh-data-[^\.]+.pbrt');
+auxiliaryFiles = FindFiles(outputFolder, 'mesh-data-[^\.]+.pbrt');
 requiredFiles = cat(2, requiredFiles, auxiliaryFiles);

@@ -34,7 +34,7 @@ defaultAdjustments = 'PBRTDefaultAdjustments.xml';
 [pbrtDoc, pbrtIdMap] = ReadSceneDOM(scene.pbrtXMLFile);
 
 nodePath = 'filter.type';
-sceneFilterType = GetSceneValue(sceneIdMap, nodePath);
+sceneFilterType = GetSceneValue(pbrtIdMap, nodePath);
 if ~isempty(sceneFilterType)
     defaultFilterType = GetSceneValue(defaultIdMap, nodePath);
     checkSceneParameter('Pixel Filter type', ...
@@ -42,14 +42,14 @@ if ~isempty(sceneFilterType)
 end
 
 nodePath = 'filter:parameter|name=alpha';
-sceneAlpha = GetSceneValue(sceneIdMap, nodePath);
+sceneAlpha = GetSceneValue(pbrtIdMap, nodePath);
 if ~isempty(sceneAlpha)
     defaultAlpha = GetSceneValue(defaultIdMap, nodePath);
     checkSceneParameter('Pixel Filter alpha', sceneAlpha, defaultAlpha);
 end
 
 nodePath = 'filter:parameter|name=xwidth';
-sceneXWidth = GetSceneValue(sceneIdMap, nodePath);
+sceneXWidth = GetSceneValue(pbrtIdMap, nodePath);
 if ~isempty(sceneXWidth)
     defaultXWidth = GetSceneValue(defaultIdMap, nodePath);
     factor = StringToVector(defaultXWidth) / StringToVector(sceneXWidth);
@@ -58,7 +58,7 @@ if ~isempty(sceneXWidth)
 end
 
 nodePath = 'filter:parameter|name=ywidth';
-sceneYWidth = GetSceneValue(sceneIdMap, nodePath);
+sceneYWidth = GetSceneValue(pbrtIdMap, nodePath);
 if ~isempty(sceneYWidth)
     defaultYWidth = GetSceneValue(defaultIdMap, nodePath);
     factor = StringToVector(defaultYWidth) / StringToVector(sceneYWidth);
@@ -70,14 +70,14 @@ end
 
 %% Compare scene ray sampler to default.
 nodePath = 'sampler.type';
-sceneSamplerType = GetSceneValue(sceneIdMap, nodePath);
+sceneSamplerType = GetSceneValue(pbrtIdMap, nodePath);
 if ~isempty(sceneSamplerType)
     defaultSamplerType = GetSceneValue(defaultIdMap, nodePath);
     checkSceneParameter('Sampler type', sceneSamplerType, defaultSamplerType);
 end
 
 nodePath = 'sampler:parameter|name=pixelsamples';
-sceneSamplesPerPixel = GetSceneValue(sceneIdMap, nodePath);
+sceneSamplesPerPixel = GetSceneValue(pbrtIdMap, nodePath);
 if ~isempty(sceneSamplesPerPixel)
     defaultSamplesPerPixel = GetSceneValue(defaultIdMap, nodePath);
     factor = StringToVector(defaultSamplesPerPixel) / StringToVector(sceneSamplesPerPixel);
