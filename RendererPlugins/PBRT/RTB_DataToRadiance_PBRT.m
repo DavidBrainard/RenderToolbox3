@@ -2,64 +2,107 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Convert Sample Renderer data to units of radiance.
+% Convert PBRT data to units of radiance.
 %   @param multispectralImage numeric rendering data from a Render function
 %   @param scene description of the scene from an ImportCollada function
 %   @param hints struct of RenderToolbox3 options
 %
 % @details
-% This function is a template for a RenderToolbox3 "DataToRadiance"
-% function.
+% This the RenderToolbox3 "DataToRadiance" function for PBRT.
 %
 % @details
-% The name of a DataToRadiance function must match a specific pattern: it
-% must begin with "RTB_DataToRadiance_", and it must end with the name of
-% the renderer, for example, "SampleRenderer".  This pattern allows
-% RenderToolbox3 to automatically locate the DataToRadiance function for
-% each renderer.  DataToRadiance functions should be included in the Matlab
-% path.
-%
-% @details
-% A DataToRadiance function must convert the @a multispectralImage data
-% that was returned from a RenderToolbox3 Render function into inits of
-% physical radiance.  It must also accept a @a scne parameter, as
-% returned from a RenderToolbox3 ImportCollada function, which describes
-% the rendered scene and may provide scene-specific and renderer-specific
-% data to informs the conversion to radiance units.  It must also accept a
-% @a hints parameter of RenderTooblox3 options, which also may inform the
-% conversion.
-%
-% @details
-% Converting a multispectralImage to units of physical radiance units is a
-% highly-renderer specific proicess.  Some renderers may be able to return
-% images in radiance units natively, in which case the DataToRadiance
-% function simply return the @a multispectralImage.  Other renderers might
-% return data that is a scaled version of radiance, in which case the
-% DataToRadiance should apply the proper scale factor to the @a
-% multispectralImage.  Determining the proper scale factor probably
-% requires prior investigation.
-%
-% @details
-% For some renderers, the proper scale factor may depend on partcular scene
-% parameters, like the nubmer of ray samples used or the type of sample
-% integrator.  In this case, @a scene and @a hints should be used to choose
-% or calculate a proper scale factor.  Getting this right may require a lot
-% of prior investigation, which may not be feasible in all cases.  A
-% DataToRadiance should make a best effort to return accurate radiance
-% units, and raise a warning when it is unable to do so.
-%
-% @details
-% A DataToRadiance function must return the given @a multispectralImage,
-% scaled into units of physical radiance.  It must also return the scale
-% factor that was applied to the original @a multispectralImage.
+% For more about DataToRadiance functions see
+% RTB_DataToRadiance_SampleRenderer().
 %
 % @details
 % Usage:
-%   [radianceImage, scaleFactor] = RTB_DataToRadiance_SampleRenderer(multispectralImage, scene, hints)
+%   [radianceImage, scaleFactor] = RTB_DataToRadiance_PBRT(multispectralImage, scene, hints)
 %
 % @ingroup RendererPlugins
-function [radianceImage, scaleFactor] = RTB_DataToRadiance_SampleRenderer(multispectralImage, scene, hints)
-        % scale the output into radiance units
-        [multispectralImage, radiometricScaleFactor] = ...
-            PBRTDataToRadiance( ...
-            multispectralImage, pbrtDoc, hints);
+function [radianceImage, scaleFactor] = RTB_DataToRadiance_PBRT(multispectralImage, scene, hints)
+
+% get the PBRT radiometric scale factor
+if ispref('PBRT', 'radiometricScaleFactor')
+    scaleFactor = getpref('PBRT', 'radiometricScaleFactor');
+else
+    scaleFactor = 1;
+end
+
+%% Compare pixel reconstruction filter to default.
+defaultAdjustments = 'PBRTDefaultAdjustments.xml';
+[defaultDoc, defaultIdMap] = ReadSceneDOM(defaultAdjustments);
+[pbrtDoc, pbrtIdMap] = ReadSceneDOM(scene.pbrtXMLFile);
+
+nodePath = 'filter.type';
+sceneFilterType = GetSceneValue(sceneIdMap, nodePath);
+if ~isempty(sceneFilterType)
+    defaultFilterType = GetSceneValue(defaultIdMap, nodePath);
+    checkSceneParameter('Pixel Filter type', ...
+        sceneFilterType, defaultFilterType);
+end
+
+nodePath = 'filter:parameter|name=alpha';
+sceneAlpha = GetSceneValue(sceneIdMap, nodePath);
+if ~isempty(sceneAlpha)
+    defaultAlpha = GetSceneValue(defaultIdMap, nodePath);
+    checkSceneParameter('Pixel Filter alpha', sceneAlpha, defaultAlpha);
+end
+
+nodePath = 'filter:parameter|name=xwidth';
+sceneXWidth = GetSceneValue(sceneIdMap, nodePath);
+if ~isempty(sceneXWidth)
+    defaultXWidth = GetSceneValue(defaultIdMap, nodePath);
+    factor = StringToVector(defaultXWidth) / StringToVector(sceneXWidth);
+    checkSceneParameter('Pixel Filter xwidth', ...
+        sceneXWidth, defaultXWidth, factor);
+end
+
+nodePath = 'filter:parameter|name=ywidth';
+sceneYWidth = GetSceneValue(sceneIdMap, nodePath);
+if ~isempty(sceneYWidth)
+    defaultYWidth = GetSceneValue(defaultIdMap, nodePath);
+    factor = StringToVector(defaultYWidth) / StringToVector(sceneYWidth);
+    checkSceneParameter('Pixel Filter ywidth', ...
+        sceneYWidth, defaultYWidth, factor);
+end
+
+% TODO: apply non-radiometric scale corrections for filter
+
+%% Compare scene ray sampler to default.
+nodePath = 'sampler.type';
+sceneSamplerType = GetSceneValue(sceneIdMap, nodePath);
+if ~isempty(sceneSamplerType)
+    defaultSamplerType = GetSceneValue(defaultIdMap, nodePath);
+    checkSceneParameter('Sampler type', sceneSamplerType, defaultSamplerType);
+end
+
+nodePath = 'sampler:parameter|name=pixelsamples';
+sceneSamplesPerPixel = GetSceneValue(sceneIdMap, nodePath);
+if ~isempty(sceneSamplesPerPixel)
+    defaultSamplesPerPixel = GetSceneValue(defaultIdMap, nodePath);
+    factor = StringToVector(defaultSamplesPerPixel) / StringToVector(sceneSamplesPerPixel);
+    checkSceneParameter('Sampler samples per pixel', ...
+        sceneSamplesPerPixel, defaultSamplesPerPixel, factor);
+end
+
+% TODO: apply non-radiometric scale corrections for sampler
+
+%% Scale the rendered data to physical radiance units.
+radianceImage = multispectralImage .* scaleFactor;
+
+
+%% Warn if scene and default properties don't match.
+function checkSceneParameter(paramName, sceneValue, defaultValue, scale)
+
+if ~strcmp(sceneValue, defaultValue)
+    warningMessage = sprintf('%s (%s) does not match default (%s).', ...
+        paramName, sceneValue, defaultValue);
+    if nargin >= 4 && ~isempty(scale)
+        warningMessage = sprintf('%s\n Radiance data might need to be scaled by a factor of %f.', ...
+            warningMessage, scale);
+    else
+        warningMessage = sprintf('%s\n Radiance data might be incorrectly scaled.', ...
+            warningMessage);
+    end
+    warning('RenderToolbox3:DefaultParamsIncorrectlyScaled',warningMessage);
+end

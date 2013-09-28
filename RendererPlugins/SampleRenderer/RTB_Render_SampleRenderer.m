@@ -3,7 +3,7 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Invoke the Sample Renderer.
-%   @param scene data or file name specifying a scene to be rendererd
+%   @param scene struct description of the scene to be rendererd
 %   @param isShow whether or not to display the output image in a figure
 %
 % @details
