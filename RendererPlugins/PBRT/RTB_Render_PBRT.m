@@ -13,16 +13,23 @@
 % See RTB_Render_SampleRenderer() for more about Render functions.
 %
 % Usage:
-%   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow)
+%   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow, hints)
 %
 % @ingroup RendererPlugins
-function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow)
+function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow, hints)
+
+if hints.isAbsoluteResourcePaths
+    sceneFile = scene.pbrtFile;
+else
+    [scenePath, sceneBase, sceneExt] = fileparts(scene.pbrtFile);
+    sceneFile = [sceneBase, sceneExt];
+end
+
 
 % invoke PBRT!
-[status, result, output] = RunPBRT(scene.pbrtFile, isShow);
+[status, result, output] = RunPBRT(sceneFile, isShow);
 if status ~= 0
-    error('PBRT rendering failed\n  %s\n  %s\n', ...
-        pbrtFile, result);
+    error('PBRT rendering failed\n  %s\n  %s\n', sceneFile, result);
 end
 
 % read output into memory

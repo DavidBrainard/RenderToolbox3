@@ -26,35 +26,45 @@ hints.outputSubfolder = mfilename();
 
 %% Create scene files for Mistuba and PBRT.
 %   this could happen on "machine A"
-portableFolder = fullfile(GetOutputPath('tempFolder'), 'portable-scenes');
+portableFolder = fullfile(GetOutputPath('tempFolder', hints), 'portable-scenes');
 for renderer = {'Mitsuba', 'PBRT'}
     % choose one renderer
     hints.renderer = renderer{1};
     
-    % save scene files and auxiliary files in a custom folder
+    % save scene required files in a custom outFolder
     outFolder = fullfile(portableFolder, hints.renderer);
-    MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints, outFolder);
+    scenes = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints, outFolder);
+    
+    % pack up scene descriptions in a mat file in the same outFolder
+    scenePack = fullfile(outFolder, 'sceneDescriptions.mat');
+    save(scenePack, 'scenes');
 end
 
 %% Render with Mitsuba and PBRT.
 % this could happen on "machine B", after copying over the custom folder
 
+% choose where to look for scenes from machineA
+hints = GetDefaultHints();
+hints.outputSubfolder = mfilename();
+hints.isAbsoluteResourcePaths = false;
+portableFolder = fullfile(GetOutputPath('tempFolder', hints), 'portable-scenes');
+
 % how to convert multi-spectral images to sRGB
 toneMapFactor = 100;
 isScaleGamma = true;
 originalFolder = pwd();
-portableFolder = fullfile(GetOutputPath('tempFolder'), 'portable-scenes');
 for renderer = {'Mitsuba', 'PBRT'}
     % choose one renderer
     hints.renderer = renderer{1};
     
-    % locate scene ".xml" files in the custom folder
+    % unpack scene descriptions from the mat file
     sceneFolder = fullfile(portableFolder, hints.renderer);
-    nativeSceneFiles = FindFiles(sceneFolder, '\.xml');
+    scenePack = fullfile(sceneFolder, 'sceneDescriptions.mat');
+    scenePackData = load(scenePack);
     
-    % render from the custom folder so renderers can find auxiliary files
-    cd(sceneFolder);    
-    radianceDataFiles = BatchRender(nativeSceneFiles, hints);
+    % render from the custom scene folder so renderers can find scene files
+    cd(sceneFolder);
+    radianceDataFiles = BatchRender(scenePackData.scenes, hints);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('MaterialSpherePortable (%s)', hints.renderer);

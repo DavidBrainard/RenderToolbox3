@@ -13,16 +13,22 @@
 % See RTB_Render_SampleRenderer() for more about Render functions.
 %
 % Usage:
-%   [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, isShow)
+%   [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, isShow, hints)
 %
 % @ingroup RendererPlugins
-function [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, isShow)
+function [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, isShow, hints)
+
+if hints.isAbsoluteResourcePaths
+    sceneFile = scene.mitsubaFile;
+else
+    [scenePath, sceneBase, sceneExt] = fileparts(scene.mitsubaFile);
+    sceneFile = [sceneBase, sceneExt];
+end
 
 % invoke Mitsuba!
-[status, result, output] = RunMitsuba(scene.mitsubaFile, isShow);
+[status, result, output] = RunMitsuba(sceneFile, isShow);
 if status ~= 0
-    error('Mitsuba rendering failed\n  %s\n  %s\n', ...
-        mitsubaFile, result);
+    error('Mitsuba rendering failed\n  %s\n  %s\n', sceneFile, result);
 end
 
 % read raw output into memory

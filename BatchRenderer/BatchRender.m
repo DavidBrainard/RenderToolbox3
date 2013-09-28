@@ -153,7 +153,7 @@ if isempty(renderFunction)
     return
 end
 [status, commandResult, multispectralImage, S] = ...
-    feval(renderFunction, scene, false);
+    feval(renderFunction, scene, false, hints);
 
 if 0 ~= status
     return

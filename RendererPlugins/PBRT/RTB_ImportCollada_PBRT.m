@@ -28,8 +28,8 @@ scene.colladaFile = colladaFile;
 scene.pbrtFile = fullfile(outputFolder, [imageName '.pbrt']);
 scene.pbrtXMLFile = fullfile(outputFolder, [imageName '.pbrt.xml']);
 scene.adjustmentsFile = fullfile(outputFolder, [imageName 'Adjustments.xml']);
-requiredFiles = {scene.colladaFile, scene.pbrtFile, ...
-    scene.pbrtXMLFile, scene.adjustmentsFile};
+requiredFiles = ...
+    {scene.colladaFile, scene.pbrtFile, scene.pbrtXMLFile, scene.adjustmentsFile};
 
 % image is a safe default film for PBRT
 if isempty(hints.filmType)
