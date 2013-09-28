@@ -10,11 +10,10 @@
 %   @param outPath path where to copy new scene files
 %
 % @details
-% Creates a family of renderer-native scene, based on the given @a
+% Creates a family of renderer-native scenes, based on the given @a
 % colladaFile, @a conditionsFile, and @a mappingsFile.  @a hints.renderer
-% specifies which renderer to make scene files for.  @a outPath is
-% optional, and may specify a folder path that where renderer-native scene
-% files should be writen.
+% specifies which renderer to target.  @a outPath is optional, and may
+% specify a folder path that where new files should be written.
 %
 % @details
 % @a colladaFile should be a Collada XML parent scene file.  @a colladaFile
@@ -38,22 +37,20 @@
 % @a hints may be a struct with options that affect the process generating
 % of renderer-native scene files.  If @a hints is omitted, values are taken
 % from GetDefaultHints().
-%   - @a hints.renderer specifies which renderer to make native scene files
-%   for.
+%   - @a hints.renderer specifies which renderer to target
 %   - @a hints.tempFolder is the default location for new renderer-native
-%   scene files.
-%   - @a hints.filmType is a renderer-specific film type to use in the
-%   new renderer-native scene files.
+%   scene files
+%   - @a hints.filmType is a renderer-specific film type to specify for the
+%   scene
 %   - @a hints.imageHeight and @a hints.imageWidth specify the image pixel
-%   dimensions to use in the new renderer-native scene files.
+%   dimensions to specify for the scene
 %   - @a hints.whichConditions is an array of condition numbers used to
 %   select rows from the @a conditionsFile.
 %   .
 %
 % @details
 % @a outPath is optional.  If provided, it should be the path to a folder
-% where new renderer-native scene files and related auxiliary files should
-% be copied.  The renderer-native scene files will also be written to @a
+% where new files should be copied.  New files will also be written to @a
 % hints.tempFolder.
 %
 % @details
@@ -63,16 +60,15 @@
 %
 % @details
 % Returns a cell array of new renderer-native scene descriptions.  Each
-% scene description may include the name of a new renderer-native scene
-% file.  By default, each scene file will have the same base name as @a
-% the given @a colladaFile, plus a numeric suffix.  If @a conditionsFile
-% contains an 'imageName' variable, each scene file be named with the value
-% of 'imageName'.
+% scene description.  By default, each scene file will have the same base
+% name as the given @a colladaFile, plus a numeric suffix.  If @a
+% conditionsFile contains an 'imageName' variable, each scene file be named
+% with the value of 'imageName'.
 %
 % @details
-% Also retrurns a cell array of file names for auxiliary files on which the
-% renderer-native scenes depend, such as image files, spectrum data
-% files, and object geometry files.
+% Also retrurns a cell array of file names for required files on which the
+% scene description depends, such as text scene files, and adjustments
+% files, geometry files, image files, spectrum data files, etc.
 %
 % @details
 % Usage:
@@ -127,7 +123,7 @@ else
 end
 
 %% Create folders to receive new scene files for each renderer.
-% determine which renderers will be used
+% determine which renderers may be used
 isMatch = strcmp('renderer', varNames);
 if any(isMatch)
     renderers = varValues{:, find(isMatch, 1, 'first')};
@@ -159,28 +155,24 @@ try
         end
         
         % make a the scene file for this condition
-        [scenes{cc}, sceneRequiredFiles] = ...
-            makeSceneForCondition(colladaFile, mappingsFile, ...
-            cc, varNames, conditionVarValues, hints);
+        [scenes{cc}, sceneRequiredFiles] = makeSceneForCondition( ...
+            colladaFile, mappingsFile, cc, ...
+            varNames, conditionVarValues, hints);
         
-        % append to running list of auxiliary files
+        % append to running list of required files
         requiredFiles = cat(2, requiredFiles, sceneRequiredFiles);
     end
 catch err
     disp('Scene conversion error!');
 end
 
-% only care about unique auxiliary files
+% only care about unique required files
 requiredFiles = unique(requiredFiles);
 
-% copy scene files and auxiliary files to an output folder?
+% copy required files to an output folder?
 if ~isempty(outPath)
     if ~exist(outPath, 'dir')
         mkdir(outPath);
-    end
-    
-    for ii = 1:numel(scenes)
-        [status, result] = copyfile(scenes{ii}, outPath);
     end
     
     for ii = 1:numel(requiredFiles)
@@ -188,26 +180,26 @@ if ~isempty(outPath)
     end
 end
 
-% report the error, if any
+% report any error
 if ~isempty(err)
     rethrow(err)
 end
 
-% Create a renderer-native scene description for one condition.
+
+%% Create a renderer-native scene description for one condition.
 function [scene, requiredFiles] = makeSceneForCondition( ...
-    colladaFile, mappingsFile, ...
-    conditionNumber, varNames, varValues, hints)
+    colladaFile, mappingsFile, conditionNumber, ...
+    varNames, varValues, hints)
 
 scene = '';
 requiredFiles = {};
 
-% choose the renderer
+%% Choose parameter values from conditions file or hints.
 isMatch = strcmp('renderer', varNames);
 if any(isMatch)
     hints.renderer = varValues{find(isMatch, 1, 'first')};
 end
 
-% choose the scene file
 isMatch = strcmp('colladaFile', varNames);
 if any(isMatch)
     colladaFile = varValues{find(isMatch, 1, 'first')};
@@ -217,14 +209,12 @@ if isempty(scenePath) && exist(colladaFile, 'file')
     colladaFile = which(colladaFile);
 end
 
-% choose the mappings file
 isMatch = strcmp('mappingsFile', varNames);
 if any(isMatch)
     mappingsFile = varValues{find(isMatch, 1, 'first')};
 end
 mappings = ParseMappings(mappingsFile);
 
-% choose the output name
 isMatch = strcmp('imageName', varNames);
 if any(isMatch)
     imageName = varValues{find(isMatch, 1, 'first')};
@@ -232,7 +222,6 @@ else
     imageName = sprintf('%s-%03d', sceneBase, conditionNumber);
 end
 
-% choose the output image size
 isMatch = strcmp('imageHeight', varNames);
 if any(isMatch)
     num = StringToVector(varValues{find(isMatch, 1, 'first')});
@@ -244,14 +233,14 @@ if any(isMatch)
     hints.imageWidth = num;
 end
 
-% copy the collada file and reduce it to known characters and elements
+%% Copy the collada file and reduce to known characters and elements.
 tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
 colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
 [isSuccess, result] = copyfile(colladaFile, colladaCopy);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
 
-% initialize renderer-specific adjustments that will receive mappings data
+%% Initialize renderer-native adjustments to receive mappings data.
 applyMappingsFunction = ...
     GetRendererAPIFunction('ApplyMappings', hints.renderer);
 if isempty(applyMappingsFunction)
@@ -259,20 +248,64 @@ if isempty(applyMappingsFunction)
 end
 adjustments = feval(applyMappingsFunction, [], []);
 
+%% Apply mappings to the renderer-native adjustments.
 % replace various mappings file expressions with concrete values
 % and collect required file names
 [mappings, mappingsRequiredFiles] = ResolveMappingsValues( ...
     mappings, varNames, varValues, colladaCopy, adjustments, hints);
 
-% for each mappings block
-%   filter mappings by group name
-%   apply directly to Collada document
-%   apply directly to adjustments document (XML only)?
-%   supplement generic mappings (must include block type)
-%   pass to ApplyMappings function
-%       convert generic to native internally
+% update the renderer-native adjustments to for each block of mappings
+blockNums = [mappings.blockNumber];
+rendererName = hints.renderer;
+rendererPathName = [rendererName '-path'];
+if ~isempty(mappings)
+    for bb = unique(blockNums)
+        
+        % get all mappings from one block
+        blockMappings = mappings(bb == blockNums);
+        blockGroup = blockMappings(1).group;
+        blockType = blockMappings(1).type;
+        
+        % choose mappings for an active groupName
+        isInGroup = isempty(groupName) ...
+            || isempty(blockGroup) || strcmp(groupName, blockGroup);
+        
+        if any(isInGroup)
+            switch blockType
+                case 'Collada'
+                    % DOM paths apply directly to Collada
+                    [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaCopy);
+                    ApplySceneDOMPaths(colladaIDMap, blockMappings);
+                    WriteSceneDOM(colladaCopy, colladaDoc);
+                    
+                case rendererPathName
+                    % DOM paths apply directly to adjustments
+                    if ischar(adjustments)
+                        [adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
+                        if ~isempty(adjustIDMap)
+                            ApplySceneDOMPaths(adjustIDMap, blockMappings);
+                            WriteSceneDOM(adjustments, adjustDoc);
+                        end
+                    end
+                    
+                case 'Generic'
+                    % scene targets apply to adjustments
+                    objects = MappingsToObjects(blockMappings);
+                    objects = SupplementGenericObjects(objects);
+                    adjustments = ...
+                        feval(applyMappingsFunction, objects, adjustments);
+                    
+                case rendererName
+                    % scene targets apply to adjustments
+                    objects = MappingsToObjects(blockMappings);
+                    adjustments = ...
+                        feval(applyMappingsFunction, objects, adjustments);
+            end
+        end
+    end
+end
 
-% convert the Collada parent scene to a mapped, renderer-native scene
+%% Produce a renderer-native scene from Collada and adjustments.
 importColladaFunction = ...
     GetRendererAPIFunction('ImportCollada', hints.renderer);
 if isempty(importColladaFunction)
