@@ -76,10 +76,10 @@
 %
 % @details
 % Usage:
-%   [scenes, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+%   [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 %
 % @ingroup BatchRenderer
-function [scenes, auxiliaryFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+function [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
 
 InitializeRenderToolbox();
 
@@ -146,7 +146,7 @@ end
 
 %% Make a scene file for each condition.
 scenes = cell(1, nConditions);
-auxiliaryFiles = {};
+requiredFiles = {};
 
 err = [];
 try
@@ -159,19 +159,19 @@ try
         end
         
         % make a the scene file for this condition
-        [scenes{cc}, sceneAux] = ...
+        [scenes{cc}, sceneRequiredFiles] = ...
             makeSceneForCondition(colladaFile, mappingsFile, ...
             cc, varNames, conditionVarValues, hints);
         
         % append to running list of auxiliary files
-        auxiliaryFiles = cat(2, auxiliaryFiles, sceneAux);
+        requiredFiles = cat(2, requiredFiles, sceneRequiredFiles);
     end
 catch err
     disp('Scene conversion error!');
 end
 
 % only care about unique auxiliary files
-auxiliaryFiles = unique(auxiliaryFiles);
+requiredFiles = unique(requiredFiles);
 
 % copy scene files and auxiliary files to an output folder?
 if ~isempty(outPath)
@@ -183,8 +183,8 @@ if ~isempty(outPath)
         [status, result] = copyfile(scenes{ii}, outPath);
     end
     
-    for ii = 1:numel(auxiliaryFiles)
-        [status, result] = copyfile(auxiliaryFiles{ii}, outPath);
+    for ii = 1:numel(requiredFiles)
+        [status, result] = copyfile(requiredFiles{ii}, outPath);
     end
 end
 
@@ -194,12 +194,12 @@ if ~isempty(err)
 end
 
 % Create a renderer-native scene description for one condition.
-function [scene, auxiliary] = makeSceneForCondition( ...
+function [scene, requiredFiles] = makeSceneForCondition( ...
     colladaFile, mappingsFile, ...
     conditionNumber, varNames, varValues, hints)
 
 scene = '';
-auxiliary = {};
+requiredFiles = {};
 
 % choose the renderer
 isMatch = strcmp('renderer', varNames);
@@ -251,43 +251,36 @@ colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
 
-% process mappings for this condition
-
-% convert the Collada file to renderer-native for this condition
-
-% make a new, modified Collada file and adjustments file
-[sceneTemp, adjustTemp, sceneResources] = WriteMappedSceneFiles( ...
-    tempFolder, imageName, colladaCopy, adjustCopy, ...
-    mappings, varNames, varValues, hints);
-
-% convert Collada and adjustments to a renderer-specific scene file
-switch hints.renderer
-    case 'Mitsuba'
-        % convert Collada to Mitsuba's .xml format
-        scene = fullfile(tempFolder, [imageName '.xml']);
-        
-        if hints.isReuseSceneFiles && exist(scene, 'file');
-            disp(sprintf('Reusing %s', scene));
-            sceneAux = {};
-        else
-            [scene, sceneDoc, sceneAux] = ColladaToMitsuba( ...
-                sceneTemp, scene, adjustTemp, hints);
-        end
-        
-    case 'PBRT'
-        % convert Collada to PBRT-XML format
-        pbrtFile = fullfile(tempFolder, [imageName '.pbrt']);
-        pbrtXMLFile = fullfile(tempFolder, [imageName '.pbrt.xml']);
-        
-        if hints.isReuseSceneFiles && exist(pbrtXMLFile, 'file');
-            disp(sprintf('Reusing %s', pbrtXMLFile));
-            sceneAux = {};
-        else
-            [pbrtFile, pbrtXMLFile, pbrtDoc, sceneAux] = ColladaToPBRT( ...
-                sceneTemp, pbrtFile, adjustTemp, hints);
-        end
-        scene = pbrtXMLFile;
+% initialize renderer-specific adjustments that will receive mappings data
+applyMappingsFunction = ...
+    GetRendererAPIFunction('ApplyMappings', hints.renderer);
+if isempty(applyMappingsFunction)
+    return;
 end
+adjustments = feval(applyMappingsFunction, [], []);
 
-% combined list of dependencies for this scene
-auxiliary = cat(2, sceneResources, sceneAux);
+% replace various mappings file expressions with concrete values
+% and collect required file names
+[mappings, mappingsRequiredFiles] = ResolveMappingsValues( ...
+    mappings, varNames, varValues, colladaCopy, adjustments, hints);
+
+% for each mappings block
+%   filter mappings by group name
+%   apply directly to Collada document
+%   apply directly to adjustments document (XML only)?
+%   supplement generic mappings (must include block type)
+%   pass to ApplyMappings function
+%       convert generic to native internally
+
+% convert the Collada parent scene to a mapped, renderer-native scene
+importColladaFunction = ...
+    GetRendererAPIFunction('ImportCollada', hints.renderer);
+if isempty(importColladaFunction)
+    return;
+end
+tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
+[scene, importRequiredFiles] = feval(importColladaFunction, ...
+    colladaCopy, adjustments, tempFolder, imageName, hints);
+
+% full list of required files
+requiredFiles = cat(2, mappingsRequiredFiles, importRequiredFiles);

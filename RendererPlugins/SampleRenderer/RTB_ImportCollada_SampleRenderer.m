@@ -47,9 +47,9 @@
 %
 % @details
 % An ImportCollada function must also return a cell array of names of files
-% that are required for rendering the scene.  These might include text
-% scene files as well as geometry files that contain scene data but are
-% separate from the main scene description.
+% that are required for rendering the scene.  For example, these might
+% include text scene files, XML adjustments files, and geometry files that
+% contain scene data but are separate from the main scene description.
 %
 % @details
 % Usage:

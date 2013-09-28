@@ -21,9 +21,10 @@
 % @details
 % An ApplyMappings function must read mappings values from the given
 % mappings @a objects and create or update @a adjustments in a renderer's
-% native format.  @a objects contains data parsed from a scene mappings
-% file.  @a adjustments will be used by the renderer's ImportCollada
-% function to modify the scene following initial Collada conversion.
+% native format.  @a objects may be empty but will usually contain data
+% parsed from a scene mappings file.  @a adjustments will be used by the
+% renderer's ImportCollada function to modify the scene following initial
+% Collada conversion.
 %
 % @details
 % @a adjustments may have any renderer-specific format.  Some renderers may

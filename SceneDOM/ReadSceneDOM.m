@@ -9,8 +9,8 @@
 % @details
 % Read the given XML @a sceneFile (.dae or .xml).  The @a sceneFile should
 % be a Collada scene file, or a renderer adjustments file.  <a
-% href="https://collada.org/mediawiki/index.php/COLLADA_-_Digital_Asset_and_FX_Exchange_Schema">Collada</a> 
-% is is an XML-based format for exchanging 3D models and assets.  Renderer 
+% href="https://collada.org/mediawiki/index.php/COLLADA_-_Digital_Asset_and_FX_Exchange_Schema">Collada</a>
+% is is an XML-based format for exchanging 3D models and assets.  Renderer
 % <a
 % href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Adjustments-Files">Adjustments
 % Files</a> introduce scene elements that Collada doesn't know about.
@@ -38,8 +38,17 @@ if nargin < 2
     excludePattern = '';
 end
 
-% open the file for parsing
-docNode = xmlread(sceneFile);
+docNode = [];
+idMap = [];
+
+try
+    % open the file for parsing
+    docNode = xmlread(sceneFile);
+catch err
+    disp(['Error reading XML file: ' sceneFile])
+    disp(err.message)
+    return;
+end
 
 % scan the document for nodes that have ids
 idMap = GenerateSceneIDMap(docNode, excludePattern);
