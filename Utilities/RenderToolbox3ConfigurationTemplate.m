@@ -48,8 +48,8 @@ if ispref('Mitsuba')
 end
 
 % choose the file with default adjustments
-adjustmentsFile = fullfile( ...
-    RenderToolboxRoot(), 'RenderData', 'MitsubaDefaultAdjustments.xml');
+adjustmentsFile = fullfile(RenderToolboxRoot(), ...
+    'RendererPlugins', 'Mitsuba', 'MitsubaDefaultAdjustments.xml');
 
 % choose the default scale factor for radiance units
 radiometricScaleFactor = 0.0795827427;
@@ -85,7 +85,7 @@ else
 end
 
 % save preferences for Mitsuba
-setpref('Mitsuba', 'adjustmentsFile', adjustmentsFile);
+setpref('Mitsuba', 'adjustments', adjustmentsFile);
 setpref('Mitsuba', 'radiometricScaleFactor', radiometricScaleFactor);
 setpref('Mitsuba', 'app', myMistubaApp);
 setpref('Mitsuba', 'executable', myMistubaExecutable);
@@ -99,8 +99,8 @@ if ispref('PBRT')
 end
 
 % choose the file with default adjustments
-adjustmentsFile = fullfile( ...
-    RenderToolboxRoot(), 'RenderData', 'PBRTDefaultAdjustments.xml');
+adjustmentsFile = fullfile(RenderToolboxRoot(), ...
+    'RendererPlugins', 'PBRT', 'PBRTDefaultAdjustments.xml');
 
 % choose the default scale factor for radiance units
 radiometricScaleFactor = 0.0063831432;
@@ -116,7 +116,7 @@ myPBRT = '/usr/local/bin/pbrt';
 %myPBRT = '/my/path/for/pbrt';
 
 % save preferences for Mitsuba
-setpref('PBRT', 'adjustmentsFile', adjustmentsFile);
+setpref('PBRT', 'adjustments', adjustmentsFile);
 setpref('PBRT', 'radiometricScaleFactor', radiometricScaleFactor);
 setpref('PBRT', 'S', S);
 setpref('PBRT', 'executable', myPBRT);
