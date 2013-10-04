@@ -13,11 +13,12 @@
 % RTB_ApplyMappings_SampleRenderer.
 %
 % @details
-% @renderer may be the name of any supported renderer, for example,
+% @a renderer may be the name of any supported renderer, for example,
 % "SampleRenderer", "PBRT", or "Mitsuba".
 %
 % @details
-% @a functionName must be the name of a RenderToolbox3 API function:
+% @a functionName must be the name of a RenderToolbox3 Renderer API
+% function:
 %   - @b ApplyMappings: the funciton that converts RenderToolbox3 mappings
 %   to renderer-native scene adjustments
 %   - @b ImportCollada: the function that converts Collada parent scene
@@ -30,7 +31,7 @@
 %   .
 %
 % @details
-% Returns the function_handle of the RenderToolbox3 renderer API function,
+% Returns the function_handle of the RenderToolbox3 Renderer API function,
 % for the given @a renderer and @a functionName.  If no such function is
 % found, retuns an empty [].  Also returns the full path to the named
 % function, if found.
@@ -48,7 +49,7 @@ functionPath = '';
 validFunctionNames = ...
     {'ApplyMappings', 'ImportCollada', 'Render', 'DataToRadiance', 'VersionInfo'};
 if ~any(strcmp(validFunctionNames, functionName))
-    disp(['rendererName ' functionName ' should be one of the following:'])
+    disp(['functionName ' functionName ' should be one of the following:'])
     disp(validFunctionNames)
     return
 end
@@ -56,7 +57,7 @@ end
 % build a standard function name
 standardName = ['RTB_' functionName '_' renderer];
 
-% try to find API the function by name
+% try to find the API function by name
 functionPath = which(standardName);
 if isempty(functionPath)
     disp(['function not found: ' standardName])

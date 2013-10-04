@@ -140,6 +140,14 @@ for ii = 1:numel(renderers)
     end
 end
 
+%% Allow user function to hook into Collada upstram of all conditions.
+% if colladaFile given as argument
+% get hook function
+% read the collada doc
+% pass doc to hook function
+% write new collada copy
+% use new collada copy instad of given colladaFile
+
 %% Make a scene file for each condition.
 scenes = cell(1, nConditions);
 requiredFiles = {};
@@ -248,6 +256,13 @@ colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
 
+%% Allow user function to hook into Collada upstram of each condition.
+% get hook function
+% read the collada doc
+% pass doc to hook function
+% write new collada copy
+% use new collada copy below
+
 %% Initialize renderer-native adjustments to receive mappings data.
 applyMappingsFunction = ...
     GetRendererAPIFunction('ApplyMappings', hints.renderer);
@@ -312,6 +327,14 @@ if ~isempty(mappings)
         end
     end
 end
+
+%% Allow user function to hook into Collada downstream of each condition.
+% get hook function
+% read the collada doc
+% pass doc to hook function
+% write new collada copy
+% use new collada copy below
+
 
 %% Produce a renderer-native scene from Collada and adjustments.
 importColladaFunction = ...
