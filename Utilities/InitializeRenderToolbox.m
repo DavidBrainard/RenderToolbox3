@@ -79,6 +79,7 @@ if isForce
     
     % default hints
     RenderToolbox3.renderer = 'SampleRenderer';
+    RenderToolbox3.remodeler = '';
     RenderToolbox3.filmType = '';
     RenderToolbox3.imageHeight = 240;
     RenderToolbox3.imageWidth = 320;

@@ -140,13 +140,8 @@ for ii = 1:numel(renderers)
     end
 end
 
-%% Allow user function to hook into Collada upstram of all conditions.
-% if colladaFile given as argument
-% get hook function
-% read the collada doc
-% pass in doc and hints
-% write new collada copy
-% use new collada copy instad of given colladaFile
+%% Allow remodeler to modify Collada document before all else.
+colladaFile = remodelCollada(colladaFile, hints, 'BeforeAll');
 
 %% Make a scene file for each condition.
 scenes = cell(1, nConditions);
@@ -191,6 +186,31 @@ end
 % report any error
 if ~isempty(err)
     rethrow(err)
+end
+
+
+%% Remodel the Collada file into a new file.
+function colladaCopy = remodelCollada(colladaFile, hints, functionName, varargin)
+colladaCopy = colladaFile;
+if ~isempty(colladaFile) && ~isempty(hints.remodeler)
+    % get the user-defined remodeler function
+    remodelerFunction = GetRemodelerAPIFunction(functionName, hints.remodeler);
+    if ~isempty(remodelerFunction)
+        % read original Collada document into memory
+        [scenePath, sceneBase, sceneExt] = fileparts(colladaFile);
+        if isempty(scenePath) && exist(colladaFile, 'file')
+            colladaFile = which(colladaFile);
+        end
+        colladaDoc = ReadSceneDOM(colladaFile);
+        
+        % apply the remodeler function with given arguments
+        colladaDoc = feval(remodelerFunction, colladaDoc, varargin{:}, hints);
+        
+        % write modified document to new file
+        tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
+        colladaCopy = fullfile(tempFolder, [sceneBase '-' functionName sceneExt]);
+        WriteSceneDOM(colladaCopy, colladaDoc);
+    end
 end
 
 
@@ -270,14 +290,11 @@ adjustments = feval(applyMappingsFunction, [], []);
 [mappings, mappingsRequiredFiles] = ResolveMappingsValues( ...
     mappings, varNames, varValues, colladaCopy, adjustments, hints);
 
-%% Allow user function to hook into Collada upstram of each condition.
-% get hook function
-% read the collada doc
-% pass in doc, varNames, varValues, mappings, hints
-% write new collada copy
-% use new collada copy below
+%% Allow remodeler to modify Collada document before each condition.
+colladaCopy = remodelCollada(colladaCopy, hints, 'BeforeCondition', ...
+    mappings, varNames, varvalues, conditionNumber);
 
-% update the renderer-native adjustments to for each block of mappings
+%% Update the renderer-native adjustments to for each block of mappings.
 blockNums = [mappings.blockNumber];
 rendererName = hints.renderer;
 rendererPathName = [rendererName '-path'];
@@ -328,13 +345,9 @@ if ~isempty(mappings)
     end
 end
 
-%% Allow user function to hook into Collada downstream of each condition.
-% get hook function
-% read the collada doc
-% pass doc to hook function
-% write new collada copy
-% use new collada copy below
-
+%% Allow remodeler to modify Collada document after each condition.
+colladaCopy = remodelCollada(colladaCopy, hints, 'AfterCondition', ...
+    mappings, varNames, varvalues, conditionNumber);
 
 %% Produce a renderer-native scene from Collada and adjustments.
 importColladaFunction = ...

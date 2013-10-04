@@ -36,10 +36,10 @@
 % function, if found.
 %
 % Usage:
-%   [rendererFunction, functionPath] = GetRendererAPIFunction(functionName, renderer)
+%   [remodelerFunction, functionPath] = GetRemodelerAPIFunction(functionName, remodeler)
 %
 % @ingroup RemodelerPlugins
-function [remodelerFunction, functionPath] = GetRemodelingAPIFunction(functionName, remodeler)
+function [remodelerFunction, functionPath] = GetRemodelerAPIFunction(functionName, remodeler)
 
 remodelerFunction = [];
 functionPath = '';
