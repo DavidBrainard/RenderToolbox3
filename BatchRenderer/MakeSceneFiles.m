@@ -292,7 +292,7 @@ adjustments = feval(applyMappingsFunction, [], []);
 
 %% Allow remodeler to modify Collada document before each condition.
 colladaCopy = remodelCollada(colladaCopy, hints, 'BeforeCondition', ...
-    mappings, varNames, varvalues, conditionNumber);
+    mappings, varNames, varValues, conditionNumber);
 
 %% Update the renderer-native adjustments to for each block of mappings.
 blockNums = [mappings.blockNumber];
@@ -347,7 +347,7 @@ end
 
 %% Allow remodeler to modify Collada document after each condition.
 colladaCopy = remodelCollada(colladaCopy, hints, 'AfterCondition', ...
-    mappings, varNames, varvalues, conditionNumber);
+    mappings, varNames, varValues, conditionNumber);
 
 %% Produce a renderer-native scene from Collada and adjustments.
 importColladaFunction = ...
