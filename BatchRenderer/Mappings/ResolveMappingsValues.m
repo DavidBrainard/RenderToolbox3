@@ -5,7 +5,7 @@
 % Update mappings by resolving expressions to concrete values.
 %   @param mappings struct of mappings data from ParseMappings()
 %   @param varNames cell array of variable names to be replaced
-%   @param varValues cell arrau of variable values to replace names
+%   @param varValues cell array of variable values to replace names
 %   @param colladaFile name or path of a Collada parent scene file
 %   @param adjustments renderer-native adjustments from an ImportCollada
 %   function

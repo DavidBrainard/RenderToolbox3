@@ -144,7 +144,7 @@ end
 % if colladaFile given as argument
 % get hook function
 % read the collada doc
-% pass doc to hook function
+% pass in doc and hints
 % write new collada copy
 % use new collada copy instad of given colladaFile
 
@@ -256,13 +256,6 @@ colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
 
-%% Allow user function to hook into Collada upstram of each condition.
-% get hook function
-% read the collada doc
-% pass doc to hook function
-% write new collada copy
-% use new collada copy below
-
 %% Initialize renderer-native adjustments to receive mappings data.
 applyMappingsFunction = ...
     GetRendererAPIFunction('ApplyMappings', hints.renderer);
@@ -276,6 +269,13 @@ adjustments = feval(applyMappingsFunction, [], []);
 % and collect required file names
 [mappings, mappingsRequiredFiles] = ResolveMappingsValues( ...
     mappings, varNames, varValues, colladaCopy, adjustments, hints);
+
+%% Allow user function to hook into Collada upstram of each condition.
+% get hook function
+% read the collada doc
+% pass in doc, varNames, varValues, mappings, hints
+% write new collada copy
+% use new collada copy below
 
 % update the renderer-native adjustments to for each block of mappings
 blockNums = [mappings.blockNumber];

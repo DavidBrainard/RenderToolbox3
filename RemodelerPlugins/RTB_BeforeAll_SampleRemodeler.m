@@ -2,7 +2,9 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Modify a Collada document before all other processing.
+% Modify a Collada document once, before all other processing.
+%   @param docNode XML Collada document node Java object
+%   @param hints struct of RenderToolbox3 options
 %
 % @details
 % This function is a template for a RenderToolbox3 "BeforeAll" remodeler
@@ -24,16 +26,19 @@
 %
 % @details
 % A BeforeAll function must accept as its first argument an XML document
-% node Java object, as returned from ReadSceneDom().  It must accept as its
+% node Java object, as returned from ReadSceneDom().  This @a docNode
+% will represent the entire Collada parent scene.  It must accept as its 
 % second argument a struct of RenderToolbox3 options as returned from
-% GetDefaultHints().  The BeforeAll function may modify the XML document
-% in any way or not at all.  These changes will be applied before any other
-% scene file processing, so they will affect all generated scene files.
+% GetDefaultHints().
 %
 % @details
-% A BeforeAll function must return the given XML document node Java object.
-% This allows a BeforeAll function to return an entirely different Java
-% object, if desired.
+% A BeforeAll function may modify the given XML document in any way, or not
+% at all.  These modifications will be applied once, before all other scene
+% file processing, so they will affect all generated scene files.
+%
+% @details
+% A BeforeAll function must return the given XML document node Java object,
+% or a different XML document node Java object, if desired.
 %
 % Usage:
 %   docNode = RTB_BeforeAll_SampleRemodeler(docNode, hints)
