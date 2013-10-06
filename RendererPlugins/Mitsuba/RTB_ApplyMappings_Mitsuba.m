@@ -31,6 +31,12 @@ if isempty(objects)
     return;
 end
 
+% apply low level "path" mappings directly to the adjustments document
+if strcmp('Mitsuba-path', objects(1).blockType)
+    ApplySceneDOMPaths(adjustments.idMap, objects);
+    return;
+end
+
 % convert generic mappings object names and values to mitusba-native
 if strcmp('Generic', objects(1).blockType)
     objects = GenericObjectsToMitsuba(objects);

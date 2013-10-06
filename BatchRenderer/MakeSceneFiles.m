@@ -318,16 +318,6 @@ if ~isempty(mappings)
                     ApplySceneDOMPaths(colladaIDMap, blockMappings);
                     WriteSceneDOM(colladaCopy, colladaDoc);
                     
-                case rendererPathName
-                    % DOM paths apply directly to adjustments
-                    if ischar(adjustments)
-                        [adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
-                        if ~isempty(adjustIDMap)
-                            ApplySceneDOMPaths(adjustIDMap, blockMappings);
-                            WriteSceneDOM(adjustments, adjustDoc);
-                        end
-                    end
-                    
                 case 'Generic'
                     % scene targets apply to adjustments
                     objects = MappingsToObjects(blockMappings);
@@ -336,10 +326,14 @@ if ~isempty(mappings)
                         feval(applyMappingsFunction, objects, adjustments);
                     
                 case rendererName
-                    % scene targets apply to adjustments
+                    % scene targets to apply to adjustments
                     objects = MappingsToObjects(blockMappings);
                     adjustments = ...
                         feval(applyMappingsFunction, objects, adjustments);
+                    
+                case rendererPathName
+                    adjustments = ...
+                        feval(applyMappingsFunction, blockMappings, adjustments);
             end
         end
     end
