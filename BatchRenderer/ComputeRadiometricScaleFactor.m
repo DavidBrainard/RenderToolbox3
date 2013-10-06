@@ -37,14 +37,10 @@
 % @ingroup BatchRenderer
 function radiometricScaleFactor = ComputeRadiometricScaleFactor(renderer)
 
-% temporarily disable radometric scaling
-setpref(renderer, 'radiometricScaleFactor', 1);
-
 %% Produce renderingings with known radiometric properties.
 % render the RadianceTest scene
 %   assume outputs go to the deafult outputDataFolder
-setpref('RenderToolbox3', 'renderer', renderer);
-MakeRadianceTest;
+MakeRadianceTest(renderer);
 
 %% Read known parameters from the RadianceTest "reference" condition.
 % distance from point light to reflector
@@ -76,7 +72,7 @@ irradiance_PowerPerUnitAreaUnitWl = ...
 radiance_PowerPerAreaSrUnitWl = irradiance_PowerPerUnitAreaUnitWl/(pi);
 
 %% Compute a radiometric unit scale factor the given render.
-dataFolder = GetOutputPath('outputDataFolder');
+dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeRadianceTest');
 
 % locate RadianceTest "reference" data file
 dataFile = FindFiles(dataFolder, [renderer '.+reference']);

@@ -13,8 +13,6 @@ mappingsFile = 'ScalingTestMappings.txt';
 %% Choose batch renderer options.
 hints.whichConditions = [];
 hints.outputSubfolder = mfilename();
-hints.PBRTRadiometricScale = 1;
-hints.MitsubaRadiometricScale = 1;
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer
@@ -25,9 +23,16 @@ for renderer = {'Mitsuba', 'PBRT'}
     % choose one renderer
     hints.renderer = renderer{1};
     
-    % make 3 multi-spectral renderings, saved in .mat files
+    % turn off radiometric unit scaling
+    oldRadiometricScale = getpref(hints.renderer, 'radiometricScaleFactor');
+    setpref(hints.renderer, 'radiometricScaleFactor', 1);
+    
+    % make multi-spectral renderings, saved in .mat files
     nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
     radianceDataFiles = BatchRender(nativeSceneFiles, hints);
+    
+    % restore radiometric unit scaling
+    setpref(hints.renderer, 'radiometricScaleFactor', oldRadiometricScale);
     
     % condense multi-spectral renderings into one sRGB montage
     montageName = sprintf('%s (%s)', 'ScalingTest', hints.renderer);

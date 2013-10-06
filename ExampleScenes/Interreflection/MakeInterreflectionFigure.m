@@ -26,7 +26,7 @@ pbrt = struct( ...
 mitsuba = pbrt;
 
 % choose where to look for renderings
-dataFolder = GetOutputPath('outputDataFolder');
+dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeInterReflection');
 
 % fill in multi-spectral data for each condition
 for ii = 1:nImages

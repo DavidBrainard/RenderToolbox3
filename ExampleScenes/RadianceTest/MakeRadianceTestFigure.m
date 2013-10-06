@@ -5,7 +5,8 @@
 %% Make a figure with data about renderer film units.
 
 %% Render the scene.
-MakeRadianceTest;
+MakeRadianceTest('PBRT');
+MakeRadianceTest('Mitsuba');
 
 %% Get multi-spectral data each sphere rendering.
 
@@ -26,7 +27,7 @@ pbrt = struct( ...
 mitsuba = pbrt;
 
 % choose where to look for renderings
-dataFolder = GetOutputPath('outputDataFolder');
+dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeRadianceTest');
 
 % fill in multi-spectral data for each condition
 for ii = 1:nImages
