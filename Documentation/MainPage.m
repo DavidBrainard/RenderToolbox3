@@ -10,6 +10,22 @@
 % conditions file and a mappings file, and produces a family of
 % renderer-native scene files and renderings.
 %
+% @defgroup RendererPlugins Renderer Plugin API
+% Plugins to work with various renderers.
+% @details
+% These functions provide templates for Renderer Plugin API functions.
+% RenderToolbox3 can invoke a named renderer plugin during scene file
+% generation and rendering.  Thus, and renderer that defines a set of
+% Renderer Plugin API functions can be used with RenderToolbox3.
+%
+% @defgroup RemodelerPlugins Remodeler Plugin API
+% Plugins to modify the Collada parent scene on the fly.
+% @details
+% These functions provide templates for Remodeler Plugin API functions.
+% RenderToolbox3 can invoke a named remodeler plugin during scene file
+% generation in order to modify the Collada parent scene on the fly, in
+% Matlab.
+%
 % @defgroup Mappings Mappings
 % Functions that support the Batch Renderer.
 % @details
@@ -37,13 +53,6 @@
 %
 % @defgroup Utilities
 % Miscellaneous utilities.
-%
-% @defgroup ColladaToPBRT
-% Convert Collada scenes to PBRT.
-% @details
-% Theses functions make up the RenderToolbox3 Collada to PBRT scene file
-% converter.  Users should not use most of these functions directly.  Just
-% use the ColladaToPBRT() function.
 %
 % @defgroup Mex
 % Build Mex-functions from source.
