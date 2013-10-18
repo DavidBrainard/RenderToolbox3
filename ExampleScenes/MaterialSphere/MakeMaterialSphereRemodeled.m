@@ -41,7 +41,7 @@ for renderer = {'Mitsuba', 'PBRT'}
     radianceDataFiles = BatchRender(nativeSceneFiles, hints);
     
     % condense multi-spectral renderings into one sRGB montage
-    montageName = sprintf('MaterialSphere (%s)', hints.renderer);
+    montageName = sprintf('MaterialSphereRemodeled (%s)', hints.renderer);
     montageFile = [montageName '.png'];
     [SRGBMontage, XYZMontage] = ...
         MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScaleGamma, hints);
