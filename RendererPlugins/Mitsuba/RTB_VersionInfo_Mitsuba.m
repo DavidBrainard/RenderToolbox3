@@ -13,8 +13,6 @@
 %
 % Usage:
 %   versionInfo = RTB_VersionInfo_Mitsuba()
-%
-% @ingroup RendererPlugins
 function versionInfo = RTB_VersionInfo_Mitsuba()
 
 % Mitsuba executable date stamp

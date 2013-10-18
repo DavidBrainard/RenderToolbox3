@@ -16,8 +16,6 @@
 %
 % Usage:
 %   docNode = RTB_BeforeAll_MaterialSphere(docNode, hints)
-%
-% @ingroup RemodelerPlugins
 function docNode = RTB_BeforeAll_MaterialSphere(docNode, hints)
 
 % use SceneDOM functions to get the sphere vertex positions

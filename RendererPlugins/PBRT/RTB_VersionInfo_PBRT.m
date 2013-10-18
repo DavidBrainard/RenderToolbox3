@@ -13,8 +13,6 @@
 %
 % Usage:
 %   versionInfo = RTB_VersionInfo_PBRT()
-%
-% @ingroup RendererPlugins
 function versionInfo = RTB_VersionInfo_PBRT()
 
 % PBRT executable date stamp

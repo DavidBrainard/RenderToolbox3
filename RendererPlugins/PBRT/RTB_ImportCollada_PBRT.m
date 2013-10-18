@@ -19,8 +19,6 @@
 % @details
 % Usage:
 %   [scene, requiredFiles] = RTB_ImportCollada_PBRT(colladaFile, adjustments, outputFolder, imageName, hints)
-%
-% @ingroup RendererPlugins
 function [scene, requiredFiles] = RTB_ImportCollada_PBRT(colladaFile, adjustments, outputFolder, imageName, hints)
 
 % declare new and required files

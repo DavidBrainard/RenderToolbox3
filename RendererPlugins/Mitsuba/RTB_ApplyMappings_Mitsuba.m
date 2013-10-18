@@ -16,8 +16,6 @@
 % @details
 % Usage:
 %   adjustments = RTB_ApplyMappings_Mitsuba(objects, adjustments)
-%
-% @ingroup RendererPlugins
 function adjustments = RTB_ApplyMappings_Mitsuba(objects, adjustments)
 
 % Read in the default Mitsuba adjustments file.

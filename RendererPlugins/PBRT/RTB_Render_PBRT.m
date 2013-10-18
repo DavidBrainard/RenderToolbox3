@@ -14,8 +14,6 @@
 %
 % Usage:
 %   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow, hints)
-%
-% @ingroup RendererPlugins
 function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow, hints)
 
 if hints.isAbsoluteResourcePaths

@@ -16,8 +16,6 @@
 % @details
 % Usage:
 %   adjustments = RTB_ApplyMappings_PBRT(objects, adjustments)
-%
-% @ingroup RendererPlugins
 function adjustments = RTB_ApplyMappings_PBRT(objects, adjustments)
 
 % Read in the default PBRT adjustments file.

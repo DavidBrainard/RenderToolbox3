@@ -22,8 +22,6 @@
 %
 % Usage:
 %   docNode = RTB_BeforeCondition_MaterialSphere(docNode, mappings, varNames, varValues, conditionNumber, hints)
-%
-% @ingroup RemodelerPlugins
 function docNode = RTB_BeforeCondition_MaterialSphere(docNode, mappings, varNames, varValues, conditionNumber, hints)
 
 % use SceneDOM functions to get the sphere normal coordinates

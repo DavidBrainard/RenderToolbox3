@@ -17,8 +17,6 @@
 % @details
 % Usage:
 %   [radianceImage, scaleFactor] = RTB_DataToRadiance_PBRT(multispectralImage, scene, hints)
-%
-% @ingroup RendererPlugins
 function [radianceImage, scaleFactor] = RTB_DataToRadiance_PBRT(multispectralImage, scene, hints)
 
 % get the PBRT radiometric scale factor

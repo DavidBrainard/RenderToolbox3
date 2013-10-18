@@ -17,8 +17,6 @@
 % @details
 % Usage:
 %   [radianceImage, scaleFactor] = RTB_DataToRadiance_Mitsuba(multispectralImage, scene, hints)
-%
-% @ingroup RendererPlugins
 function [radianceImage, scaleFactor] = RTB_DataToRadiance_Mitsuba(multispectralImage, scene, hints)
 
 % get the Mitsuba radiometric scale factor
