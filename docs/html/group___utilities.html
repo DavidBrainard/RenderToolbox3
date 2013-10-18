@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Render Toolbox 3
-   &#160;<span id="projectnumber">v1.0</span>
+   &#160;<span id="projectnumber">v1.1</span>
    </div>
   </td>
  </tr>
@@ -84,6 +84,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ga509d8833e7183548b2b4e36346b1b36b"><td class="memItemLeft" align="right" valign="top">pbrtFile pbrtXMLFile pbrtDoc <br class="typebreak"/>
+auxiliary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga509d8833e7183548b2b4e36346b1b36b">ColladaToPBRT</a> (colladaFile, pbrtFile, adjustmentsFile, hints)</td></tr>
+<tr class="memdesc:ga509d8833e7183548b2b4e36346b1b36b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a Collada parent scene file to a PBRT-native scene file.  <a href="#ga509d8833e7183548b2b4e36346b1b36b"></a><br/></td></tr>
+<tr class="separator:ga509d8833e7183548b2b4e36346b1b36b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf1d28c3bb7f641015db635ad2780879c"><td class="memItemLeft" align="right" valign="top">updatedPath newEntries&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaf1d28c3bb7f641015db635ad2780879c">AddWorkingPath</a> (working, isRecursive)</td></tr>
 <tr class="memdesc:gaf1d28c3bb7f641015db635ad2780879c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the given file or folder to the Matlab path.  <a href="#gaf1d28c3bb7f641015db635ad2780879c"></a><br/></td></tr>
 <tr class="separator:gaf1d28c3bb7f641015db635ad2780879c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -93,10 +97,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ga7c0c95f63d05404d1caaa06da2d662b0"><td class="memItemLeft" align="right" valign="top">mitsubaFile mitsubaDoc auxiliary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga7c0c95f63d05404d1caaa06da2d662b0">ColladaToMitsuba</a> (colladaFile, mitsubaFile, adjustmentsFile, hints)</td></tr>
 <tr class="memdesc:ga7c0c95f63d05404d1caaa06da2d662b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a Collada parent scene file to a Mitusuba-native scene file.  <a href="#ga7c0c95f63d05404d1caaa06da2d662b0"></a><br/></td></tr>
 <tr class="separator:ga7c0c95f63d05404d1caaa06da2d662b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga509d8833e7183548b2b4e36346b1b36b"><td class="memItemLeft" align="right" valign="top">pbrtFile pbrtXMLFile pbrtDoc <br class="typebreak"/>
-auxiliary&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga509d8833e7183548b2b4e36346b1b36b">ColladaToPBRT</a> (colladaFile, pbrtFile, adjustmentsFile, hints)</td></tr>
-<tr class="memdesc:ga509d8833e7183548b2b4e36346b1b36b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a Collada parent scene file to a PBRT-native scene file.  <a href="#ga509d8833e7183548b2b4e36346b1b36b"></a><br/></td></tr>
-<tr class="separator:ga509d8833e7183548b2b4e36346b1b36b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab2d31ab25e845f303659852577e7583c"><td class="memItemLeft" align="right" valign="top">sortedPath originalPath&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gab2d31ab25e845f303659852577e7583c">DemoteEnvPathEntries</a> (variable, matching)</td></tr>
 <tr class="memdesc:gab2d31ab25e845f303659852577e7583c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move some environment path entries to the end of the path.  <a href="#gab2d31ab25e845f303659852577e7583c"></a><br/></td></tr>
 <tr class="separator:gab2d31ab25e845f303659852577e7583c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -186,6 +186,60 @@ libPathName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Miscellaneous utilities. </p>
 <h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="ga509d8833e7183548b2b4e36346b1b36b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">pbrtFile pbrtXMLFile pbrtDoc auxiliary ColladaToPBRT </td>
+          <td>(</td>
+          <td class="paramtype">colladaFile&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">pbrtFile&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">adjustmentsFile&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">hints&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert a Collada parent scene file to a PBRT-native scene file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">colladaFile</td><td>input Collada parent scene file name or path </td></tr>
+    <tr><td class="paramname">pbrtFile</td><td>output PBRT-native scene file name or path (optional) </td></tr>
+    <tr><td class="paramname">adjustmentsFile</td><td>PBRT-native adjustments file name or path (optional) </td></tr>
+    <tr><td class="paramname">hints</td><td>struct of RenderToolbox3 options, see <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a></td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Converts the given <em>colladaFile</em> ('.dae' or '.xml') to a PBRT .pbrt file with the name (and path) given in <em>pbrtFile</em>.</p>
+<p>If <em>adjustmentsFile</em> is provided, it should be the name of a PBRT-XML adjustments xml-file. Elements of <em>adjustmentsFile</em> will replace or modify elements of the converted scene file according to matching "id" attributes.</p>
+<p><em>hints</em> may be a struct with additional parameters for the converter. See <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a> for more about batch renderer hints.</p>
+<p>Returns the file name of the new PBRT-native scene file, which might be the same as the given <em>pbrtFile</em>. Also returns the PBRT-XML file and XML Document Object Model (DOM) document object from which the PBRT file was generated. Also returns a cell array of file names for auxiliary files, like geometry files that the PBRT files depends on.</p>
+<p>Usage: [pbrtFile, pbrtXMLFile, pbrtDoc, auxiliary] = <a class="el" href="group___utilities.html#ga509d8833e7183548b2b4e36346b1b36b" title="Convert a Collada parent scene file to a PBRT-native scene file.">ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)</a> </p>
+
+</div>
+</div>
 <a class="anchor" id="gaf1d28c3bb7f641015db635ad2780879c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -298,60 +352,6 @@ libPathName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p><em>hints</em> may be a struct with additional parameters for the converter. See <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a> for more about batch renderer hints.</p>
 <p>Returns the file name of the new Mitsuba file, which might be the same as the given <em>mitsubaFile</em>. Also returns an XML Document Object Model (DOM) document node that represenets the Mitsuba file. Also returns a cell array of file names for auxiliary files, like geometry files, that the Mitsuba file depends on.</p>
 <p>Usage: [mitsubaFile, mitsubaDoc, auxiliary] = <a class="el" href="group___utilities.html#ga7c0c95f63d05404d1caaa06da2d662b0" title="Convert a Collada parent scene file to a Mitusuba-native scene file.">ColladaToMitsuba(colladaFile, mitsubaFile, adjustmentsFile, hints)</a> </p>
-
-</div>
-</div>
-<a class="anchor" id="ga509d8833e7183548b2b4e36346b1b36b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">pbrtFile pbrtXMLFile pbrtDoc auxiliary ColladaToPBRT </td>
-          <td>(</td>
-          <td class="paramtype">colladaFile&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">pbrtFile&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">adjustmentsFile&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">hints&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Convert a Collada parent scene file to a PBRT-native scene file. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">colladaFile</td><td>input Collada parent scene file name or path </td></tr>
-    <tr><td class="paramname">pbrtFile</td><td>output PBRT-native scene file name or path (optional) </td></tr>
-    <tr><td class="paramname">adjustmentsFile</td><td>PBRT-native adjustments file name or path (optional) </td></tr>
-    <tr><td class="paramname">hints</td><td>struct of RenderToolbox3 options, see <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a></td></tr>
-  </table>
-  </dd>
-</dl>
-<p>Converts the given <em>colladaFile</em> ('.dae' or '.xml') to a PBRT .pbrt file with the name (and path) given in <em>pbrtFile</em>.</p>
-<p>If <em>adjustmentsFile</em> is provided, it should be the name of a PBRT-XML adjustments xml-file. Elements of <em>adjustmentsFile</em> will replace or modify elements of the converted scene file according to matching "id" attributes.</p>
-<p><em>hints</em> may be a struct with additional parameters for the converter. See <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a> for more about batch renderer hints.</p>
-<p>Returns the file name of the new PBRT-native scene file, which might be the same as the given <em>pbrtFile</em>. Also returns the PBRT-XML file and XML Document Object Model (DOM) document object from which the PBRT file was generated. Also returns a cell array of file names for auxiliary files, like geometry files that the PBRT files depends on.</p>
-<p>Usage: [pbrtFile, pbrtXMLFile, pbrtDoc, auxiliary] = <a class="el" href="group___utilities.html#ga509d8833e7183548b2b4e36346b1b36b" title="Convert a Collada parent scene file to a PBRT-native scene file.">ColladaToPBRT(colladaFile, pbrtFile, adjustmentsFile, hints)</a> </p>
 
 </div>
 </div>
@@ -1535,7 +1535,7 @@ libPathName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Aug 3 2013 16:08:29 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Oct 18 2013 19:40:03 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>
