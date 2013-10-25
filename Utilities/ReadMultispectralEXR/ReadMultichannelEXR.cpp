@@ -25,6 +25,10 @@
 #include <mex.h>
 #include <matrix.h>
 
+// make sure we have a portable 32-bit uint
+#include <tmwtypes.h>
+#define MATLAB_UINT32 uint32_T
+
 using namespace Imf;
 using namespace Imath;
 
@@ -107,7 +111,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                 typeName = mxCreateString("UINT");
                 
                 // copy slice data from file to a frame buffer
-                Array2D<uint32_t> slicePixels;
+                Array2D<MATLAB_UINT32> slicePixels;
                 slicePixels.resizeErase(height, width);
                 frameBuffer.insert(iter.name(),
                         Slice(HALF,
