@@ -5,10 +5,9 @@ https://github.com/DavidBrainard/RenderToolbox3/wiki
 
 RenderToolbox3 Copyright (c) 2012-2013 The RenderToolbox3 Team.
 RenderToolbox3 is released under the MIT License.
-Please see LICENSE.txt for details. 
-About Us: https://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
-
-We welcome your comments and contributions.
- - To discuss RenderToolbox3, please visit our [forum](https://groups.google.com/forum/?hl=en#!forum/rendertoolbox3-discussion) at google groups.  You should be able to read existing discussions.  To add a comment or question, click on the "Join group" link.
- - If you want to help improve RenderToolbox3, please also see our list of known [Issues](https://github.com/DavidBrainard/RenderToolbox3/issues?state=open)
+Please see LICENSE.txt for details.
+ - About Us: https://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
+ - Join Us: https://github.com/DavidBrainard/RenderToolbox3/wiki/Join-Us
+ - Discussion forum: https://groups.google.com/forum/?hl=en#!forum/rendertoolbox3-discussion
+ - Known issues: https://github.com/DavidBrainard/RenderToolbox3/issues?state=open
 
