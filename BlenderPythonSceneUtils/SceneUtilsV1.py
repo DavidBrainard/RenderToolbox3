@@ -468,7 +468,7 @@ class sceneManager:
         self.addPlanarQuad(params);
 
 
-    # Method to generate a random mesh
+    # Method to generate a mesh object from an elevation map
     def addElevationMapObject(self, params):
         # compute vertices
         vertices = [];
