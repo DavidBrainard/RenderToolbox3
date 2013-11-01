@@ -34,43 +34,51 @@ if isempty(hints.filmType)
     hints.filmType = 'image';
 end
 
-%% Invoke several Collada to PBRT utilities.
-fprintf('Converting %s\n  to %s.\n', colladaFile, scene.pbrtFile);
-
-% run in the destination folder to capture all ouput there
-originalFolder = pwd();
-cd(outputFolder);
-
-% read the collada file
-[colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
-
-% create a new PBRT-XML document
-[pbrtDoc, pbrtIDMap] = CreateStubDOM(colladaIDMap, 'pbrt_xml');
-PopulateStubDOM(pbrtIDMap, colladaIDMap, hints);
-
-% add a film node to the to the adjustments document
-filmNodeID = 'film';
-filmPBRTIdentifier = 'Film';
-adjustRoot = adjustments.docNode.getDocumentElement();
-filmNode = CreateElementChild(adjustRoot, filmPBRTIdentifier, filmNodeID);
-adjustments.idMap(filmNodeID) = filmNode;
-
-% fill in the film parameters
-SetType(adjustments.idMap, filmNodeID, filmPBRTIdentifier, hints.filmType);
-AddParameter(adjustments.idMap, filmNodeID, ...
-    'xresolution', 'integer', hints.imageWidth);
-AddParameter(adjustments.idMap, filmNodeID, ...
-    'yresolution', 'integer', hints.imageHeight);
-
-% write the adjusted PBRT-XML document to file
-MergeAdjustments(pbrtDoc, adjustments.docNode);
-WriteSceneDOM(scene.pbrtXMLFile, pbrtDoc);
-WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
-
-% dump the PBRT-XML document into a .pbrt text file
-WritePBRTFile(scene.pbrtFile, scene.pbrtXMLFile, hints);
-
-cd(originalFolder)
+if hints.isReuseSceneFiles
+    % locate exsiting scene files, but don't produce new ones
+    disp('Reusing scene files for PBRT scene:')
+    disp(scene)
+    drawnow();
+    
+else
+    %% Invoke several Collada to PBRT utilities.
+    fprintf('Converting %s\n  to %s.\n', colladaFile, scene.pbrtFile);
+    
+    % run in the destination folder to capture all ouput there
+    originalFolder = pwd();
+    cd(outputFolder);
+    
+    % read the collada file
+    [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
+    
+    % create a new PBRT-XML document
+    [pbrtDoc, pbrtIDMap] = CreateStubDOM(colladaIDMap, 'pbrt_xml');
+    PopulateStubDOM(pbrtIDMap, colladaIDMap, hints);
+    
+    % add a film node to the to the adjustments document
+    filmNodeID = 'film';
+    filmPBRTIdentifier = 'Film';
+    adjustRoot = adjustments.docNode.getDocumentElement();
+    filmNode = CreateElementChild(adjustRoot, filmPBRTIdentifier, filmNodeID);
+    adjustments.idMap(filmNodeID) = filmNode;
+    
+    % fill in the film parameters
+    SetType(adjustments.idMap, filmNodeID, filmPBRTIdentifier, hints.filmType);
+    AddParameter(adjustments.idMap, filmNodeID, ...
+        'xresolution', 'integer', hints.imageWidth);
+    AddParameter(adjustments.idMap, filmNodeID, ...
+        'yresolution', 'integer', hints.imageHeight);
+    
+    % write the adjusted PBRT-XML document to file
+    MergeAdjustments(pbrtDoc, adjustments.docNode);
+    WriteSceneDOM(scene.pbrtXMLFile, pbrtDoc);
+    WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
+    
+    % dump the PBRT-XML document into a .pbrt text file
+    WritePBRTFile(scene.pbrtFile, scene.pbrtXMLFile, hints);
+    
+    cd(originalFolder)
+end
 
 %% Detect auxiliary geometry files.
 auxiliaryFiles = FindFiles(outputFolder, 'mesh-data-[^\.]+.pbrt');
