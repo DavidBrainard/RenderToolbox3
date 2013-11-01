@@ -46,6 +46,9 @@
 %   dimensions to specify for the scene
 %   - @a hints.whichConditions is an array of condition numbers used to
 %   select rows from the @a conditionsFile.
+%   - @a hints.isReuseSceneFiles specefies whether or not renderer
+%   ImportCollada functions should attempt to to skip actual scene file
+%   creation, and use existing files instead.
 %   .
 %
 % @details

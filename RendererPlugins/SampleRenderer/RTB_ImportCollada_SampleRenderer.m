@@ -79,4 +79,10 @@ scene.height = 5;
 scene.width = 5;
 scene.value = 1;
 
+if hints.isReuseSceneFiles
+    % may wish to reuse existing scene files instead of creating new ones
+    disp('Reusing scene files')
+    drawnow();
+end
+
 requiredFiles = {};

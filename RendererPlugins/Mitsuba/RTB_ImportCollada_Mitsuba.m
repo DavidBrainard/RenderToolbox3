@@ -34,43 +34,52 @@ if isempty(hints.filmType)
     hints.filmType = 'hdrfilm';
 end
 
-%% Invoke the Mitsuba importer.
-% set the dynamic library search path
-[newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
-
-% invoke the Mitsuba importer
-[colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
-importer = fullfile( ...
-    getpref('Mitsuba', 'app'), ...
-    getpref('Mitsuba', 'importer'));
-fprintf('Converting %s\n  to %s.\n', colladaFile, scene.mitsubaFile);
-importCommand = sprintf('%s -r %dx%d -l %s %s %s', ...
-    importer, ...
-    hints.imageWidth, hints.imageHeight, ...
-    hints.filmType, ...
-    [colladaBase colladaExt], ...
-    scene.unadjustedMitsubaFile);
-
-% run in the destination folder to capture all ouput there
-originalFolder = pwd();
-cd(outputFolder);
-[status, result] = unix(importCommand);
-cd(originalFolder)
-if status ~= 0
-    error('Mitsuba file conversion failed\n  %s\n  %s\n', ...
-        colladaFile, result);
+if hints.isReuseSceneFiles
+    % locate exsiting scene files, but don't produce new ones
+    disp('Reusing scene files for Mitsuba scene:')
+    disp(scene)
+    drawnow();
+    
+else
+    
+    %% Invoke the Mitsuba importer.
+    % set the dynamic library search path
+    [newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
+    
+    % invoke the Mitsuba importer
+    [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
+    importer = fullfile( ...
+        getpref('Mitsuba', 'app'), ...
+        getpref('Mitsuba', 'importer'));
+    fprintf('Converting %s\n  to %s.\n', colladaFile, scene.mitsubaFile);
+    importCommand = sprintf('%s -r %dx%d -l %s %s %s', ...
+        importer, ...
+        hints.imageWidth, hints.imageHeight, ...
+        hints.filmType, ...
+        [colladaBase colladaExt], ...
+        scene.unadjustedMitsubaFile);
+    
+    % run in the destination folder to capture all ouput there
+    originalFolder = pwd();
+    cd(outputFolder);
+    [status, result] = unix(importCommand);
+    cd(originalFolder)
+    if status ~= 0
+        error('Mitsuba file conversion failed\n  %s\n  %s\n', ...
+            colladaFile, result);
+    end
+    
+    % restore the library search path
+    setenv(libPathName, originalLibPath);
+    
+    %% Apply adjustments using the RenderToolbox3 custom mechanism.
+    %   Mitsuba nodes named "ref" have "id" attrubutes, but are not "id" nodes
+    excludePattern = '^ref$';
+    mitsubaDoc = ReadSceneDOM(scene.unadjustedMitsubaFile, excludePattern);
+    MergeAdjustments(mitsubaDoc, adjustments.docNode, excludePattern);
+    WriteSceneDOM(scene.mitsubaFile, mitsubaDoc);
+    WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
 end
-
-% restore the library search path
-setenv(libPathName, originalLibPath);
-
-%% Apply adjustments using the RenderToolbox3 custom mechanism.
-%   Mitsuba nodes named "ref" have "id" attrubutes, but are not "id" nodes
-excludePattern = '^ref$';
-mitsubaDoc = ReadSceneDOM(scene.unadjustedMitsubaFile, excludePattern);
-MergeAdjustments(mitsubaDoc, adjustments.docNode, excludePattern);
-WriteSceneDOM(scene.mitsubaFile, mitsubaDoc);
-WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
 
 %% Detect auxiliary geometry files.
 auxiliaryFiles = FindFiles(outputFolder, '\.serialized');
