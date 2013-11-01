@@ -35,8 +35,8 @@ Mitsuba {
 
     % ======== Camera sampler settings =============
     Camera-camera_sampler:sampler:ldsampler
-    Camera-camera_sampler:sampleCount.integer  = 128
-    Camera-camera_sampler:pixelSamples.integer = 16
+    Camera-camera_sampler:sampleCount.integer  = 1024
+    Camera-camera_sampler:pixelSamples.integer = 32
 }
 
 
