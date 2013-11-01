@@ -7,7 +7,7 @@
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'CheckerShadowNoDimples.dae';
-mappingsFile = 'CheckerShadowSceneMappings.txt';
+mappingsFile    = 'CheckerShadowSceneMappings.txt';
 
 %% Choose batch renderer options.
 hints.whichConditions = [];
