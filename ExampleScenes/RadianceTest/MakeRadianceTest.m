@@ -14,9 +14,9 @@
 % @details
 % Usage:
 %   MakeRadianceTest(renderer)
-%
 function MakeRadianceTest(renderer)
 
+hints = GetDefaultHints();
 if nargin > 0
     hints.renderer = renderer;
 end
