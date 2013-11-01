@@ -16,32 +16,35 @@ def pointObjectToTarget(obj, targetLoc):
     zRad = math.atan2(dy, dx) - math.pi/2;
     obj.rotation_euler = mathutils.Euler((xRad, 0, zRad), 'XYZ');
 
-# Helper method to create a random elevation map   
-def createRandomElevationMap(xBinsNum, yBinsNum):
+# Helper method to create a random surface (resembling spilled liquid)  
+# by blitting Gaussians and truncating the result  
+def createRandomSurfaceMap(xBinsNum, yBinsNum):
     sigmaX = 1/3.2;
     sigmaY = 1/3.2;
     elevationMap = [[0 for x in range(0,xBinsNum)] for y in range(0,yBinsNum)];
     for y in range (0, yBinsNum ):
         for x in range(0,xBinsNum):
             xc = 2*(x-xBinsNum/2+0.5)/xBinsNum;
-            yc = 2*(y-yBinsNum /2+0.5)/yBinsNum;
+            yc = 2*(y-yBinsNum/2+0.5)/yBinsNum;
             z  = random.random()*math.pow(math.exp(-0.5*(math.pow(xc/sigmaX,2)+math.pow(yc/sigmaY,2))),0.7);
             if z > 0.25:
                z = 0.25;
             elevationMap[y][x] = z;
     return(elevationMap);
 
-# Helper method to create a random elevation map by blitting random Gaussians
-def createRandomGaussianBlobsMap(xBinsNum, yBinsNum, principalCreaseDirection, stdevCreaseDirection):
+
+# Helper method to create an elevation map (resembling a stretched cloth) 
+# by blitting elongated Gaussians at random positions/orientations
+def createRandomGaussianBlobsMap(xBinsNum, yBinsNum):
     # create a 2D list and fill it with 0
     elevation = [[0 for x in range(0,xBinsNum)] for y in range(0,yBinsNum)];
      
-    # pre-create fy lists
+    # allocate memory
     fx = [0 for x in range(0, xBinsNum)];
     fy = [0 for y in range(0, yBinsNum)];
     fySinTheta = [0 for y in range(0, yBinsNum)];
     fyCosTheta = [0 for y in range(0, yBinsNum)];
-        
+     
     peakPos         = mathutils.Vector((0.0, 0.0));
     positionSigma   = mathutils.Vector((1/3.0,  1/3.0));
     dx              = 1.0/xBinsNum;
@@ -51,32 +54,38 @@ def createRandomGaussianBlobsMap(xBinsNum, yBinsNum, principalCreaseDirection, s
     mediumBumpsNum = 200;
     smallBumpsNum  = 100;
     for bumpIndex in range(1,mediumBumpsNum+smallBumpsNum):
-        print('Generating RandomGaussianBlob: {}/{} bump'.format(bumpIndex, mediumBumpsNum+smallBumpsNum));
+        # give some feedback regarding the progress
+        print('Generating gaussian blob #{} of {}'.format(bumpIndex, mediumBumpsNum+smallBumpsNum));
         sys.stdout.flush()
         
+        # randomize Gaussian sigmas
         bumpSigmaX = (0.16+random.random())*0.03;
         if bumpIndex > mediumBumpsNum:
            bumpSigmaX = (0.12+random.random())*0.03;
         bumpSigmaY = (6.0 + 2*random.random())*bumpSigmaX;
 
+        # randomize Gaussian position around main radius
         randomRadius = random.gauss(0.9, 0.35);  
-        if (randomRadius < 0):
+        if (randomRadius < 0.0):
             continue;  
         randomTheta  = random.random()*2.0*math.pi + 2.0*math.pi;
         randomXpos   = randomRadius * math.cos(randomTheta);
         randomYpos   = randomRadius * math.sin(randomTheta);
-        bumpHeight   = 1; # math.pow(randomRadius,0.9);
-        principalCreaseDirection = randomTheta - math.pi/2.0 + random.gauss(0, math.pi/60);
-        creaseDirection = random.gauss(principalCreaseDirection, stdevCreaseDirection);
-        sinTheta = math.sin(creaseDirection);
-        cosTheta = math.cos(creaseDirection);
-
         xc = peakPos.x + randomXpos;
         yc = peakPos.y + randomYpos;
+
+        # this choice of Gaussian orientation results in an elevation map resembling a stretched cloth
+        gaussianOrientaton = randomTheta - math.pi/2.0 + random.gauss(0, math.pi/60);
+        sinTheta = math.sin(gaussianOrientaton);
+        cosTheta = math.cos(gaussianOrientaton);
+        
+        # precompute some stuff
         for y in range(0, yBinsNum):
             fy[y] = 2*(y-yBinsNum/2+0.5)/yBinsNum - yc;
             fySinTheta[y] = fy[y] * sinTheta;
             fyCosTheta[y] = fy[y] * cosTheta;
+
+        # blit the Gaussian
         for x in range(0, xBinsNum):
             fx[x] = 2*(x-xBinsNum/2+0.5)/xBinsNum - xc;
             fxCosTheta = fx[x] * cosTheta;
@@ -84,18 +93,19 @@ def createRandomGaussianBlobsMap(xBinsNum, yBinsNum, principalCreaseDirection, s
             for y in range(0, yBinsNum):
                 xx = fxCosTheta - fySinTheta[y];
                 yy = fxSinTheta + fyCosTheta[y];
-                elevation[y][x] += bumpHeight * math.exp(-0.5*(math.pow(xx/bumpSigmaX,2.0) + math.pow(yy/bumpSigmaY,2.0)));
-      
+                elevation[y][x] += math.exp(-0.5*(math.pow(xx/bumpSigmaX,2.0) + math.pow(yy/bumpSigmaY,2.0)));
+    
+    # normalize elevation to 1.0  
     maxElevation = max(max(elevation));
     minElevation = min(min(elevation));
     maxElevation = max([maxElevation, -minElevation]);
-
     rows = len(elevation);
     cols = len(elevation[0]);
     for y in range(0, rows):
         for x in range(0, cols):
             elevation[y][x] *= 1.0/maxElevation;
 
+    # return computed elevation map
     return(elevation);
 
 
@@ -120,10 +130,8 @@ class sceneManager:
         # set the grid spacing and the number of grid lines
         if ('sceneGridSpacing' in params) and ('sceneGridLinesNum' in params):
             self.setGrid(params['sceneGridSpacing'], params['sceneGridLinesNum']);
-        
             # set the size of the displayed grid lines
             bpy.context.scene.tool_settings.normal_size = params['sceneGridLinesNum'];
-
 
         # Set rendering params
         # exposure boost    
