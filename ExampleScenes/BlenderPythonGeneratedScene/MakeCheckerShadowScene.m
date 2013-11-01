@@ -9,7 +9,7 @@ function MakeCheckerShadowScene
 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
-parentSceneFile = 'CheckerShadowDimples.dae';
+parentSceneFile = 'CheckerShadowNoDimples.dae';
 mappingsFile = 'CheckerShadowSceneMappings.txt';
 
 
@@ -25,7 +25,7 @@ isScale = true;
 hints.renderer    = 'Mitsuba';
 nativeSceneFiles  = MakeSceneFiles(parentSceneFile, '', mappingsFile, hints);
 radianceDataFiles = BatchRender(nativeSceneFiles, hints);
-montageName       = sprintf('%s (%s)', 'CheckerShadowScene', hints.renderer);
+montageName       = sprintf('%s (%s)', 'CheckerShadowSceneThisOne', hints.renderer);
 montageFile       = [montageName '.png'];
 [SRGBMontage, XYZMontage] = ...
         MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
