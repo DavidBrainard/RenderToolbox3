@@ -54,13 +54,13 @@ for ii = 1:nMaps
     
     % fill in object info for this mapping
     obj.id = info.id;
+    obj.blockType = map.blockType;
+    obj.blockGroup = map.group;
+    obj.blockNumber = map.blockNumber;
     if info.isDeclaration
         % fill in object class info
         obj.class = info.name;
         obj.subclass = info.type;
-        obj.blockType = map.blockType;
-        obj.blockGroup = map.group;
-        obj.blockNumber = map.blockNumber;
         
     else
         % fill in an object property
