@@ -379,8 +379,11 @@ class sceneManager:
         return(theSphere);
 
     def addPlanarQuad(self, params):
-        # Generate the mesh for the plane.
-        vertices = [(-0.5, -0.5, 0),(0.5, -0.5, 0),(0.5, 0.5, 0),(-0.5, 0.5, 0)];
+        if 'vertices' in params:
+            # Generate the mesh for the plane.
+            vertices = params['vertices'];
+        else:
+            vertices = [(-0.5, -0.5, 0),(0.5, -0.5, 0),(0.5, 0.5, 0),(-0.5, 0.5, 0)];
         # edges: pairs, each pais containing two indices to the vertices list
         edges = [];
         # faces: list of N-tuples (N >= 3) containing indices to the vertices list
@@ -422,48 +425,99 @@ class sceneManager:
                    'material'   : roomParams['floorMaterialType'],
                    'flipNormal' : False,
                  };
-        self.addPlanarQuad(params);
+        if ('wallThickness' in roomParams):
+            params['scaling'].x = roomWidth/2;
+            params['scaling'].y = roomDepth/2;
+            params['scaling'].z = roomParams['wallThickness'];
+            if params['location'].z < 0:
+                params['location'].z += roomParams['wallThickness'];
+            else:
+                params['location'].z -= roomParams['wallThickness'];
+            floorPlane = self.addCube(params);
+        else:
+            floorPlane = self.addPlanarQuad(params);
 
         # the backwall
         params = { 'name'       : roomParams['backWallName'],
                    'scaling'    : mathutils.Vector((roomWidth, roomHeight, 0.1)),
                    'rotation'   : mathutils.Vector((math.pi/2, 0, 0)),
-                   'location'   : mathutils.Vector((roomLocation.x, roomDepth/2, roomLocation.z+roomHeight/2)),
+                   'location'   : mathutils.Vector((roomLocation.x, roomLocation.y+roomDepth/2, roomLocation.z+roomHeight/2)),
                    'material'   : roomParams['backWallMaterialType'],
                    'flipNormal' : False,
                  };
-        self.addPlanarQuad(params);
+        if ('wallThickness' in roomParams):
+            params['scaling'].x = roomWidth/2;
+            params['scaling'].y = roomHeight/2;
+            params['scaling'].z = roomParams['wallThickness'];
+            if params['location'].y < 0:
+                params['location'].y += roomParams['wallThickness'];
+            else:
+                params['location'].y -= roomParams['wallThickness'];
+            backWallPlane = self.addCube(params);
+        else:
+            backWallPlane = self.addPlanarQuad(params);
 
 
         # the left wall
         params = { 'name'       : roomParams['leftWallName'],
                    'scaling'    : mathutils.Vector((roomHeight, roomDepth, 0.1)),
                    'rotation'   : mathutils.Vector((0,math.pi/2,0)),
-                   'location'   : mathutils.Vector((roomLocation.x-roomWidth/2, 0, roomLocation.z+roomHeight/2)),
+                   'location'   : mathutils.Vector((roomLocation.x-roomWidth/2, roomLocation.y, roomLocation.z+roomHeight/2)),
                    'material'   : roomParams['leftWallMaterialType'],
                    'flipNormal' : False,
                  };
-        self.addPlanarQuad(params);
+        if ('wallThickness' in roomParams):
+            params['scaling'].x = roomHeight/2;
+            params['scaling'].y = roomDepth/2;
+            params['scaling'].z = roomParams['wallThickness'];
+            if params['location'].x < 0:
+                params['location'].x += roomParams['wallThickness'];
+            else:
+                params['location'].x -= roomParams['wallThickness'];
+            leftWallPlane = self.addCube(params);
+        else:
+            leftWallPlane = self.addPlanarQuad(params);
 
         # the right wall
         params = { 'name'       : roomParams['rightWallName'],
                    'scaling'    : mathutils.Vector((roomHeight, roomDepth, 0.1)),
                    'rotation'   : mathutils.Vector((0,-math.pi/2,0)),
-                   'location'   : mathutils.Vector((roomLocation.x+roomWidth/2, 0, roomLocation.z+roomHeight/2)),
+                   'location'   : mathutils.Vector((roomLocation.x+roomWidth/2, roomLocation.y, roomLocation.z+roomHeight/2)),
                    'material'   : roomParams['rightWallMaterialType'],
                    'flipNormal' : False,
                  };
-        self.addPlanarQuad(params);
+        if ('wallThickness' in roomParams):
+            params['scaling'].x = roomHeight/2;
+            params['scaling'].y = roomDepth/2;
+            params['scaling'].z = roomParams['wallThickness'];
+            if params['location'].x < 0:
+                params['location'].x += roomParams['wallThickness'];
+            else:
+                params['location'].x -= roomParams['wallThickness'];
+            rightWallPlane = self.addCube(params);
+        else:
+            rightWallPlane = self.addPlanarQuad(params);
 
         # the frontwall
         params = { 'name'       : roomParams['frontWallName'],
                    'scaling'    : mathutils.Vector((roomWidth, roomHeight, 0.1)),
                    'rotation'   : mathutils.Vector((-math.pi/2, 0, 0)),
-                   'location'   : mathutils.Vector((roomLocation.x, -roomDepth/2, roomLocation.z+roomHeight/2)),
+                   'location'   : mathutils.Vector((roomLocation.x, roomLocation.y-roomDepth/2, roomLocation.z+roomHeight/2)),
                    'material'   : roomParams['frontWallMaterialType'],
                    'flipNormal' : False,
                  };
-        self.addPlanarQuad(params);
+        if ('wallThickness' in roomParams):
+            params['scaling'].x = roomWidth/2;
+            params['scaling'].y = roomHeight/2;
+            params['scaling'].z = roomParams['wallThickness'];
+            if params['location'].y < 0:
+                params['location'].y += roomParams['wallThickness'];
+            else:
+                params['location'].y -= roomParams['wallThickness'];
+            frontWallPlane = self.addCube(params);
+        else:
+            frontWallPlane = self.addPlanarQuad(params);
+
 
         # the ceiling plane
         params = { 'name'       : roomParams['ceilingName'],
@@ -473,7 +527,32 @@ class sceneManager:
                    'material'   : roomParams['ceilingMaterialType'],
                    'flipNormal' : False,
                  };
-        self.addPlanarQuad(params);
+        if ('wallThickness' in roomParams):
+            params['scaling'].x = roomWidth/2;
+            params['scaling'].y = roomDepth/2;
+            params['scaling'].z = roomParams['wallThickness'];
+            if params['location'].z < 0:
+                params['location'].z += roomParams['wallThickness'];
+            else:
+                params['location'].z -= roomParams['wallThickness'];
+            ceilingPlane = self.addCube(params);
+        else:
+            ceilingPlane = self.addPlanarQuad(params);
+
+
+        # Generate a dictionary with the room's surface planes return the room surfaces
+        surfacesDict = {
+                    'floorPlane'        : floorPlane,
+                    'backWallPlane'     : backWallPlane,
+                    'leftWallPlane'     : leftWallPlane,
+                    'rightWallPlane'    : rightWallPlane,
+                    'frontWallPlane'    : frontWallPlane,
+                    'ceilingPlane'      : ceilingPlane,
+                    }
+
+        # and return it
+        return(surfacesDict);
+
 
 
     # Method to generate a mesh object from an elevation map
