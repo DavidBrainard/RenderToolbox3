@@ -157,8 +157,20 @@ class sceneManager:
         
         # Set CYCLES as the rendering engine
         #bpy.context.scene.render.engine = 'CYCLES';
-        #bpy.context.scene.cycles.samples = 100;
-        #bpy.context.scene.cycles.film_exposure = 5;
+        bpy.context.scene.cycles.samples = 100;
+        bpy.context.scene.cycles.film_exposure = 5;
+
+        # Generate a transparent material (used to bypass collada issue with Blender area lights)
+        params = {'name'              : 'transparent material',
+                  'diffuse_shader'    : 'LAMBERT',
+                  'diffuse_intensity' : 1.0,
+                  'diffuse_color'     : mathutils.Vector((1.0, 1.0, 1.0)),
+                  'specular_shader'   : 'WARDISO',
+                  'specular_intensity': 1.0,
+                  'specular_color'    : mathutils.Vector((1.0, 1.0, 1.0)),
+                  'alpha'             : 0.0,
+        };        
+        self.transparentMaterial = self.generateMaterialType(params);
 
 
 
@@ -305,18 +317,23 @@ class sceneManager:
         # link the lamp object to the current scene (if not linked, the lamp is not functional)
         bpy.context.screen.scene.objects.link(theLampObject);
 
-        # Check whether we are adding an area lamp object ...
+        # Check whether we are adding a Blender area lamp object ...
         if params['model'].type == 'AREA':
-            bpy.ops.mesh.primitive_plane_add();
-            theAreaLightPlane           = bpy.context.active_object;
-            theAreaLightPlane.name      = '{}-geomObject'.format(params['name']);
-            theAreaLightPlane.scale     = mathutils.Vector((params['model'].size/2, params['model'].size_y/2, 1));
-            theAreaLightPlane.location  = params['location'];
+            # add a transparent planar Quad at the same xyz coords, which RT3 will transform into an area light
+            quadParams = {'name'       : '{}-geomObject'.format(params['name']),
+                          'scaling'    : mathutils.Vector((params['model'].size, params['model'].size_y, 1)),
+                          'rotation'   : mathutils.Vector((0, 0, 0)),
+                          'location'   : params['location'],
+                          'material'   : self.transparentMaterial,
+                          'flipNormal' : True,
+                         };
+            quadOBJ = self.addPlanarQuad(quadParams); 
             # rotate the lamp object so that it looks at the desired position
-            pointObjectToTarget(theAreaLightPlane, params['lookAt']);
+            pointObjectToTarget(quadOBJ, params['lookAt']);
             # rename the underlying mesh so RT3 can access it
-            bpy.data.meshes[theAreaLightPlane.data.name].name = '{}'.format(params['name']);
-            print('Area light mesh name for RT3: {}'.format(bpy.data.meshes[theAreaLightPlane.data.name].name));
+            bpy.data.meshes[quadOBJ.data.name].name = '{}'.format(params['name']);
+            print('Area light mesh name for RT3: {}'.format(bpy.data.meshes[quadOBJ.data.name].name));
+            
 
     # Method to add a matte material
     def generateMaterialType(self, params):
@@ -403,7 +420,8 @@ class sceneManager:
         thePlanarQuad.rotation_euler = params['rotation'];
         thePlanarQuad.location       = params['location'];
         # attach a material 
-        thePlanarQuad.data.materials.append(params['material']);
+        if 'material' in params:
+            thePlanarQuad.data.materials.append(params['material']);
         # link the plane to the scene
         bpy.context.scene.objects.link(thePlanarQuad);
         #  the normal will be shown only in EditMode in the 3D View viewport
