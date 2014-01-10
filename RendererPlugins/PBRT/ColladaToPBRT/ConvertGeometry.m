@@ -280,12 +280,8 @@ fclose(fid);
 SetType(stubIDMap, id, 'Shape', 'trianglemesh');
 
 % set a material for this polylist?
-[attrib, name, materialName] = GetElementAttributes(polyList, 'material');
-if ischar(materialName) && ~isempty(materialName)
-    % adding '-material' to the materialName is a hack.
-    %   should really look up the correct "instance_material" binding
-    %   but this lives in the parent node, not the geometry or polylist
-    materialID = [materialName '-material'];
+[attrib, name, materialID] = GetElementAttributes(polyList, 'material');
+if ischar(materialID) && ~isempty(materialID)
     refName = [polyName '-material'];
     AddReference(stubIDMap, id, refName, 'Material', materialID);
 end
