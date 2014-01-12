@@ -181,8 +181,8 @@ end
 trans = struct('type', types, 'value', values);
 
 
-% Scale selected transformation magnitudes by a given factor.
-function trans = scaleTransformationMagnitudes(trans, factor, types)
+% Invert selected transformations (i.e. "undo" them)
+function trans = invertTransformations(trans, types)
 nTrans = numel(trans);
 for ii = 1:nTrans
     % is this transformation one of the selected types?
@@ -194,17 +194,22 @@ for ii = 1:nTrans
     valueNum = StringToVector(trans(ii).value);
     
     switch trans(ii).type
+        case {'Transform', 'ConcatTransform'}
+            % full inverse of 4x4 matrix
+            original = reshape(valueNum, 4, 4);
+            valueNum = inv(original);
+            
         case 'Rotate'
-            % scale only the rotation angle (not the axis of rotation)
-            valueNum(1) = factor*valueNum(1);
+            % rotate in opposite direction
+            valueNum(1) = -1*valueNum(1);
             
         case 'LookAt'
-            % scale only the point looked at (not the eye or the up)
-            valueNum(4:6) = factor*valueNum(4:6);
+            % look in opposite direction
+            valueNum(4:6) = -1*valueNum(4:6);
             
-        otherwise
-            % scale all components
-            valueNum = factor*valueNum;
+        case {'Translate', 'Scale'}
+            % move or scale in opposite directions
+            valueNum = -1*valueNum;
     end
     
     % convert back to strings
@@ -217,14 +222,20 @@ function writeTransformations(fid, transforms, isBegin)
 for ii = 1:numel(transforms)
     t = transforms(ii);
     
-    if isBegin
-        % private transformation, with TransformBegin ...
-        fprintf(fid, 'TransformBegin %s %s\n', t.type, t.value);
-        
+    stringOut = '';
+    if strcmp(t.type, 'Transform') || strcmp(t.type, 'ConcatTransform')
+        % matrix transformation, like Transform [0 1 2 ... 15 16]
+        stringOut = sprintf('%s [%s]\n', t.type, t.value);
     else
         % regular transformation, like Translate 0 0 10
-        fprintf(fid, '%s %s\n', t.type, t.value);
+        stringOut = sprintf('%s %s\n', t.type, t.value);
     end
+    
+    if isBegin
+        % private transformation, with TransformBegin ...
+        stringOut = ['TransformBegin ' stringOut];
+    end
+    fprintf(fid, stringOut);
 end
 
 % Write enough TransformEnd to balance writeTransformations(... true).
@@ -283,9 +294,9 @@ function writeCamera(fid, idMap, cameraNodeID, hints)
 cameraNode = idMap(cameraNodeID);
 nodeTransforms = getTransformations(cameraNode);
 
-% negate and reverse camera transforms to get point of view
-nodeTransforms = scaleTransformationMagnitudes( ...
-    nodeTransforms, -1, {'Translate', 'Rotate'});
+% invert camera transforms and reverse order to get point of view
+nodeTransforms = invertTransformations( ...
+    nodeTransforms, {'Translate', 'Rotate', 'ConcatTransform'});
 nodeTransforms = nodeTransforms(end:-1:1);
 
 % follow reference to camera internal parameters

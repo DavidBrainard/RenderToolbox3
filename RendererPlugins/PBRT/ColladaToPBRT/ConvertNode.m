@@ -33,31 +33,44 @@ isConverted = true;
 % declare a top-level world object
 SetType(stubIDMap, id, 'Attribute', '');
 
-% get translations
-colladaPath = {id, ':translate|sid=location'};
-colladaValue = GetSceneValue(colladaIDMap, colladaPath);
-AddTransform(stubIDMap, id, 'location', 'Translate', colladaValue);
+% add spatial transformations from child nodes
+[children, names] = GetElementChildren(colladaIDMap(id));
+for ii = 1:numel(children)
+    
+    childPath = GetNodePath(children{ii}, 'sid');
+    childNodeName = names{ii};
+    [attr, attrName, childSid] = GetElementAttributes(children{ii}, 'sid');
+    
+    switch childNodeName
+        case 'translate'
+            value = GetSceneValue(colladaIDMap, childPath);
+            AddTransform(stubIDMap, id, childSid, 'Translate', value);
+            
+        case 'rotate'
+            value = getConvertedRotation(colladaIDMap, childPath);
+            AddTransform(stubIDMap, id, childSid, 'Rotate', value);
+            
+        case 'scale'
+            value = GetSceneValue(colladaIDMap, childPath);
+            AddTransform(stubIDMap, id, childSid, 'Scale', value);
+            
+        case 'matrix'
+            value = getConvertedMatrix(colladaIDMap, childPath);
+            AddTransform(stubIDMap, id, childSid, 'ConcatTransform', value);
+    end
+end
 
-% get X, Y, and Z rotations
-colladaPath = {id, ':rotate|sid=rotationZ'};
-colladaValue = getConvertedRotation(colladaIDMap, colladaPath);
-AddTransform(stubIDMap, id, 'rotationZ', 'Rotate', colladaValue);
-
-colladaPath = {id, ':rotate|sid=rotationY'};
-colladaValue = getConvertedRotation(colladaIDMap, colladaPath);
-AddTransform(stubIDMap, id, 'rotationY', 'Rotate', colladaValue);
-
-colladaPath = {id, ':rotate|sid=rotationX'};
-colladaValue = getConvertedRotation(colladaIDMap, colladaPath);
-AddTransform(stubIDMap, id, 'rotationX', 'Rotate', colladaValue);
-
-% get scaling
-colladaPath = {id, ':scale|sid=scale'};
-colladaValue = GetSceneValue(colladaIDMap, colladaPath);
-AddTransform(stubIDMap, id, 'scale', 'Scale', colladaValue);
 
 % Get Collada [x y z angle], convert to PBRT [angle x y z]
 function pbrtNum = getConvertedRotation(colladaIDMap, colladaPath)
 rotationString = GetSceneValue(colladaIDMap, colladaPath);
 rotationNum = StringToVector(rotationString);
 pbrtNum = rotationNum([4 1 2 3]);
+
+
+% Collada gives row-major matrices.  PBRT files seem to want column-major.
+function pbrtNum = getConvertedMatrix(colladaIDMap, colladaPath)
+matrixString = GetSceneValue(colladaIDMap, colladaPath);
+matrixNum = StringToVector(matrixString);
+indices = reshape(1:16, 4, 4)';
+pbrtNum = matrixNum(indices(:));
