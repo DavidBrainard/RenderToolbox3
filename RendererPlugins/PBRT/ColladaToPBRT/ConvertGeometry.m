@@ -282,6 +282,12 @@ SetType(stubIDMap, id, 'Shape', 'trianglemesh');
 % set a material for this polylist?
 [attrib, name, materialID] = GetElementAttributes(polyList, 'material');
 if ischar(materialID) && ~isempty(materialID)
+    % Blender-Collada hack:
+    % before blender ~2.6, polylists referred to materials by name, not by
+    % id.  Append "-material" to the name to get the id.
+    if ~stubIDMap.isKey(materialID)
+        materialID = [materialID '-material'];
+    end
     refName = [polyName '-material'];
     AddReference(stubIDMap, id, refName, 'Material', materialID);
 end
