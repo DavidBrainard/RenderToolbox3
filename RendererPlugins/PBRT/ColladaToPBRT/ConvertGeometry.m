@@ -285,8 +285,9 @@ if ischar(materialID) && ~isempty(materialID)
     % Blender-Collada hack:
     % before blender ~2.6, polylists referred to materials by name, not by
     % id.  Append "-material" to the name to get the id.
-    if ~stubIDMap.isKey(materialID)
-        materialID = [materialID '-material'];
+    materialIDHack = [materialID '-material'];
+    if stubIDMap.isKey(materialIDHack)
+        materialID = materialIDHack;
     end
     refName = [polyName '-material'];
     AddReference(stubIDMap, id, refName, 'Material', materialID);
