@@ -1,17 +1,13 @@
 % modify the input Collada file
 Collada {
-    % swap camera handedness from Blender's Collada output
-    Camera:scale|sid=scale = -1 1 1
-
     % move the camera for each condition
     Camera:translate|sid=location = (xCam) (yCam) 3
-    Camera:rotate|sid=rotationX = 1 0 0 80
-    Camera:rotate|sid=rotationY = 0 1 0 0
     Camera:rotate|sid=rotationZ = 0 0 1 (zRotCam)
+    Camera:rotate|sid=rotationY = 0 1 0 0
+    Camera:rotate|sid=rotationX = 1 0 0 80
 
-    % rotate the cube arbitrarily
-    MrCube:rotate|sid=rotationX += 0 0 0 15
-    MrCube:rotate|sid=rotationY -= 0 0 0 15
+    % swap camera handedness from Blender's Collada output
+    Camera:scale|sid=scale = -1 1 1
 }
 
 % moodify the lighting spectra for both Mitsuba and PBRT
