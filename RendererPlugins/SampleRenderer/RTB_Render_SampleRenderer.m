@@ -4,7 +4,6 @@
 %
 % Invoke the Sample Renderer.
 %   @param scene struct description of the scene to be rendererd
-%   @param isShow whether or not to display the output image in a figure
 %   @param hints struct of RenderToolbox3 options
 %
 % @details
@@ -20,9 +19,7 @@
 % @details
 % A Render function must invoke a renderer using the given @a scene.  @a
 % scene will be a struct scene description returned from the ImportCollada
-% function for the same renderer.  A Render function must also accept the  
-% parameter @a isShow.  When @a isShow is true, it may optionally display
-% rendering results in a figure.
+% function for the same renderer.
 %
 % @details
 % A Render function should check the value of @a
@@ -56,16 +53,14 @@
 % This template function returns sample values but does not render anyting.
 %
 % Usage:
-%   [status, result, multispectralImage, S] = RTB_Render_SampleRenderer(scene, isShow, hints)
+%   [status, result, multispectralImage, S] = RTB_Render_SampleRenderer(scene, hints)
 %
 % @ingroup RendererPlugins
-function [status, result, multispectralImage, S] = RTB_Render_SampleRenderer(scene, isShow, hints)
+function [status, result, multispectralImage, S] = RTB_Render_SampleRenderer(scene, hints)
 
 disp('SampleRenderer Render function.')
 disp('scene is:')
 disp(scene)
-disp('isShow is:')
-disp(isShow)
 disp('hints is:')
 disp(hints)
 

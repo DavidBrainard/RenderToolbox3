@@ -4,7 +4,7 @@
 %
 % Invoke PBRT.
 %   @param scene struct description of the scene to be rendererd
-%   @param isShow whether or not to display the output image in a figure
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % This function is the RenderToolbox3 "Render" function for PBRT.
@@ -13,8 +13,8 @@
 % See RTB_Render_SampleRenderer() for more about Render functions.
 %
 % Usage:
-%   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow, hints)
-function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, isShow, hints)
+%   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
+function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
 
 if hints.isAbsoluteResourcePaths
     sceneFile = scene.pbrtFile;
@@ -25,7 +25,7 @@ end
 
 
 % invoke PBRT!
-[status, result, output] = RunPBRT(sceneFile, isShow);
+[status, result, output] = RunPBRT(sceneFile, hints);
 if status ~= 0
     error('PBRT rendering failed\n  %s\n  %s\n', sceneFile, result);
 end

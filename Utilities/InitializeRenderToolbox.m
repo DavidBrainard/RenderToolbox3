@@ -89,6 +89,7 @@ if isForce
     RenderToolbox3.isParallel = false;
     RenderToolbox3.isPlot = true;
     RenderToolbox3.isAbsoluteResourcePaths = true;
+    RenderToolbox3.isCaptureCommandResults = true;
     
     % choose dynamic library path names and default values
     %   these are applied automatically, via SetRenderToolboxLibraryPath()

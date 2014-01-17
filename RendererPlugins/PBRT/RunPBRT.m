@@ -4,7 +4,7 @@
 %
 % Invoke the PBRT renderer.
 %   @param sceneFile filename or path of a PBRT-native text scene file.
-%   @param isShow whether or not to display the output image in a figure
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
 % Invoke the PBRT renderer on the given PBRT-native text @a sceneFile.
@@ -12,21 +12,21 @@
 % Matlab's unix() command.
 %
 % @details
-% if @a isShow is provided and true, displays an sRGB representation of the
-% output image in a new figure.
+% if @a hints.isPlot is provided and true, displays an sRGB representation
+% of the output image in a new figure.
 %
 % @details
-% Returns the numeric status code and text output from the unix() command.
+% Returns the numeric status code and text output from PBRT.
 % Also returns the name of the expected output file from PBRT.
 %
 % Usage:
-%   [status, result, output] = RunPBRT(sceneFile, isShow)
+%   [status, result, output] = RunPBRT(sceneFile, hints)
 %
 % @ingroup Utilities
-function [status, result, output] = RunPBRT(sceneFile, isShow)
+function [status, result, output] = RunPBRT(sceneFile, hints)
 
-if nargin < 2 || isempty(isShow)
-    isShow = false;
+if nargin < 2
+    hints = GetDefaultHints();
 end
 
 InitializeRenderToolbox();
@@ -49,7 +49,7 @@ originalFolder = pwd();
 if exist(scenePath, 'dir')
     cd(scenePath);
 end
-[status, result] = unix(renderCommand);
+[status, result] = RunCommand(renderCommand, hints);
 cd(originalFolder)
 
 % restore the library search path
@@ -60,7 +60,7 @@ if status ~= 0
     warning(result)
     warning('Could not render scene "%s".', sceneBase)
     
-elseif isShow
+elseif hints.isPlot
     multispectral = ReadDAT(output);
     S = getpref('PBRT', 'S');
     toneMapFactor = 10;

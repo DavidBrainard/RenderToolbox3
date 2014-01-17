@@ -152,9 +152,11 @@ renderFunction = GetRendererAPIFunction('Render', hints.renderer);
 if isempty(renderFunction)
     return
 end
-[status, commandResult, multispectralImage, S] = ...
-    feval(renderFunction, scene, false, hints);
 
+% renderer plugin need not preview results
+hints.isPlot = false;
+[status, commandResult, multispectralImage, S] = ...
+    feval(renderFunction, scene, hints);
 if 0 ~= status
     return
 end

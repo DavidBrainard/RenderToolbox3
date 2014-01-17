@@ -19,6 +19,9 @@ hints.imageWidth = 150;
 hints.imageHeight = 120;
 hints.outputSubfolder = mfilename();
 
+% capture and save renderer output, or display it live in Command Window
+hints.isCaptureCommandResults = true;
+
 %% Move to temp folder before creating new files.
 originalFolder = pwd();
 tempFolder = GetOutputPath('tempFolder', hints);
