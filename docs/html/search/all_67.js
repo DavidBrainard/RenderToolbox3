@@ -12,6 +12,8 @@ var searchData=
   ['getobjectproperty',['GetObjectProperty',['../group___mappings.html#ga76a74e0dcfa267d98bc4ae3f5e83e9fe',1,'GetObjectProperty.m']]],
   ['getoutputpath',['GetOutputPath',['../group___utilities.html#ga5636d82ea1ffeba18271c07a7ee601a8',1,'GetOutputPath.m']]],
   ['getpixelspectrum',['GetPixelSpectrum',['../group___utilities.html#gaa206f55edddd9a34b3760915e5674a57',1,'GetPixelSpectrum.m']]],
+  ['getremodelerapifunction',['GetRemodelerAPIFunction',['../group___remodeler_plugins.html#ga3dbb21b9450ee04d8e836bac68f104dc',1,'GetRemodelerAPIFunction.m']]],
+  ['getrendererapifunction',['GetRendererAPIFunction',['../group___renderer_plugins.html#ga81bbc36e891d2fa496377eba7c59872b',1,'GetRendererAPIFunction.m']]],
   ['getscenevalue',['GetSceneValue',['../group___scene_d_o_m.html#gaa32b05c4394e44c8acff91190f10b478',1,'GetSceneValue.m']]],
   ['getuserfolder',['GetUserFolder',['../group___utilities.html#gaf366bf01c55ce57049d3b6f1d81cee84',1,'GetUserFolder.m']]],
   ['greatfunction',['GreatFunction',['../group___example_docs.html#gac929f43c3c401310bde1463f7113ae22',1,'GreatFunction.m']]]

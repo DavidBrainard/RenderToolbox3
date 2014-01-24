@@ -5,7 +5,6 @@ var searchData=
   ['setobjectproperty',['SetObjectProperty',['../group___mappings.html#gaa7dbb01f97716a83f7548e4a716eb50e',1,'SetObjectProperty.m']]],
   ['setrendertoolboxlibrarypath',['SetRenderToolboxLibraryPath',['../group___utilities.html#gaec34a00f6d038b7c4ebaa995f371bdc5',1,'SetRenderToolboxLibraryPath.m']]],
   ['setscenevalue',['SetSceneValue',['../group___scene_d_o_m.html#ga1d555864c247110212a319cb8a43e731',1,'SetSceneValue.m']]],
-  ['settype',['SetType',['../group___collada_to_p_b_r_t.html#ga661eaf0f1de942318197d519681b5450',1,'SetType.m']]],
   ['showxyzandsrgb',['ShowXYZAndSRGB',['../group___utilities.html#ga42cc5699a3aaa04aa0b5c41c71dd5270',1,'ShowXYZAndSRGB.m']]],
   ['showxyzhistogram',['ShowXYZHistogram',['../group___utilities.html#ga9bad88deb0cb6dba4fa0170576af7540',1,'ShowXYZHistogram.m']]],
   ['spdpowerpernmtopowerperwlband',['SpdPowerPerNmToPowerPerWlBand',['../group___utilities.html#ga6d44ff403cd8ed821e2173761cc916bd',1,'SpdPowerPerNmToPowerPerWlBand.m']]],
