@@ -2,8 +2,14 @@ Collada {
     % swap camera handedness from Blender's Collada output
     Camera:scale|sid=scale = -1 1 1
 
-    % move the blue and white panels
+    % forget any 4x4 panel transformation from Blender
+    BluePanel:matrix|sid=transform = 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+    WhitePanel:matrix|sid=transform = 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+
+    % move the panels with separate transformations (in order!)
+    BluePanel:translate|sid=location = -0.707 0 0
     BluePanel:rotate|sid=rotationY = 0 1 0 (blueRot)
+    WhitePanel:translate|sid=location = 0.707 0 0
     WhitePanel:rotate|sid=rotationY = 0 1 0 (whiteRot)
 }
 

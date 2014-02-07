@@ -1,16 +1,19 @@
 Collada {
+    % forget any 4x4 camera transformation from Blender
+    Camera:matrix|sid=transform = 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+
+    % move the camera with distinct transformations (in order!)
     % swap camera handedness from Blender's Collada output
+    Camera:translate|sid=location = 0 (cameraY) (cameraZ)
+    Camera:rotate|sid=rotationX = 1 0 0 (cameraXRot)
     Camera:scale|sid=scale = -1 1 1
 
     % move the lights
     %   make sure the AreaLight is behind Point light
+    %   area rotated 180 degrees in blender, so it moves backwards
     Point:translate|sid=location = 0 0 (lightDistance)
-    AreaLight:translate|sid=location = 0 0 (lightDistance)
-    AreaLight:translate|sid=location += 0 0 0.1
-
-    % move the camera
-    Camera:translate|sid=location = 0 (cameraY) (cameraZ)
-    Camera:rotate|sid=rotationX = 1 0 0 (cameraXRot)
+    AreaLight:translate|sid=location = 0 0 -(lightDistance)
+    AreaLight:translate|sid=nudge = 0 0 -0.1
 
     % move the reflector
     Reflector:rotate|sid=rotationX = 1 0 0 (reflectorXRot)

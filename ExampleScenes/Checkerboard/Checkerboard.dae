@@ -3,10 +3,10 @@
   <asset>
     <contributor>
       <author>Blender User</author>
-      <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
+      <authoring_tool>Blender 2.69.0 r60991</authoring_tool>
     </contributor>
-    <created>2013-02-25T10:30:35</created>
-    <modified>2013-02-25T10:30:35</modified>
+    <created>2014-02-07T10:00:44</created>
+    <modified>2014-02-07T10:00:44</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -22,6 +22,13 @@
           </perspective>
         </technique_common>
       </optics>
+      <extra>
+        <technique profile="blender">
+          <YF_dofdist>0</YF_dofdist>
+          <shiftx>0</shiftx>
+          <shifty>0</shifty>
+        </technique>
+      </extra>
     </camera>
   </library_cameras>
   <library_lights>
@@ -92,33 +99,8 @@
       </extra>
     </light>
   </library_lights>
+  <library_images/>
   <library_effects>
-    <effect id="Center-effect">
-      <profile_COMMON>
-        <technique sid="common">
-          <lambert>
-            <emission>
-              <color sid="emission">0 0 0 1</color>
-            </emission>
-            <ambient>
-              <color sid="ambient">0 0 0 1</color>
-            </ambient>
-            <diffuse>
-              <color sid="diffuse">0 0 0 1</color>
-            </diffuse>
-            <index_of_refraction>
-              <float sid="index_of_refraction">1</float>
-            </index_of_refraction>
-          </lambert>
-        </technique>
-        <extra>
-          <technique profile="GOOGLEEARTH">
-            <double_sided>1</double_sided>
-          </technique>
-        </extra>
-      </profile_COMMON>
-      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
-    </effect>
     <effect id="Checkerboard-effect">
       <profile_COMMON>
         <technique sid="common">
@@ -151,50 +133,42 @@
       </profile_COMMON>
       <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
     </effect>
+    <effect id="Center-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0 0 0 1</color>
+            </diffuse>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </lambert>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
   </library_effects>
   <library_materials>
-    <material id="Center-material" name="Center">
-      <instance_effect url="#Center-effect"/>
-    </material>
     <material id="Checkerboard-material" name="Checkerboard">
       <instance_effect url="#Checkerboard-effect"/>
     </material>
+    <material id="Center-material" name="Center">
+      <instance_effect url="#Center-effect"/>
+    </material>
   </library_materials>
   <library_geometries>
-    <geometry id="Center-mesh" name="Center">
-      <mesh>
-        <source id="Center-mesh-positions">
-          <float_array id="Center-mesh-positions-array" count="12">0.125 -0.125 0 -0.125 -0.125 0 0.125 0.125 0 -0.125 0.125 0</float_array>
-          <technique_common>
-            <accessor source="#Center-mesh-positions-array" count="4" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <source id="Center-mesh-normals">
-          <float_array id="Center-mesh-normals-array" count="3">0 0 1</float_array>
-          <technique_common>
-            <accessor source="#Center-mesh-normals-array" count="1" stride="3">
-              <param name="X" type="float"/>
-              <param name="Y" type="float"/>
-              <param name="Z" type="float"/>
-            </accessor>
-          </technique_common>
-        </source>
-        <vertices id="Center-mesh-vertices">
-          <input semantic="POSITION" source="#Center-mesh-positions"/>
-        </vertices>
-        <polylist material="Center" count="1">
-          <input semantic="VERTEX" source="#Center-mesh-vertices" offset="0"/>
-          <input semantic="NORMAL" source="#Center-mesh-normals" offset="1"/>
-          <vcount>4 </vcount>
-          <p>1 0 0 0 2 0 3 0</p>
-        </polylist>
-      </mesh>
-      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
-    </geometry>
     <geometry id="Checkerboard-mesh" name="Checkerboard">
       <mesh>
         <source id="Checkerboard-mesh-positions">
@@ -208,9 +182,9 @@
           </technique_common>
         </source>
         <source id="Checkerboard-mesh-normals">
-          <float_array id="Checkerboard-mesh-normals-array" count="3">0 0 1</float_array>
+          <float_array id="Checkerboard-mesh-normals-array" count="6">0 0 1 0 0 1</float_array>
           <technique_common>
-            <accessor source="#Checkerboard-mesh-normals-array" count="1" stride="3">
+            <accessor source="#Checkerboard-mesh-normals-array" count="2" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
@@ -218,9 +192,9 @@
           </technique_common>
         </source>
         <source id="Checkerboard-mesh-map-0">
-          <float_array id="Checkerboard-mesh-map-0-array" count="8">0 0 0.9999999 0 0.9999999 1 0 0.9999999</float_array>
+          <float_array id="Checkerboard-mesh-map-0-array" count="12">0.9999999 1 0 0.9999999 0.9999999 0 0 0.9999999 0 0 0.9999999 0</float_array>
           <technique_common>
-            <accessor source="#Checkerboard-mesh-map-0-array" count="4" stride="2">
+            <accessor source="#Checkerboard-mesh-map-0-array" count="6" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
@@ -229,64 +203,81 @@
         <vertices id="Checkerboard-mesh-vertices">
           <input semantic="POSITION" source="#Checkerboard-mesh-positions"/>
         </vertices>
-        <polylist material="Checkerboard" count="1">
+        <polylist material="Checkerboard-material" count="2">
           <input semantic="VERTEX" source="#Checkerboard-mesh-vertices" offset="0"/>
           <input semantic="NORMAL" source="#Checkerboard-mesh-normals" offset="1"/>
           <input semantic="TEXCOORD" source="#Checkerboard-mesh-map-0" offset="2" set="0"/>
-          <vcount>4 </vcount>
-          <p>1 0 0 0 0 1 2 0 2 3 0 3</p>
+          <vcount>3 3 </vcount>
+          <p>2 0 0 3 0 1 0 0 2 3 1 3 1 1 4 0 1 5</p>
+        </polylist>
+      </mesh>
+      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+    <geometry id="Center-mesh" name="Center">
+      <mesh>
+        <source id="Center-mesh-positions">
+          <float_array id="Center-mesh-positions-array" count="12">0.125 -0.125 0 -0.125 -0.125 0 0.125 0.125 0 -0.125 0.125 0</float_array>
+          <technique_common>
+            <accessor source="#Center-mesh-positions-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Center-mesh-normals">
+          <float_array id="Center-mesh-normals-array" count="6">0 0 1 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Center-mesh-normals-array" count="2" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Center-mesh-vertices">
+          <input semantic="POSITION" source="#Center-mesh-positions"/>
+        </vertices>
+        <polylist material="Center-material" count="2">
+          <input semantic="VERTEX" source="#Center-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Center-mesh-normals" offset="1"/>
+          <vcount>3 3 </vcount>
+          <p>2 0 3 0 0 0 3 1 1 1 0 1</p>
         </polylist>
       </mesh>
       <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
     </geometry>
   </library_geometries>
+  <library_controllers/>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
-      <node id="Center" type="NODE">
-        <translate sid="location">0 0 0.05</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
-        <instance_geometry url="#Center-mesh">
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="Center" target="#Center-material"/>
-            </technique_common>
-          </bind_material>
-        </instance_geometry>
+      <node id="Camera" name="Camera" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 1 0 0 0 1</matrix>
+        <instance_camera url="#Camera-camera"/>
       </node>
-      <node id="Sun" type="NODE">
-        <translate sid="location">0 0 20</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
-        <instance_light url="#Sun-light"/>
-      </node>
-      <node id="Checkerboard" type="NODE">
-        <translate sid="location">0 0 0</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
+      <node id="Checkerboard" name="Checkerboard" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
         <instance_geometry url="#Checkerboard-mesh">
           <bind_material>
             <technique_common>
-              <instance_material symbol="Checkerboard" target="#Checkerboard-material">
-                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-              </instance_material>
+              <instance_material symbol="Checkerboard-material" target="#Checkerboard-material"/>
             </technique_common>
           </bind_material>
         </instance_geometry>
       </node>
-      <node id="Camera" type="NODE">
-        <translate sid="location">0 0 1</translate>
-        <rotate sid="rotationZ">0 0 1 0</rotate>
-        <rotate sid="rotationY">0 1 0 0</rotate>
-        <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
-        <instance_camera url="#Camera-camera"/>
+      <node id="Sun" name="Sun" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 20 0 0 0 1</matrix>
+        <instance_light url="#Sun-light"/>
+      </node>
+      <node id="Center" name="Center" type="NODE">
+        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0.01 0 0 0 1</matrix>
+        <instance_geometry url="#Center-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Center-material" target="#Center-material"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
       </node>
     </visual_scene>
   </library_visual_scenes>
