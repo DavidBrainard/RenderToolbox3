@@ -13,7 +13,7 @@
 % (If not, a description may be there soon.)
 %
 % @details
-% See the RenderToolbox3 wiki for more about image <a 
+% See the RenderToolbox3 wiki for more about image <a
 % href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands">Spectrum Bands</a>, and how RenderToolbox3 determines the spectral sampling of
 % PBRT .dat files.
 %
@@ -26,14 +26,20 @@
 % Also returns the multispectral image dimensions [height width n].
 %
 % @details
+% If the given .dat file contains an optional lens description, also
+% returns a struct of lens data with fields @b focalLength, @b fStop,
+% and @b fieldOfView.
+%
+% @details
 % Usage:
-%   [imageData, imageSize] = ReadDAT(filename)
+%   [imageData, imageSize, lens] = ReadDAT(filename)
 %
 % @ingroup Readers
-function [imageData, imageSize] = ReadDAT(filename)
+function [imageData, imageSize, lens] = ReadDAT(filename)
 
 imageData = [];
 imageSize = [];
+lens = [];
 
 %% Try to open the file
 fprintf('Opening file "%s".\n', filename);
@@ -42,21 +48,33 @@ if fid < 0
     error(message);
 end
 
-%% Read header line to get image size
+%% Read header line to get image size.
 sizeLine = fgetl(fid);
 dataPosition = ftell(fid);
-[mifSize, count, err] = lineToMat(sizeLine);
-if count <= 0
+[imageSize, count, err] = lineToMat(sizeLine);
+if count ~=3
     fclose(fid);
     error('Could not read image size: %s', err);
 end
-wSize = mifSize(1);
-hSize = mifSize(2);
-nPlanes = mifSize(3);
+wSize = imageSize(1);
+hSize = imageSize(2);
+nPlanes = imageSize(3);
 imageSize = [hSize, wSize, nPlanes];
 
 fprintf('  Reading image h=%d x w=%d x %d spectral planes.\n', ...
     hSize, wSize, nPlanes);
+
+%% Optional second header line might contain realistic lens info.
+lensLine = fgetl(fid);
+[lensData, count, err] = lineToMat(lensLine);
+if count == 3
+    dataPosition = ftell(fid);
+    lens.focalLength = lensData(1);
+    lens.fStop = lensData(2);
+    lens.fieldOfView = lensData(3);
+    fprintf('  Found lens data focalLength=%d, fStop=%d, fieldOfView=%d.\n', ...
+        lens.focalLength, lens.fStop, lens.fieldOfView);
+end
 
 %% Read the whole .dat into memory
 fseek(fid, dataPosition, 'bof');
