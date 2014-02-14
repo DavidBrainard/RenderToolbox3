@@ -75,7 +75,7 @@ elseif isOrthographic
     % get the x-magnification
     colladaPath = {id, ':optics', ':technique_common', ...
         ':orthographic', ':xmag'};
-    xmag = str2double(GetSceneValue(colladaIDMap, colladaPath))/2;
+    xmag = str2double(GetSceneValue(colladaIDMap, colladaPath));
     
     % PBRT ortho camera uses x and y scale factors in screenwindow
     ymag = xmag/aspect;
