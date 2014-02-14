@@ -8,9 +8,7 @@ Mitsuba-path {
     %   use Scene DOM paths to replace the camera's transformations
     Camera-camera$ = merge   
     Camera-camera:transform|name=toWorld:scale.x = [Camera-camera:optics:technique_common:orthographic:xmag]
-    Camera-camera:transform|name=toWorld:scale.x /= 2
     Camera-camera:transform|name=toWorld:scale.y = [Camera-camera:optics:technique_common:orthographic:xmag]
-    Camera-camera:transform|name=toWorld:scale.y /= 2
 
     % override the default film
     %   to reign in the pixel filter
