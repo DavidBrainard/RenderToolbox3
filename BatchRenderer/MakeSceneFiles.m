@@ -106,6 +106,8 @@ if nargin < 5 || isempty(outPath)
     outPath = '';
 end
 
+fprintf('\nMakeSceneFiles started at %s.\n\n', datestr(now(), 0));
+
 %% Read conditions file into memory.
 if isempty(conditionsFile)
     % no conditions, do a single rendering
@@ -142,6 +144,11 @@ for ii = 1:numel(renderers)
         mkdir(tempFolder);
     end
 end
+
+%% Call out the original Collada authoring tool (Blender, etc.)
+%   any remodelling function might have modified the authoring info
+authoringTool = GetColladaAuthorInfo(colladaFile);
+fprintf('Original Collada scene authored with %s.\n\n', authoringTool);
 
 %% Allow remodeler to modify Collada document before all else.
 colladaFile = remodelCollada(colladaFile, hints, 'BeforeAll');
@@ -356,6 +363,13 @@ tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
 [scene, importRequiredFiles] = feval(importColladaFunction, ...
     colladaCopy, adjustments, tempFolder, imageName, hints);
 [scene.imageName] = deal(imageName);
+
+% store Collada authoring info along with the scene description
+%   authoring info may have been set by a remodeler!
+[authoringTool, asset] = GetColladaAuthorInfo(colladaCopy);
+authorInfo.authoringTool = authoringTool;
+authorInfo.asset = asset;
+[scene.authorInfo] = deal(authorInfo);
 
 % full list of required files
 requiredFiles = cat(2, mappingsRequiredFiles, importRequiredFiles);

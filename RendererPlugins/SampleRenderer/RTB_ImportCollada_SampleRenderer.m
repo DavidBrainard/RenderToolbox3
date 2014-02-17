@@ -46,8 +46,8 @@
 %
 % @details
 % The specific format of the returned struct does not matter, it just has
-% to be a struct.  RenderToolbox3 may add or replace the imageName field of
-% the returned struct automatically.
+% to be a struct.  RenderToolbox3 may add or update some struct fields
+% automatically, including the authorInfo and imageName fields.
 %
 % @details
 % An ImportCollada function must also return a cell array of names of files

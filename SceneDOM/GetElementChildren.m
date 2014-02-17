@@ -26,9 +26,9 @@
 %
 % @details
 % If @a name, @a checkName and @a checkValue are provided, searches for a
-% single child element that has the node name @a, and has an attribute with
-% the name @a checkName and value equal to @a checkValue.  If such a child
-% element is found, returns the single child element and string name.
+% single child element that has the node name @a name, and has an attribute
+% with the name @a checkName and value equal to @a checkValue.  If such a
+% child element is found, returns the single child element and string name.
 % Otherwise, returns empty values.
 %
 % @details

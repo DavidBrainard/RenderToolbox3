@@ -40,8 +40,9 @@
 %
 % @details
 % The each mat-file will also contain variables with metadata about how the
-% scene was rendered:
-%   - scene - the the name of the renderer-native scene file
+% scene was made and rendererd:
+%   - scene - the renderer-native scene description (e.g. file name,
+%   Collada author info)
 %   - hints - the given @a hints struct, or default hints struct
 %   - versionInfo - struct of version information about RenderToolbox3,
 %   its dependencies, and the current renderer
