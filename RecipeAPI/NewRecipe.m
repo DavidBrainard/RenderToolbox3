@@ -89,5 +89,9 @@ recipe = struct( ...
     'mappingsFile', mappingsFile, ...
     'hints', hints);
 
-%% "CleanRecipe" is the origin of derived field names.
+%% Derive conditions and mappings from respective files.
+recipe = ReadRecipeConditions(recipe);
+recipe = ReadRecipeMappings(recipe);
+
+%% "CleanRecipe" is the origin of all other derived field names.
 recipe = CleanRecipe(recipe);
