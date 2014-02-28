@@ -1,13 +1,13 @@
 
 executed: nothing (index: none)
-at: 28-Feb-2014 17:51:16
-by user: ben, on host: Benjamins-iMac.local)
+at: 28-Feb-2014 17:57:44
+by user: ben, on host: Benjamins-iMac.local
 comment: I made a new recipe.
 with error: none
 
 executed: BadConfigScript (index: 0)
-at: 28-Feb-2014 17:51:16
-by user: ben, on host: Benjamins-iMac.local)
+at: 28-Feb-2014 17:57:44
+by user: ben, on host: Benjamins-iMac.local
 comment: none
 with error: silly:id, This is a silly error
 stack trace:

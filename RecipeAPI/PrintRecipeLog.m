@@ -50,7 +50,7 @@ for ii = 1:numel(recipe.logData)
         % who executed it
         user = getString(log.userName, 'nobody', 'unknown');
         host = getString(log.hostName, 'none', 'unknown');
-        line = ['by user: ' user ', on host: ' host ')'];
+        line = ['by user: ' user ', on host: ' host];
         summary = appendLogLine(summary, line);
     end
     
