@@ -4,7 +4,7 @@
 %
 % Start a new recipe from scratch.
 %   @param configureScript name of a system configuration script
-%   @param executiveScript name of a RenderToolbox3 executive script
+%   @param executive script/function names/handles to execute
 %   @param parentSceneFile name of a Collada scene file
 %   @param conditionsFile name of a RenderToolbox3 conditions file
 %   @param mappingsFile name of a RenderToolbox3 mappings file
@@ -21,8 +21,9 @@
 % RenderToolbox3ConfigurationTemplate.
 %
 % @details
-% @a executiveScript should be the name of a RenderToolbox3 executive
-% script, for example MakeDragonColorChecker.m.
+% @a executive should be the name or function_handle of an executive script
+% or function that will carry out the recipe, or a cell array of such
+% scripts or functions to be executed in sequence.
 %
 % @details
 % @a parentSceneFile should be the name name of a Collada parent scene
@@ -46,11 +47,11 @@
 %
 % @details
 % Usage:
-%   recipe = NewRecipe(configureScript, executiveScript, ...
-%   parentSceneFile, conditionsFile, mappingsFile, hints)
+%   recipe = NewRecipe(configureScript, executive, ...
+%    parentSceneFile, conditionsFile, mappingsFile, hints)
 %
 % @ingroup RecipeAPI
-function recipe = NewRecipe(configureScript, executiveScript, ...
+function recipe = NewRecipe(configureScript, executive, ...
     parentSceneFile, conditionsFile, mappingsFile, hints)
 
 %% Default arguments.
@@ -59,7 +60,7 @@ if nargin < 1
 end
 
 if nargin < 2
-    executiveScript = '';
+    executive = '';
 end
 
 if nargin < 3
@@ -83,7 +84,7 @@ end
 %% Brand new recipe struct with basic fields filled in.
 recipe = struct( ...
     'configureScript', configureScript, ...
-    'executiveScript', executiveScript, ...
+    'executive', executive, ...
     'parentSceneFile', parentSceneFile, ...
     'conditionsFile', conditionsFile, ...
     'mappingsFile', mappingsFile, ...

@@ -29,17 +29,18 @@ if ~IsStructFieldPresent(recipe, 'configureScript')
     return
 end
 
+errorData = [];
 try
     % set the current recipe so that configureScript can access it
     CurrentRecipe(recipe);
     run(recipe.configureScript);
     
 catch errorData
-    % get the current recipe in case configureScript modified it
-    recipe = CurrentRecipe();
-    recipe = AppendRecipeError(recipe, errorData);
-    return
+    % fills in placeholder above, log it below
 end
 
 % get the current recipe in case configureScript modified it
 recipe = CurrentRecipe();
+
+% put this execution in the log with any error data
+recipe = AppendRecipeLog(recipe, recipe.configureScript, errorData, '', 0);

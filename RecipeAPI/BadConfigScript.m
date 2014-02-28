@@ -6,4 +6,4 @@ recipe = CurrentRecipe();
 recipe.hints.renderer = 'BadRenderer';
 CurrentRecipe(recipe);
 
-error('This is a silly error');
+error('silly:id', 'This is a silly error');

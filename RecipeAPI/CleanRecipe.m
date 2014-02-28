@@ -23,4 +23,4 @@ recipe.nativeScenes = {};
 recipe.renderings = {};
 recipe.images = {};
 recipe.montages = {};
-recipe.errorData = {};
+recipe.logData = [];
