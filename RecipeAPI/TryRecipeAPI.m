@@ -1,22 +1,25 @@
+
 clear
 clc
 
-% make a new recipe!
-configScript = 'BadConfigScript';
-executive = 'MakeDragonColorChecker.m';
-parentScene = 'Dragon.dae';
-conditionsFile = 'DragonColorCheckerConditions.txt';
-mappingsFile = 'DragonColorCheckerMappings.txt';
+% Build a recipe for the coordinates test scene.
+configScript = 'RenderToolbox3ConfigurationTemplate';
+executive = @RenderRecipe;
+parentScene = 'CoordinatesTest.dae';
+conditionsFile = '';
+mappingsFile = '';
 hints.renderer = 'Mitsuba';
+
 recipe = NewRecipe(configScript, executive, parentScene, ...
     conditionsFile, mappingsFile, hints);
 
-recipe = AppendRecipeLog(recipe, [], [], 'I made a new recipe.');
+recipe = AppendRecipeLog(recipe, 'Testing a new recipe');
 
-% configure for the recipe
+%% configure for the recipe
 recipe = ConfigureForRecipe(recipe);
-recipe
-recipe.hints
+recipe = MakeRecipeSceneFiles(recipe);
+recipe = MakeRecipeRenderings(recipe);
+recipe = MakeRecipeMontage(recipe);
 
-PrintRecipeLog(recipe, false);
-WriteRecipeLog(recipe, 'recipe.log')
+PrintRecipeLog(recipe, true);
+WriteRecipeLog(recipe, 'recipe.log');

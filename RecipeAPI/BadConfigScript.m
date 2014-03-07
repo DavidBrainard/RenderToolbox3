@@ -3,7 +3,7 @@
 run('RenderToolbox3ConfigurationTemplate');
 
 recipe = CurrentRecipe();
-recipe.hints.renderer = 'BadRenderer';
+recipe.input.hints.renderer = 'BadRenderer';
 CurrentRecipe(recipe);
 
 error('silly:id', 'This is a silly error');

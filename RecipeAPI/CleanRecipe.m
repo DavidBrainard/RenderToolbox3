@@ -19,8 +19,6 @@
 function recipe = CleanRecipe(recipe)
 
 % Clear all derived data fields
-recipe.nativeScenes = {};
-recipe.renderings = {};
-recipe.images = {};
-recipe.montages = {};
-recipe.logData = [];
+recipe.rendering = [];
+recipe.processing = [];
+recipe.log = [];

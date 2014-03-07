@@ -6,8 +6,8 @@
 %   @param recipe a recipe struct
 %
 % @details
-% Reads RenderToolbox3 mappings from @a recipe.mappingsFile and saves
-% the results in @a recipe.mappings.
+% Reads RenderToolbox3 mappings from @a recipe.input.mappingsFile
+% and saves the results in @a recipe.rendering.mappings.
 %
 % @details
 % Returns the given @a recipe, with parsed mappings.
@@ -19,7 +19,8 @@
 % @ingroup RecipeAPI
 function recipe = ReadRecipeMappings(recipe)
 
-recipe.mappings = [];
-if IsStructFieldPresent(recipe, 'mappingsFile')
-    recipe.mappings = ParseMappings(recipe.mappingsFile);
+recipe.rendering.mappings = [];
+if IsStructFieldPresent(recipe.input, 'mappingsFile')
+    recipe.rendering.mappings = ...
+        ParseMappings(recipe.input.mappingsFile);
 end

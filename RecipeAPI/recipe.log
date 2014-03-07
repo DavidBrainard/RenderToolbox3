@@ -1,25 +1,30 @@
 
 executed: nothing (index: none)
-at: 28-Feb-2014 17:57:44
+at: 07-Mar-2014 17:51:33
 by user: ben, on host: Benjamins-iMac.local
-comment: I made a new recipe.
+comment: Testing a new recipe
 with error: none
 
-executed: BadConfigScript (index: 0)
-at: 28-Feb-2014 17:57:44
+executed: RenderToolbox3ConfigurationTemplate (index: 0)
+at: 07-Mar-2014 17:51:33
 by user: ben, on host: Benjamins-iMac.local
-comment: none
-with error: silly:id, This is a silly error
-stack trace:
-Error using <a href="matlab:helpUtils.errorDocCallback('BadConfigScript', '/Users/ben/Documents/Projects/RenderToolbox3/RecipeAPI/BadConfigScript.m', 9)" style="font-weight:bold">BadConfigScript</a> (<a href="matlab: opentoline('/Users/ben/Documents/Projects/RenderToolbox3/RecipeAPI/BadConfigScript.m',9,0)">line 9</a>)
-This is a silly error
+comment: run automatically by ConfigureForRecipe
+with error: none
 
-Error in <a href="matlab:helpUtils.errorDocCallback('run', '/Applications/MATLAB_R2012a.app/toolbox/matlab/lang/run.m', 74)" style="font-weight:bold">run</a> (<a href="matlab: opentoline('/Applications/MATLAB_R2012a.app/toolbox/matlab/lang/run.m',74,0)">line 74</a>)
-    evalin('caller',[script ';']);
+executed: MakeSceneFiles (index: 0)
+at: 07-Mar-2014 17:51:38
+by user: ben, on host: Benjamins-iMac.local
+comment: run automatically by MakeRecipeSceneFiles
+with error: none
 
-Error in <a href="matlab:helpUtils.errorDocCallback('ConfigureForRecipe', '/Users/ben/Documents/Projects/RenderToolbox3/RecipeAPI/ConfigureForRecipe.m', 36)" style="font-weight:bold">ConfigureForRecipe</a> (<a href="matlab: opentoline('/Users/ben/Documents/Projects/RenderToolbox3/RecipeAPI/ConfigureForRecipe.m',36,0)">line 36</a>)
-    run(recipe.configureScript);
+executed: BatchRender (index: 0)
+at: 07-Mar-2014 17:51:40
+by user: ben, on host: Benjamins-iMac.local
+comment: run automatically by MakeRecipeRenderings
+with error: none
 
-Error in <a href="matlab:helpUtils.errorDocCallback('TryRecipeAPI', '/Users/ben/Documents/Projects/RenderToolbox3/RecipeAPI/TryRecipeAPI.m', 17)" style="font-weight:bold">TryRecipeAPI</a> (<a href="matlab: opentoline('/Users/ben/Documents/Projects/RenderToolbox3/RecipeAPI/TryRecipeAPI.m',17,0)">line 17</a>)
-recipe = ConfigureForRecipe(recipe);
-
+executed: MakeMontage (index: 0)
+at: 07-Mar-2014 17:51:41
+by user: ben, on host: Benjamins-iMac.local
+comment: run automatically by MakeRecipeMontage
+with error: none

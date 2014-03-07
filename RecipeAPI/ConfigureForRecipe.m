@@ -7,16 +7,15 @@
 %
 % @details
 % Attempts to configure RenderToolbox3 for rendering the given @a recipe
-% using @a recipe.configureScript.  If @a recipe.configureScript throws an
-% error, appends the error to the recipe.
+% using @a recipe.input.configureScript.
 %
 % @details
-% Sets the "current recipe" so that @a recipe.configureScript may access
-% and modify the given @a recipe using CurrentRecipe();
+% Sets the "current recipe" so that @a recipe.input.configureScript may
+% access and modify the given @a recipe using CurrentRecipe();
 %
 % @details
 % Returns the given @a recipe, possibly updated by @a
-% recipe.configureScript, possibly with a new error appended.
+% recipe.input.configureScript, possibly with a new error appended.
 %
 % @details
 % Usage:
@@ -25,15 +24,11 @@
 % @ingroup RecipeAPI
 function recipe = ConfigureForRecipe(recipe)
 
-if ~IsStructFieldPresent(recipe, 'configureScript')
-    return
-end
-
 errorData = [];
 try
     % set the current recipe so that configureScript can access it
     CurrentRecipe(recipe);
-    run(recipe.configureScript);
+    run(recipe.input.configureScript);
     
 catch errorData
     % fills in placeholder above, log it below
@@ -43,4 +38,6 @@ end
 recipe = CurrentRecipe();
 
 % put this execution in the log with any error data
-recipe = AppendRecipeLog(recipe, recipe.configureScript, errorData, '', 0);
+recipe = AppendRecipeLog(recipe, ...
+    ['run automatically by ' mfilename()], ...
+    recipe.input.configureScript, errorData, 0);

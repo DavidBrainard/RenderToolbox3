@@ -6,8 +6,8 @@
 %   @param recipe a recipe struct
 %
 % @details
-% Reads RenderToolbox3 conditions from @a recipe.conditionsFile and saves
-% the results in @a recipe.conditions.
+% Reads RenderToolbox3 conditions from @a recipe.input.conditionsFile and
+% saves the results in @a recipe.rendering.conditions.
 %
 % @details
 % Returns the given @a recipe, with parsed conditions.
@@ -19,8 +19,9 @@
 % @ingroup RecipeAPI
 function recipe = ReadRecipeConditions(recipe)
 
-recipe.conditions = [];
-if IsStructFieldPresent(recipe, 'conditionsFile')
-    [recipe.conditions.names, recipe.conditions.values] = ...
-        ParseConditions(recipe.conditionsFile);
+recipe.rendering.conditions = [];
+if IsStructFieldPresent(recipe.input, 'conditionsFile')
+    [recipe.rendering.conditions.names, ...
+        recipe.rendering.conditions.values] = ...
+        ParseConditions(recipe.input.conditionsFile);
 end

@@ -32,8 +32,8 @@ end
 
 %% Print a paragraph for each log entry.
 summary = '';
-for ii = 1:numel(recipe.logData)
-    log = recipe.logData(ii);
+for ii = 1:numel(recipe.log)
+    log = recipe.log(ii);
     
     % what was executed
     exec = getString(log.executed, 'nothing', 'unknown');
@@ -74,7 +74,9 @@ for ii = 1:numel(recipe.logData)
     summary = appendLogLine(summary, '');
 end
 
-disp(summary)
+if 0 == nargout
+    disp(summary)
+end
 
 
 function summary = appendLogLine(summary, line)
