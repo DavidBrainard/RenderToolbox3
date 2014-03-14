@@ -15,6 +15,7 @@
 %   - 'tempFolder' - the path to temporary files
 %   - 'outputDataFolder' - the path to output data files
 %   - 'outputImageFolder' - the path to output image files
+%   - 'resourcesFolder' - the path to recipe resource dependencies
 %   .
 %
 % @details
@@ -29,7 +30,7 @@
 % @ingroup Utilities
 function path = GetOutputPath(pathName, hints)
 
-pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder'};
+pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder'};
 if nargin < 1 || ~any(strcmp(pathName, pathNames))
     pathNamesString = evalc('disp(pathNames)');
     error('pathName must be one of the following: \n  %s', pathNamesString);

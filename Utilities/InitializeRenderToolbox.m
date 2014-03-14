@@ -75,6 +75,7 @@ if isForce
     RenderToolbox3.tempFolder = fullfile(userFolder, 'temp');
     RenderToolbox3.outputDataFolder = fullfile(userFolder, 'data');
     RenderToolbox3.outputImageFolder = fullfile(userFolder, 'images');
+    RenderToolbox3.resourcesFolder = fullfile(userFolder, 'resources');
     RenderToolbox3.outputSubfolder = '';
     
     % default hints
