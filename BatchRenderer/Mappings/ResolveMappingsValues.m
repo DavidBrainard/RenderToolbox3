@@ -7,7 +7,7 @@
 %   @param varNames cell array of variable names to be replaced
 %   @param varValues cell array of variable values to replace names
 %   @param colladaFile name or path of a Collada parent scene file
-%   @param adjustments renderer-native adjustments from an ImportCollada
+%   @param adjustments renderer-native adjustments from an ApplyMappings
 %   function
 %   @param hints struct of RenderToolbox3 options
 %
@@ -45,14 +45,15 @@
 % considered as expressions that might match the names of files on the
 % Matlab path or in the current directory.  Whenever a right-hand value
 % does match the name of a file on the Matlab path, the value will be
-% replaces with the full absolute path name of the file.  For example, the
-% expression "D65.spd" would be replaces with a full path name such as
+% replaced with the full absolute path name of the file.  For example, the
+% expression "D65.spd" would be replaced with a full path name such as
 % "/Users/foo/RenderToolbox3/RenderData/D65.spd"
 %
 % @details
 % Returns the given @a mappings, updated with expressions replaced by
-% concrete values.  Also returns a cell array of absolute path names to
-% files on the Matlab path that were encountered during processing.
+% concrete values.  Also returns a struct array describing files on the
+% Matlab path that were encountered during processing, including the
+% full local path.
 %
 % @details
 % Used internally by MakeSceneFiles().
@@ -63,7 +64,7 @@
 %
 % @ingroup Mappings
 function [mappings, requiredFiles] = ResolveMappingsValues(mappings, varNames, varValues, colladaFile, adjustments, hints)
-requiredFiles = {};
+requiredFiles = struct('verbatimName', {}, 'fullLocalPath', {});
 
 % temporarily add current directory to the path
 %   try to restore path even with errors
@@ -105,7 +106,9 @@ try
         % find files on the Matlab path
         whichFile = findWhichFile(map.right.value);
         if ~isempty(whichFile)
-            requiredFiles{end+1} = whichFile;
+            nFiles = numel(requiredFiles) + 1;
+            requiredFiles(nFiles).verbatimName = map.right.value;
+            requiredFiles(nFiles).fullLocalPath = whichFile;
             
             % replace file name expressions with absolute path names
             if hints.isAbsoluteResourcePaths
