@@ -7,13 +7,11 @@
 %   @param conditionsFile file name or path of a conditions file
 %   @param mappingsFile file name or path of a mappings file
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
-%   @param outPath path where to copy new scene files
 %
 % @details
 % Creates a family of renderer-native scenes, based on the given @a
 % colladaFile, @a conditionsFile, and @a mappingsFile.  @a hints.renderer
-% specifies which renderer to target.  @a outPath is optional, and may
-% specify a folder path that where new files should be written.
+% specifies which renderer to target.
 %
 % @details
 % @a colladaFile should be a Collada XML parent scene file.  @a colladaFile
@@ -52,11 +50,6 @@
 %   .
 %
 % @details
-% @a outPath is optional.  If provided, it should be the path to a folder
-% where new files should be copied.  New files will also be written to @a
-% hints.tempFolder.
-%
-% @details
 % This function uses RenderToolbox3 renderer API functions "ApplyMappings"
 % and "ImportCollada".  These functions, for the renderer specified in @a
 % hints.renderer, must be on the Matlab path.
@@ -75,10 +68,10 @@
 %
 % @details
 % Usage:
-%   [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+%   [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
 %
 % @ingroup BatchRenderer
-function [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints, outPath)
+function [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
 
 InitializeRenderToolbox();
 
@@ -100,10 +93,6 @@ if nargin < 4
     hints = GetDefaultHints();
 else
     hints = GetDefaultHints(hints);
-end
-
-if nargin < 5 || isempty(outPath)
-    outPath = '';
 end
 
 fprintf('\nMakeSceneFiles started at %s.\n\n', datestr(now(), 0));
@@ -181,17 +170,6 @@ end
 
 % only care about unique required files
 requiredFiles = unique(requiredFiles);
-
-% copy required files to an output folder?
-if ~isempty(outPath)
-    if ~exist(outPath, 'dir')
-        mkdir(outPath);
-    end
-    
-    for ii = 1:numel(requiredFiles)
-        [status, result] = copyfile(requiredFiles{ii}, outPath);
-    end
-end
 
 % report any error
 if ~isempty(err)

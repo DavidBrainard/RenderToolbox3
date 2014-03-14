@@ -4,6 +4,12 @@
 %
 %% Render the MaterialSphere scene in a portable fashion.
 
+%% TODO: this recipe is broken.
+% This recipe uses an "old" way of trying to make a recipe portable across
+% machines.  When the RecipeAPI is complete, it will be a better way to
+% make recipes portable.  This recipe should be updated to demonstrate the
+% RecipeAPI, when the RecipeAPI is complete.
+ 
 %% Choose example files, make sure they're on the Matlab path.
 AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'MaterialSphere.dae';
