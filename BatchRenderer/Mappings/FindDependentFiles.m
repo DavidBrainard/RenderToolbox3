@@ -41,9 +41,6 @@
 %   .
 %
 % @details
-% Used internally by MakeSceneFiles().
-%
-% @details
 % Usage:
 %   dependencies = FindDependentFiles(parentSceneFile, conditionsFile, ...
 % mappingsFile, extraFileNames, hints)

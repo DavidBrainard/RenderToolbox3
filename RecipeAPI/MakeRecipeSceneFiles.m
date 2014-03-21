@@ -11,8 +11,7 @@
 % specified in @a recipe.input.hints.renderer.
 %
 % @details
-% Returns the given @a recipe, with @a recipe.rendering.scenes and @a
-% recipe.requiredFiles filled in.
+% Returns the given @a recipe, with @a recipe.rendering.scenes filled in.
 %
 % @details
 % Usage:
@@ -24,13 +23,12 @@ function recipe = MakeRecipeSceneFiles(recipe)
 recipe.rendering.scenes = {};
 errorData = [];
 try
-    [recipe.rendering.scenes, requiredFiles] = MakeSceneFiles(...
+    [recipe.rendering.scenes, recipe.rendering.requiredFiles] = ...
+        MakeSceneFiles(...
         recipe.input.parentSceneFile, ...
         recipe.input.conditionsFile, ...
         recipe.input.mappingsFile, ...
         recipe.input.hints);
-    
-    recipe = AppendRecipeRequiredFiles(recipe, requiredFiles);
     
 catch errorData
     % fills in placeholder above, log it below

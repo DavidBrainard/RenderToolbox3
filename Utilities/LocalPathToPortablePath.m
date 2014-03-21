@@ -18,10 +18,11 @@
 % @details
 % If @a localPath path is located under one of these output paths, returns
 % a "portable" version of the same path with the output path name replaced
-% by a placeholder.  Otherwise, returns @a localPath unchanged.
+% by a placeholder.  Otherwise, treats the file as a resource file and uses
+% the resourcesFolder placeholder.
 %
-% Use PortablePathtoLocal() to convert the returned portable path back to a
-% local path, on this or another RenderToolbox3 machine.
+% Use PortablePathToLocalPath() to convert the returned portable path back
+% to a local path, on this or another RenderToolbox3 machine.
 %
 % @details
 % If @a hints is provided, uses RenderToolbox3 output path names like @a
@@ -45,7 +46,6 @@ end
 hints.outputSubfolder = '';
 
 pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder'};
-portablePath = localPath;
 delimiter = '@RTB@';
 for ii = 1:numel(pathNames)
     pathName = pathNames{ii};
@@ -60,3 +60,8 @@ for ii = 1:numel(pathNames)
         return
     end
 end
+
+% never found a mathcing folder prefix, treat resource file
+[localDir, localBase, localExt] = fileparts(localPath);
+portablePrefix = [delimiter 'resourcesFolder' delimiter];
+portablePath = fullfile(portablePrefix, [localBase localExt]);

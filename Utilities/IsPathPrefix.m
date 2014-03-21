@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Check whether one file path is the parent of another.
+% Is the first path a prefix (i.e. parent) of the second?
 %   @param pathA string path for a file or folder that exists
 %   @param pathB string path for another file or folder that exists
 %

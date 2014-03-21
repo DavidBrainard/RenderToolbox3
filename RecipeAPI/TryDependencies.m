@@ -2,13 +2,16 @@
 clear
 clc
 
-%% Build a recipe for the coordinates test scene.
-configScript = 'RenderToolbox3ConfigurationTemplate';
+configScript = 'PBRTOpticsConfigurationTemplate';
 executive = @RenderRecipe;
-parentScene = 'Dragon.dae';
-conditionsFile = 'DragonColorCheckerConditions.txt';
-mappingsFile = 'DragonColorCheckerMappings.txt';
+parentScene = 'SimpleSquare.dae';
+conditionsFile = 'SimpleSquareConditions.txt';
+mappingsFile = 'SimpleSquareMappings.txt';
 hints.renderer = 'Mitsuba';
+hints.imageWidth = 50;
+hints.imageHeight = 50;
+hints.whichConditions = 1:4;
+hints.isPlot = false;
 hints.outputSubfolder = 'dependenciesTest';
 
 recipe = NewRecipe(configScript, executive, parentScene, ...
@@ -16,37 +19,29 @@ recipe = NewRecipe(configScript, executive, parentScene, ...
 
 recipe = AppendRecipeLog(recipe, 'Testing a new recipe');
 
-%% Locate recipe dependencies.
-extraFiles = {which(configScript), which(parentScene), ...
-    which(conditionsFile), which(mappingsFile)};
-dependencies = FindDependentFiles( ...
-    recipe.input.parentSceneFile, ...
-    recipe.input.conditionsFile, ...
-    recipe.input.mappingsFile, ...
-    extraFiles, ...
-    hints);
+%% Stick some outputs in the recipe.
+recipe = ConfigureForRecipe(recipe);
+recipe = MakeRecipeSceneFiles(recipe);
+recipe = MakeRecipeRenderings(recipe);
+recipe = MakeRecipeMontage(recipe);
 
-%% Copy recipe and dependencies to a resources subfolder.
-resourcesFolder = GetOutputPath('resourcesFolder', hints);
-if ~exist(resourcesFolder, 'dir')
-    mkdir(resourcesFolder);
-end
+%% Pack up the whole thing.
+extras = {'usairforce-test-card.tga'};
+fullZipFileName = fullfile(GetOutputPath('tempFolder', hints), 'fullPack.zip');
+[recipe, fullZipFileName] = PackUpRecipe(recipe, fullZipFileName, extras);
 
-for ii = 1:numel(dependencies)
-    copyfile(dependencies(ii).fullLocalPath, resourcesFolder);
-end
+%% Pack up a cleaned version.
+recipe = CleanRecipe(recipe);
+cleanZipFileName = fullfile(GetOutputPath('tempFolder', hints), 'cleanPack.zip');
+[recipe, cleanZipFileName] = PackUpRecipe(recipe, cleanZipFileName);
 
-% RecipeAPI function should automatically include configScript,
-% parentScene, conditionsFile, and mappingsFile as extra dependency files.
-% It should resolve their full local paths with which?
-%
-% It should also check each element of executive, and include it if it is
-% not the name of a RenderToolbox3 build-in function (i.e.
-% RenderToolboxRoot() is not a prefix of its path).
-%
-% It should also store a mapping of local file names (i.e. names in the zip
-% archive or resources folder) and the paths where they might want to be
-% copied (i.e. "unportabled" path, if any).
-%
-% Actually, we night never want to unportable the files.  It might be best
-% to leave them in the resources folder.  Simpler that way.
+%% Unpack the whole thing and try to re-render without making scene files.
+sillyRoot = '/Users/ben/Documents/MATLAB/frender-foolbox';
+hints.tempFolder = fullfile(sillyRoot, 'temp');
+hints.outputDataFolder = fullfile(sillyRoot, 'data');
+hints.outputImageFolder = fullfile(sillyRoot, 'images');
+hints.resourcesFolder = fullfile(sillyRoot, 'resources');
+recipe = UnpackRecipe(fullZipFileName, true, hints);
+
+recipe.input.hints = hints;
+recipe = MakeRecipeRenderings(recipe);

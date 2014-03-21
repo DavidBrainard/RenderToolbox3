@@ -21,4 +21,5 @@ function recipe = CleanRecipe(recipe)
 % Clear all derived data fields
 recipe.rendering = [];
 recipe.processing = [];
+recipe.dependencies = [];
 recipe.log = [];

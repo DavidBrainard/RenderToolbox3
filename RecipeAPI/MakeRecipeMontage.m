@@ -32,6 +32,12 @@ try
         MakeMontage(recipe.rendering.radianceDataFiles, ...
         montageFile, [], [], recipe.input.hints);
     
+    if IsStructFieldPresent(recipe.processing, 'images')
+        recipe.processing.images{end+1} = montageFile;
+    else
+        recipe.processing.images = {montageFile};
+    end
+    
     if recipe.input.hints.isPlot
         ShowXYZAndSRGB( ...
             recipe.processing.xyzMontage, ...

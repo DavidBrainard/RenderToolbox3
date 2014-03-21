@@ -20,7 +20,7 @@
 % @ingroup RecipeAPI
 function recipe = MakeRecipeRenderings(recipe)
 
-recipe.rendering.radianceData = {};
+recipe.rendering.radianceDataFiles = {};
 errorData = [];
 try
     recipe.rendering.radianceDataFiles = BatchRender( ...

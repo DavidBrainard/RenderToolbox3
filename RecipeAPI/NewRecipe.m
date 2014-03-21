@@ -60,7 +60,10 @@ if nargin < 1
 end
 
 if nargin < 2
-    executive = '';
+    executive = {};
+end
+if ~iscell(executive)
+    executive = {executive};
 end
 
 if nargin < 3
@@ -82,9 +85,10 @@ else
 end
 
 %% Brand new recipe struct with basic fields filled in.
+% note: struct() needs executive cell array to be wrapped in another cell
 basic = struct( ...
     'configureScript', configureScript, ...
-    'executive', executive, ...
+    'executive', {executive}, ...
     'parentSceneFile', parentSceneFile, ...
     'conditionsFile', conditionsFile, ...
     'mappingsFile', mappingsFile, ...

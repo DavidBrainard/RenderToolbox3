@@ -350,4 +350,5 @@ authorInfo.asset = asset;
 [scene.authorInfo] = deal(authorInfo);
 
 % full list of required files
-requiredFiles = cat(2, mappingsRequiredFiles, importRequiredFiles);
+requiredFiles = cat(2, ...
+    {mappingsRequiredFiles.verbatimName}, importRequiredFiles);
