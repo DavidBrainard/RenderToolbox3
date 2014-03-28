@@ -45,14 +45,7 @@ mitsuba = fullfile( ...
     getpref('Mitsuba', 'executable'));
 renderCommand = sprintf('%s -o %s %s', mitsuba, output, sceneFile);
 fprintf('%s\n', renderCommand);
-
-% run Mitsuba in the destination folder to capture all ouput there
-originalFolder = pwd();
-if exist(scenePath, 'dir')
-    cd(scenePath);
-end
 [status, result] = RunCommand(renderCommand, hints);
-cd(originalFolder)
 
 % restore the library search path
 setenv(libPathName, originalLibPath);

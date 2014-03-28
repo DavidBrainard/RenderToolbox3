@@ -43,14 +43,7 @@ output = fullfile(scenePath, [sceneBase '.dat']);
 pbrt = getpref('PBRT', 'executable');
 renderCommand = sprintf('%s --outfile %s %s', pbrt, output, sceneFile);
 fprintf('%s\n', renderCommand);
-
-% run PBRT in the destination folder to capture all ouput there
-originalFolder = pwd();
-if exist(scenePath, 'dir')
-    cd(scenePath);
-end
 [status, result] = RunCommand(renderCommand, hints);
-cd(originalFolder)
 
 % restore the library search path
 setenv(libPathName, originalLibPath);

@@ -44,10 +44,6 @@ else
     %% Invoke several Collada to PBRT utilities.
     fprintf('Converting %s\n  to %s.\n', colladaFile, scene.pbrtFile);
     
-    % run in the destination folder to capture all ouput there
-    originalFolder = pwd();
-    cd(outputFolder);
-    
     % read the collada file
     [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
     
@@ -76,10 +72,8 @@ else
     
     % dump the PBRT-XML document into a .pbrt text file
     WritePBRTFile(scene.pbrtFile, scene.pbrtXMLFile, hints);
-    
-    cd(originalFolder)
 end
 
 %% Detect auxiliary geometry files.
-auxiliaryFiles = FindFiles(outputFolder, 'mesh-data-[^\.]+.pbrt');
+auxiliaryFiles = FindFiles(pwd(), 'mesh-data-[^\.]+.pbrt');
 requiredFiles = cat(2, requiredFiles, auxiliaryFiles);

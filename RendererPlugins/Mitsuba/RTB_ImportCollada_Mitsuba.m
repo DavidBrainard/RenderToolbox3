@@ -47,7 +47,6 @@ else
     [newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
     
     % invoke the Mitsuba importer
-    [colladaPath, colladaBase, colladaExt] = fileparts(colladaFile);
     importer = fullfile( ...
         getpref('Mitsuba', 'app'), ...
         getpref('Mitsuba', 'importer'));
@@ -56,14 +55,11 @@ else
         importer, ...
         hints.imageWidth, hints.imageHeight, ...
         hints.filmType, ...
-        [colladaBase colladaExt], ...
+        colladaFile, ...
         scene.unadjustedMitsubaFile);
     
     % run in the destination folder to capture all ouput there
-    originalFolder = pwd();
-    cd(outputFolder);
     [status, result] = unix(importCommand);
-    cd(originalFolder)
     if status ~= 0
         error('Mitsuba file conversion failed\n  %s\n  %s\n', ...
             colladaFile, result);
@@ -82,5 +78,5 @@ else
 end
 
 %% Detect auxiliary geometry files.
-auxiliaryFiles = FindFiles(outputFolder, '\.serialized');
+auxiliaryFiles = FindFiles(pwd(), '\.serialized');
 requiredFiles = cat(2, requiredFiles, auxiliaryFiles);
