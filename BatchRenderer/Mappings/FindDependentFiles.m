@@ -86,7 +86,12 @@ end
 %% Scan input files to find other required files.
 mappings = ParseMappings(mappingsFile);
 [varNames, varValues] = ParseConditions(conditionsFile);
-for ii = 1:size(varValues, 1)
+if isempty(hints.whichConditions)
+    whichConditions = 1:size(varValues, 1);
+else
+    whichConditions = hints.whichConditions;
+end
+for ii = whichConditions
     [resolvedMappings, deps] = ResolveMappingsValues(mappings, ...
         varNames, varValues(ii,:), parentSceneFile, adjustments, hints);
     if 1 == ii
@@ -108,5 +113,5 @@ dependencies = dependencies(uniqueIndices);
 %% Get a RenderTooblox3 "portable" path for each local path.
 for ii = 1:numel(dependencies)
     dependencies(ii).portablePath = ...
-        LocalPathToPortablePath(dependencies(ii).fullLocalPath);
+        LocalPathToPortablePath(dependencies(ii).fullLocalPath, hints);
 end
