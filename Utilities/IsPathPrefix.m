@@ -43,7 +43,7 @@
 %
 % @details
 % Usage:
-%   isEqual = IsFilePathsEqual(pathA, pathB)
+%   [isPrefix, remainder] = IsPathPrefix(pathA, pathB)
 %
 % @ingroup Utilities
 function [isPrefix, remainder] = IsPathPrefix(pathA, pathB)
@@ -53,6 +53,10 @@ if exist(pathA, 'dir')
     compareA = pathA;
 elseif exist(pathA, 'file')
     compareA = fileparts(pathA);
+    if isempty(compareA) && ~exist(fullfile(pwd(), pathA), 'file')
+        % file exists at pwd(), or on path
+        compareA = fileparts(which(pathA));
+    end
 else
     message = [pathA ' is not a file or folder name'];
     error('RenderToolbox3:IsFilePathsEqual', message);
@@ -62,7 +66,15 @@ if exist(pathB, 'dir')
     compareB = pathB;
     fileB = '';
 elseif exist(pathB, 'file')
+    whichB = which(pathB);
+    if ~isempty(whichB)
+        pathB = whichB;
+    end
     [compareB, baseB, extB] = fileparts(pathB);
+    if isempty(compareB) && ~exist(fullfile(pwd(), pathB), 'file')
+        % file exists at pwd(), or on path
+        [compareB, baseB, extB] = fileparts(which(pathB));
+    end
     fileB = [baseB extB];
 else
     message = [pathB ' is not a file or folder name'];
@@ -71,27 +83,29 @@ end
 
 % use pwd() to compare e.g. absolute and relative paths
 startDir = pwd();
-errorData = [];
 isPrefix = false;
 remainder = '';
 try
     cd(compareA);
     realPathA = pwd();
+catch errorData
+    warning(errorData.identifier, errorData.message)
+    cd(startDir);
+    return;
+end
+
+try
     cd(compareB);
     realPathB = pwd();
-    
-    % match should always occur at beginning
-    matchIndex = strfind(realPathB, realPathA);
-    if 1 == matchIndex
-        isPrefix = true;
-        remainder = fullfile(realPathB(numel(realPathA)+2:end), fileB);
-    end
-    
 catch errorData
-    % fill in the placeholder, rethrow below
+    warning(errorData.identifier, errorData.message)
+    cd(startDir);
+    return;
 end
-cd(startDir);
 
-if ~isempty(errorData)
-    rethrow(errorData)
+% match should always occur at beginning
+matchIndex = strfind(realPathB, realPathA);
+if 1 == matchIndex
+    isPrefix = true;
+    remainder = fullfile(realPathB(numel(realPathA)+2:end), fileB);
 end
