@@ -22,14 +22,6 @@
 % function for the same renderer.
 %
 % @details
-% A Render function should check the value of @a
-% hints.isAbsoluteResourcePaths.  If the value is false, it should attempt
-% to ignore absolute file paths of any files required for rendering.
-% It should pass plain file names to any rendering commands and assume the
-% files are located in the current working folder.  This should allow
-% scenes generated on one machine to be rendererd on another machine.
-%
-% @details
 % RenderToolbox3 does not care how the renderer is invoked.  Some
 % possibilities are:
 %	- use Matlab's system() command to invoke an external application

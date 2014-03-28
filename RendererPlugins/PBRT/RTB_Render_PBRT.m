@@ -16,15 +16,8 @@
 %   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
 function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
 
-if hints.isAbsoluteResourcePaths
-    sceneFile = scene.pbrtFile;
-else
-    [scenePath, sceneBase, sceneExt] = fileparts(scene.pbrtFile);
-    sceneFile = [sceneBase, sceneExt];
-end
-
-
 % invoke PBRT!
+sceneFile = scene.pbrtFile;
 [status, result, output] = RunPBRT(sceneFile, hints);
 if status ~= 0
     error('PBRT rendering failed\n  %s\n  %s\n', sceneFile, result);

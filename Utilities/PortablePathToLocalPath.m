@@ -47,7 +47,7 @@ end
 % only interested in output path roots
 hints.outputSubfolder = '';
 
-pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder'};
+pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder', 'workingFolder'};
 localPath = portablePath;
 delimiter = '@RTB@';
 for ii = 1:numel(pathNames)

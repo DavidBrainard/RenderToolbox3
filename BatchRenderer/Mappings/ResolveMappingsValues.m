@@ -41,13 +41,13 @@
 % like "8".
 %
 % @details
-% If @hints.isAbsoluteResourcePaths is true, all right-hand values will be
-% considered as expressions that might match the names of files on the
-% Matlab path or in the current directory.  Whenever a right-hand value
-% does match the name of a file on the Matlab path, the value will be
-% replaced with the full absolute path name of the file.  For example, the
-% expression "D65.spd" would be replaced with a full path name such as
-% "/Users/foo/RenderToolbox3/RenderData/D65.spd"
+% All right-hand values will be evaluated as expressions that might match
+% the names of files within @a hints.workingFolder or on the Matlab path.
+% Whenever a right-hand value does match the name of such a a file, the
+% value will be replaced with an unambiguous path to the matched file.
+% Matched files that are within @a hints.workingFolder will be replaced
+% with relative paths starting at @a hints.workingFolder.  Matched files
+% from the Matlab path will be replaced with full absoulte path names.
 %
 % @details
 % Returns the given @a mappings, updated with expressions replaced by
@@ -103,17 +103,14 @@ try
             map.right.value = GetSceneValue(adjustIDMap, map.right.value);
         end
         
-        % find files on the Matlab path
-        whichFile = findWhichFile(map.right.value);
-        if ~isempty(whichFile)
+        % find files within working folder or on Matlab path
+        filePath = findWhichFile(map.right.value, hints.workingFolder);
+        if ~isempty(filePath)
             nFiles = numel(requiredFiles) + 1;
             requiredFiles(nFiles).verbatimName = map.right.value;
-            requiredFiles(nFiles).fullLocalPath = whichFile;
+            requiredFiles(nFiles).fullLocalPath = filePath;
             
-            % replace file name expressions with absolute path names
-            if hints.isAbsoluteResourcePaths
-                map.right.value = whichFile;
-            end
+            map.right.value = filePath;
         end
         
         mappings(mm) = map;
@@ -127,9 +124,9 @@ end
 path(originalPath);
 
 
-%% Return absolute path if expression is a file on the path.
-function whichFile = findWhichFile(expression)
-whichFile = '';
+%% Absolute path for expression in working folder or on Matlab path.
+function filePath = findWhichFile(expression, workingFolder)
+filePath = '';
 if ~isempty(strfind(expression, '.')) && exist(expression, 'file')
-    whichFile = which(expression);
+    filePath = ResolveFilePath(expression, workingFolder);
 end

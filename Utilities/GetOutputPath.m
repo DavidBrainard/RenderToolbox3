@@ -7,8 +7,7 @@
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Returns the full path to a the RenderToolbox3 output folder.  The full
-% path is made from the named path, plus the outputSubfolder.
+% Returns the full path to a RenderToolbox3 output folder.
 %
 % @details
 % @a pathName may be one of the folowing:
@@ -16,6 +15,7 @@
 %   - 'outputDataFolder' - the path to output data files
 %   - 'outputImageFolder' - the path to output image files
 %   - 'resourcesFolder' - the path to recipe resource dependencies
+%   - 'workingFolder' - the working path in @a hints.workingPath
 %   .
 %
 % @details
@@ -30,7 +30,7 @@
 % @ingroup Utilities
 function path = GetOutputPath(pathName, hints)
 
-pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder'};
+pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder', 'workingFolder'};
 if nargin < 1 || ~any(strcmp(pathName, pathNames))
     pathNamesString = evalc('disp(pathNames)');
     error('pathName must be one of the following: \n  %s', pathNamesString);
@@ -42,4 +42,8 @@ else
     hints = GetDefaultHints(hints);
 end
 
-path = fullfile(hints.(pathName), hints.outputSubfolder);
+if strcmp('workingFolder', pathName)
+    path = hints.(pathName);
+else
+    path = fullfile(hints.(pathName), hints.outputSubfolder);
+end

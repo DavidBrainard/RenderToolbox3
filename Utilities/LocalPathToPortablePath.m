@@ -45,7 +45,7 @@ end
 % only interested in output path roots
 hints.outputSubfolder = '';
 
-pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder'};
+pathNames = {'tempFolder', 'outputDataFolder', 'outputImageFolder', 'resourcesFolder', 'workingFolder'};
 delimiter = '@RTB@';
 for ii = 1:numel(pathNames)
     pathName = pathNames{ii};
@@ -61,7 +61,7 @@ for ii = 1:numel(pathNames)
     end
 end
 
-% never found a mathcing folder prefix, treat resource file
+% never found a mathcing folder prefix, default to working folder
 [localDir, localBase, localExt] = fileparts(localPath);
-portablePrefix = [delimiter 'resourcesFolder' delimiter];
+portablePrefix = [delimiter 'workingFolder' delimiter];
 portablePath = fullfile(portablePrefix, [localBase localExt]);

@@ -16,14 +16,8 @@
 %   [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, hints)
 function [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, hints)
 
-if hints.isAbsoluteResourcePaths
-    sceneFile = scene.mitsubaFile;
-else
-    [scenePath, sceneBase, sceneExt] = fileparts(scene.mitsubaFile);
-    sceneFile = [sceneBase, sceneExt];
-end
-
 % invoke Mitsuba!
+sceneFile = scene.mitsubaFile;
 [status, result, output] = RunMitsuba(sceneFile, hints);
 if status ~= 0
     error('Mitsuba rendering failed\n  %s\n  %s\n', sceneFile, result);

@@ -25,7 +25,7 @@ hints.imageWidth = 200;
 hints.imageHeight = 160;
 
 % resources like images and spectrum files should use relative paths
-hints.isAbsoluteResourcePaths = false;
+hints.workingPath = pwd();
 
 % put output files in a subfolder named like this script
 hints.outputSubfolder = mfilename();
@@ -52,7 +52,6 @@ end
 % choose where to look for scenes from machineA
 hints = GetDefaultHints();
 hints.outputSubfolder = mfilename();
-hints.isAbsoluteResourcePaths = false;
 portableFolder = fullfile(GetOutputPath('tempFolder', hints), 'portable-scenes');
 
 % how to convert multi-spectral images to sRGB

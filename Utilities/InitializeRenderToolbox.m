@@ -70,13 +70,14 @@ if isForce
         rmpref('RenderToolbox3');
     end
     
-    % default output locations
+    % default input and output locations
     userFolder = fullfile(GetUserFolder(), 'render-toolbox');
     RenderToolbox3.tempFolder = fullfile(userFolder, 'temp');
     RenderToolbox3.outputDataFolder = fullfile(userFolder, 'data');
     RenderToolbox3.outputImageFolder = fullfile(userFolder, 'images');
     RenderToolbox3.resourcesFolder = fullfile(userFolder, 'resources');
     RenderToolbox3.outputSubfolder = '';
+    RenderToolbox3.workingFolder = '';
     
     % default hints
     RenderToolbox3.renderer = 'SampleRenderer';
@@ -89,7 +90,6 @@ if isForce
     RenderToolbox3.isReuseSceneFiles = false;
     RenderToolbox3.isParallel = false;
     RenderToolbox3.isPlot = true;
-    RenderToolbox3.isAbsoluteResourcePaths = true;
     RenderToolbox3.isCaptureCommandResults = true;
     
     % choose dynamic library path names and default values
