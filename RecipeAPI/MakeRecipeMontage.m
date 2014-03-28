@@ -19,6 +19,8 @@
 % @ingroup RecipeAPI
 function recipe = MakeRecipeMontage(recipe)
 
+recipe = ChangeToRecipeFolder(recipe);
+
 recipe.processing.xyzMontage = [];
 recipe.processing.srgbMontage = [];
 errorData = [];

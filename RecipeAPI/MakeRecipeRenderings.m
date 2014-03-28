@@ -20,6 +20,8 @@
 % @ingroup RecipeAPI
 function recipe = MakeRecipeRenderings(recipe)
 
+recipe = ChangeToRecipeFolder(recipe);
+
 recipe.rendering.radianceDataFiles = {};
 errorData = [];
 try

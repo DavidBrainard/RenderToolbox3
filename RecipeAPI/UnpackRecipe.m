@@ -47,7 +47,7 @@ end
 
 %% Set up a clean, temporary working folder.
 workingHints = hints;
-workingHints.outputSubfolder = zipBase;
+workingHints.outputSubfolder = '';
 workingFolder = GetOutputPath('tempFolder', workingHints);
 workingHints.tempFolder = fullfile(workingFolder, 'temp');
 workingHints.outputDataFolder = fullfile(workingFolder, 'data');
@@ -72,8 +72,20 @@ end
 matData = load(recipeFileName);
 recipe = matData.recipe;
 
+%% Update recipe hints with local-specific values.
+recipe.input.hints.workingFolder = hints.workingFolder;
+recipe.input.hints.outputSubfolder = hints.outputSubfolder;
+recipe.input.hints.tempFolder = hints.tempFolder;
+recipe.input.hints.outputDataFolder = hints.outputDataFolder;
+recipe.input.hints.outputImageFolder = hints.outputImageFolder;
+recipe.input.hints.resourcesFolder = hints.resourcesFolder;
+recipe.input.hints.libPathName = hints.libPathName;
+recipe.input.hints.libPath = hints.libPath;
+recipe.input.hints.libPathLast = hints.libPathLast;
 
 %% Copy dependencies from working folder to locally configured folders?
+% the unzipped archive contains an extra folder named for the zip file
+workingHints.workingFolder = fullfile(workingFolder, zipBase);
 if isCopyDependencies
     hints.outputSubfolder = recipe.input.hints.outputSubfolder;
     hints.renderer = recipe.input.hints.renderer;
@@ -96,12 +108,3 @@ if isCopyDependencies
     % don't keep redundant copies of dependencies.
     rmdir(workingFolder, 's');
 end
-
-
-%% Re-detect dependencies locally for the unpacked recipe.
-dependencies = FindRecipeDependentFiles(recipe);
-recipe.dependencies = dependencies;
-
-recipe = AppendRecipeLog(recipe, ...
-    ['run automatically by ' mfilename()], ...
-    @FindRecipeDependentFiles, [], 0);

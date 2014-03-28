@@ -20,6 +20,8 @@
 % @ingroup RecipeAPI
 function recipe = MakeRecipeSceneFiles(recipe)
 
+recipe = ChangeToRecipeFolder(recipe);
+
 recipe.rendering.scenes = {};
 errorData = [];
 try

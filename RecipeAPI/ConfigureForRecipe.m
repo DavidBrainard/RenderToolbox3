@@ -24,6 +24,8 @@
 % @ingroup RecipeAPI
 function recipe = ConfigureForRecipe(recipe)
 
+recipe = ChangeToRecipeFolder(recipe);
+
 errorData = [];
 try
     % set the current recipe so that configureScript can access it

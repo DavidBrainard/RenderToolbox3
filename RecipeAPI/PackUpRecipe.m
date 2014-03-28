@@ -65,6 +65,7 @@ recipeFileName = fullfile(workingFolder, 'recipe.mat');
 save(recipeFileName, 'recipe');
 
 %% Copy dependencies to subfolders of the working folder.
+hints.workingFolder = workingFolder;
 for ii = 1:numel(recipe.dependencies)
     originalPath = recipe.dependencies(ii).fullLocalPath;
     portablePath = recipe.dependencies(ii).portablePath;
