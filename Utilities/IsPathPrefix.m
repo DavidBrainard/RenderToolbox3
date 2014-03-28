@@ -54,31 +54,27 @@ if exist(pathA, 'dir')
 elseif exist(pathA, 'file')
     compareA = fileparts(pathA);
     if isempty(compareA) && ~exist(fullfile(pwd(), pathA), 'file')
-        % file exists at pwd(), or on path
+        % file exists on path, not at pwd()
         compareA = fileparts(which(pathA));
     end
 else
-    message = [pathA ' is not a file or folder name'];
-    error('RenderToolbox3:IsFilePathsEqual', message);
+    message = ['"' pathA '" is not a file or folder name'];
+    error('RenderToolbox3:IsPathPrefix', message);
 end
 
 if exist(pathB, 'dir')
     compareB = pathB;
     fileB = '';
 elseif exist(pathB, 'file')
-    whichB = which(pathB);
-    if ~isempty(whichB)
-        pathB = whichB;
-    end
     [compareB, baseB, extB] = fileparts(pathB);
     if isempty(compareB) && ~exist(fullfile(pwd(), pathB), 'file')
-        % file exists at pwd(), or on path
+        % file exists on path, not at pwd()
         [compareB, baseB, extB] = fileparts(which(pathB));
     end
     fileB = [baseB extB];
 else
-    message = [pathB ' is not a file or folder name'];
-    error('RenderToolbox3:IsFilePathsEqual', message);
+    message = ['"' pathB '" is not a file or folder name'];
+    error('RenderToolbox3:IsPathPrefix', message);
 end
 
 % use pwd() to compare e.g. absolute and relative paths
@@ -93,6 +89,7 @@ catch errorData
     cd(startDir);
     return;
 end
+cd(startDir);
 
 try
     cd(compareB);
@@ -102,6 +99,7 @@ catch errorData
     cd(startDir);
     return;
 end
+cd(startDir);
 
 % match should always occur at beginning
 matchIndex = strfind(realPathB, realPathA);
