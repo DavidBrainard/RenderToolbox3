@@ -60,9 +60,11 @@ if nargin < 2 || isempty(rootFolder)
     rootFolder = pwd();
 end
 
-[isPrefix, filePath] = IsPathPrefix(rootFolder, fileName);
-if isPrefix
+matches = FindFiles(rootFolder, fileName);
+if ~isempty(matches)
     isRootFolderMatch = true;
+    firstMatch = matches{1};
+    [isPrefix, filePath] = IsPathPrefix(rootFolder, firstMatch);
     return;
 end
 

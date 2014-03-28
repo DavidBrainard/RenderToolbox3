@@ -187,7 +187,7 @@ if ~isempty(colladaFile) && ~isempty(hints.remodeler)
         % read original Collada document into memory
         [scenePath, sceneBase, sceneExt] = fileparts(colladaFile);
         if isempty(scenePath) && exist(colladaFile, 'file')
-            colladaFile = which(colladaFile);
+            colladaFile = ResolveFilePath(colladaFile, hints.workingFolder);
         end
         colladaDoc = ReadSceneDOM(colladaFile);
         
@@ -222,7 +222,7 @@ if any(isMatch)
 end
 [scenePath, sceneBase, sceneExt] = fileparts(colladaFile);
 if isempty(scenePath) && exist(colladaFile, 'file')
-    colladaFile = which(colladaFile);
+    colladaFile = ResolveFilePath(colladaFile, hints.workingFolder);
 end
 
 isMatch = strcmp('mappingsFile', varNames);

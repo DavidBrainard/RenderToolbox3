@@ -76,7 +76,7 @@ if IsStructFieldPresent(recipe.processing, 'images')
 end
 
 extras = cat(2, extras, inputs, executive, generated, renderings, images);
-extras = getWhichFilesIfAny(extras);
+extras = getWhichFilesIfAny(extras, recipe.input.hints.workingFolder);
 
 %% Scan input files for additional dependencies.
 dependencies = FindDependentFiles( ...
@@ -86,12 +86,10 @@ dependencies = FindDependentFiles( ...
     extras, ...
     recipe.input.hints);
 
-
 % Get full path to files on Matlab path, excluding RenderToolbox3 files.
-function whichFileNames = getWhichFilesIfAny(fileNames)
+function whichFileNames = getWhichFilesIfAny(fileNames, workingFolder)
 whichFileNames = cell(size(fileNames));
 isIncluded = false(size(fileNames));
-renderToolboxRoot = RenderToolboxRoot();
 for ii = 1:numel(fileNames)
     
     fileName = fileNames{ii};
@@ -106,14 +104,14 @@ for ii = 1:numel(fileNames)
         continue;
     end
     
-    whichFile = which(fileName);
-    if ~isempty(whichFile)
-        % convert partial name on Matlab path to full absolute path
-        fileName = whichFile;
+    [filePath, isRootFolderMatch] = ResolveFilePath(fileName, workingFolder);
+    if ~isempty(filePath)
+        % convert partial name to unambiguous path
+        fileName = filePath;
     end
     
-    if IsPathPrefix(renderToolboxRoot, fileName)
-        % file is part of RenderToolbox3
+    if ~isRootFolderMatch
+        % file not found within working folder
         isIncluded(ii) = false;
         continue;
     end
