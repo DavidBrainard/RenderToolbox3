@@ -4,7 +4,7 @@
 %
 % Detect input files and other dependencies for a recipe.
 %   @param recipe a recipe struct
-%   @param extras cell array of extra files to include
+%   @param extras cell array of extra files to include with this recipe
 %
 % @details
 % Scans the given @a recipe.input files to determine file dependencies that
@@ -15,81 +15,71 @@
 % these resources are detected.
 %
 % @details
-% if @a extras is included, it must be a cell array of additional
-% file names to include along with the detected dependencies.
-%
-% @details
-% Returns a struct array with one element per dependency.  Each element of
-% the struct array will have the following fields:
-%   - @b verbatimName - the name of the dependent file just as it appeared
-%   @a recipe.input or in a specific input file.
-%   - @b fullLocalPath - the full local path and name of the dependent file
-%   as it appears on the Matlab path.
-%   - @b portablePath - a "portable" representation of the @b
-%   fullLocalPath, that uses placeholders for RenderToolbox3 output paths
-%   as returned from GetOutputPath().
-%   .
+% Returns a struct array in dependent file info, with one element per
+% dependency, as returned from FindDependentFiles().
 %
 % @details
 % Usage:
-%   dependencies = FindRecipeDependentFiles(recipe, extras)
+%   dependenciesInfo = FindRecipeDependentFiles(recipe, extras)
 %
 % @ingroup RecipeAPI
-function dependencies = FindRecipeDependentFiles(recipe, extras)
+function dependenciesInfo = FindRecipeDependentFiles(recipe, extras)
 
 if nargin < 1 || ~isstruct(recipe)
     error('You must suplpy a recipe struct');
 end
 
-if nargin < 2
-    extras = {};
-end
-
-%% Build up a grand list of required files.
-
-% input files are required files
-inputs = { ...
+%% Choose required input files.
+% get path info about direct input files
+% and generated scene files
+inputFiles = { ...
     recipe.input.configureScript, ...
     recipe.input.parentSceneFile, ...
     recipe.input.conditionsFile, ...
     recipe.input.mappingsFile};
-
-% executive scripts/functions are required files
-executive = recipe.input.executive;
-
-% generated scene files are required (if any)
-generated = {};
+inputFiles = cat(2, inputFiles, recipe.input.executive);
 if IsStructFieldPresent(recipe.rendering, 'requiredFiles')
-    generated = recipe.rendering.requiredFiles;
+    inputFiles = cat(2, inputFiles, recipe.rendering.requiredFiles);
 end
+inputInfo = getFilesInfoIfAny(inputFiles, recipe.input.hints);
 
-% rendered radiance data files are required (if any)
-renderings = {};
-if IsStructFieldPresent(recipe.rendering, 'radianceDataFiles')
-    renderings = recipe.rendering.radianceDataFiles;
-end
-
-images = {};
-if IsStructFieldPresent(recipe.processing, 'images')
-    % processed images and montages are required (if any)
-    images = recipe.processing.images;
-end
-
-extras = cat(2, extras, inputs, executive, generated, renderings, images);
-extras = getWhichFilesIfAny(extras, recipe.input.hints.workingFolder);
-
-%% Scan input files for additional dependencies.
-dependencies = FindDependentFiles( ...
+% get path info about indirect input files (like spectra, textures)
+indirectInfo = FindDependentFiles( ...
     recipe.input.parentSceneFile, ...
     recipe.input.conditionsFile, ...
     recipe.input.mappingsFile, ...
-    extras, ...
     recipe.input.hints);
 
+% only take input files if they're inside the recipe working folder
+inputInfo = cat(2, inputInfo, indirectInfo);
+isRootFolderMatch = [inputInfo.isRootFolderMatch];
+inputInfo = inputInfo(isRootFolderMatch);
+
+
+%% Take any rendered or processed output files.
+outputFiles = {};
+if IsStructFieldPresent(recipe.rendering, 'radianceDataFiles')
+    outputFiles = cat(2, outputFiles, recipe.rendering.radianceDataFiles);
+end
+
+if IsStructFieldPresent(recipe.processing, 'images')
+    outputFiles = cat(2, outputFiles, recipe.processing.images);
+end
+
+% get path info about output files
+outputInfo = getFilesInfoIfAny(outputFiles, recipe.input.hints);
+
+%% Take any extra files explicitly provided.
+extraInfo = getFilesInfoIfAny(extras, recipe.input.hints);
+
+%% Unique list of inputs, outputs, and extras.
+dependenciesInfo = cat(2, inputInfo, outputInfo, extraInfo);
+[uniques, uniqueIndices] = unique({dependenciesInfo.absolutePath});
+dependenciesInfo = dependenciesInfo(uniqueIndices);
+
 % Get full path to files on Matlab path, excluding RenderToolbox3 files.
-function whichFileNames = getWhichFilesIfAny(fileNames, workingFolder)
-whichFileNames = cell(size(fileNames));
-isIncluded = false(size(fileNames));
+function filesInfo = getFilesInfoIfAny(fileNames, hints)
+infoCell = cell(size(fileNames));
 for ii = 1:numel(fileNames)
     
     fileName = fileNames{ii};
@@ -100,24 +90,14 @@ for ii = 1:numel(fileNames)
     
     if ~exist(fileName, 'file')
         % file not found
-        isIncluded(ii) = false;
         continue;
     end
     
-    [filePath, isRootFolderMatch] = ResolveFilePath(fileName, workingFolder);
-    if ~isempty(filePath)
-        % convert partial name to unambiguous path
-        fileName = filePath;
+    fileInfo = ResolveFilePath(fileName, hints.workingFolder);
+    if ~isempty(fileInfo) && ~isempty(fileInfo.absolutePath)
+        fileInfo.portablePath = ...
+            LocalPathToPortablePath(fileInfo.absolutePath, hints);
+        infoCell{ii} = fileInfo;
     end
-    
-    if ~isRootFolderMatch
-        % file not found within working folder
-        isIncluded(ii) = false;
-        continue;
-    end
-    
-    % take this file
-    isIncluded(ii) = true;
-    whichFileNames{ii} = fileName;
 end
-whichFileNames = whichFileNames(isIncluded);
+filesInfo = cat(2, infoCell{:});

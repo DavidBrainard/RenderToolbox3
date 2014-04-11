@@ -51,9 +51,8 @@
 %
 % @details
 % Returns the given @a mappings, updated with expressions replaced by
-% concrete values.  Also returns a struct array describing files on the
-% Matlab path that were encountered during processing, including the
-% full local path.
+% concrete values.  Also returns a struct array describing files
+% encountered during processing, as returned from ResolveFilePath().
 %
 % @details
 % Used internally by MakeSceneFiles().
@@ -64,69 +63,45 @@
 %
 % @ingroup Mappings
 function [mappings, requiredFiles] = ResolveMappingsValues(mappings, varNames, varValues, colladaFile, adjustments, hints)
-requiredFiles = struct('verbatimName', {}, 'fullLocalPath', {});
+requiredFiles = ResolveFilePath('');
 
-% temporarily add current directory to the path
-%   try to restore path even with errors
-originalPath = path();
-try
-    AddWorkingPath(pwd());
-    
-    % read the colladaFile
-    [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
-    
-    % read adjustments XML file, if any
-    adjustDoc = [];
-    adjustIDMap = [];
-    if ischar(adjustments)
-        [adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
-    end
-    
-    for mm = 1:numel(mappings)
-        % replace (varName) expressions with varValue values
-        map = mappings(mm);
-        for nn = 1:numel(varNames);
-            varPattern = ['\(' varNames{nn} '\)'];
-            map.left.value = ...
-                regexprep(map.left.value, varPattern, varValues{nn});
-            map.right.value = ...
-                regexprep(map.right.value, varPattern, varValues{nn});
-        end
-        
-        % replace [] and <> expressions with XML node values
-        if strcmp('[]', map.right.enclosing)
-            % '[]' look up a Collada scene path
-            map.right.value = GetSceneValue(colladaIDMap, map.right.value);
-            
-        elseif ~isempty(adjustIDMap) && strcmp('<>', map.right.enclosing)
-            % '<>' look up an adjustments file scne path
-            map.right.value = GetSceneValue(adjustIDMap, map.right.value);
-        end
-        
-        % find files within working folder or on Matlab path
-        filePath = findWhichFile(map.right.value, hints.workingFolder);
-        if ~isempty(filePath)
-            nFiles = numel(requiredFiles) + 1;
-            requiredFiles(nFiles).verbatimName = map.right.value;
-            requiredFiles(nFiles).fullLocalPath = filePath;
-            
-            map.right.value = filePath;
-        end
-        
-        mappings(mm) = map;
-    end
-    
-catch err
-    disp('Error resolving mappings values!')
-    disp(err.message)
+% read the colladaFile
+[colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
+
+% read adjustments XML file, if any
+adjustDoc = [];
+adjustIDMap = [];
+if ischar(adjustments)
+    [adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
 end
 
-path(originalPath);
-
-
-%% Absolute path for expression in working folder or on Matlab path.
-function filePath = findWhichFile(expression, workingFolder)
-filePath = '';
-if ~isempty(strfind(expression, '.')) && exist(expression, 'file')
-    filePath = ResolveFilePath(expression, workingFolder);
+for mm = 1:numel(mappings)
+    % replace (varName) expressions with varValue values
+    map = mappings(mm);
+    for nn = 1:numel(varNames);
+        varPattern = ['\(' varNames{nn} '\)'];
+        map.left.value = ...
+            regexprep(map.left.value, varPattern, varValues{nn});
+        map.right.value = ...
+            regexprep(map.right.value, varPattern, varValues{nn});
+    end
+    
+    % replace [] and <> expressions with XML node values
+    if strcmp('[]', map.right.enclosing)
+        % '[]' look up a Collada scene path
+        map.right.value = GetSceneValue(colladaIDMap, map.right.value);
+        
+    elseif ~isempty(adjustIDMap) && strcmp('<>', map.right.enclosing)
+        % '<>' look up an adjustments file scne path
+        map.right.value = GetSceneValue(adjustIDMap, map.right.value);
+    end
+    
+    % find files within working folder or on Matlab path
+    fileInfo = ResolveFilePath(map.right.value, hints.workingFolder);
+    if ~isempty(fileInfo) && ~isempty(fileInfo.resolvedPath)
+        requiredFiles(end+1) = fileInfo;
+        map.right.value = fileInfo.resolvedPath;
+    end
+    
+    mappings(mm) = map;
 end

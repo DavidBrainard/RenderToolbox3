@@ -67,7 +67,7 @@ save(recipeFileName, 'recipe');
 %% Copy dependencies to subfolders of the working folder.
 hints.workingFolder = workingFolder;
 for ii = 1:numel(recipe.dependencies)
-    originalPath = recipe.dependencies(ii).fullLocalPath;
+    originalPath = recipe.dependencies(ii).absolutePath;
     portablePath = recipe.dependencies(ii).portablePath;
     tempPath = PortablePathToLocalPath(portablePath, hints);
     tempDir = fileparts(tempPath);

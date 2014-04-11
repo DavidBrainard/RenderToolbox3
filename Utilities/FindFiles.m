@@ -5,12 +5,14 @@
 % Locate files at or below the given folder.
 %   @param folder path where to start looking for files
 %   @param filter optional regular expression for filtering files
+%   @param isFolders whether to search for files as well as folders
+%   @param isExact whether to use @a filter for exact file name matching
 %
 % @details
 % FindFiles() recursively searches @a folder and its subfolders for files.
 % If @a folder is omitted, uses pwd().  By default, returns all files.  @a
-% fileFilter may contain a regular expression, in which case only files
-% whose names match @fileFilter are included.  Matching is performed on
+% filter may contain a regular expression, in which case only files
+% whose names match @filter are included.  Matching is performed on
 % full, absolute path names.
 %
 % @details
@@ -27,17 +29,21 @@
 %
 % @details
 % Usage:
-%   fileList = FindFiles(folder, fileFilter, isFolders)
+%   fileList = FindFiles(folder, filter, isFolders, isExact)
 %
 % @ingroup Utilities
-function fileList = FindFiles(folder, fileFilter, isFolders)
+function fileList = FindFiles(folder, filter, isFolders, isExact)
+
+if nargin < 4 || isempty(isExact)
+    isExact = false;
+end
 
 if nargin < 3 || isempty(isFolders)
     isFolders = false;
 end
 
 if nargin < 2
-    fileFilter = '';
+    filter = '';
 end
 
 if nargin < 1 || isempty(folder)
@@ -58,8 +64,7 @@ files = {d(~isSubfolder).name};
 subfolders = {d(isSubfolder).name};
 
 % include the present folder itself?
-if isFolders && (isempty(fileFilter) ...
-        || ~isempty(regexp(folder, fileFilter, 'once')))
+if isFolders && checkMatch(folder, filter, isExact)
     fileList = {folder};
 else
     fileList = {};
@@ -74,8 +79,7 @@ for ii = 1:numel(files)
             && isempty(regexpi(f, '.*\.asv'))
         
         absPathFile = fullfile(folder, f);
-        if (isempty(fileFilter) ...
-                || ~isempty(regexp(absPathFile, fileFilter, 'once')))
+        if checkMatch(absPathFile, filter, isExact)
             fileList{end+1} = absPathFile;
         end
     end
@@ -87,6 +91,14 @@ for ii = 1:numel(subfolders)
     if ~isempty(sf) && ~any(sf=='.')
         absSubfolder = fullfile(folder, sf);
         fileList = cat(2, fileList, ...
-            FindFiles(absSubfolder, fileFilter, isFolders));
+            FindFiles(absSubfolder, filter, isFolders));
     end
+end
+
+function isMatch = checkMatch(filePath, filter, isExact)
+if isExact
+    [pathPrefix, baseName, extension] = fileparts(filePath);
+    isMatch = strcmp(filter, [baseName, extension]);
+else
+    isMatch = isempty(filter) || ~isempty(regexp(filePath, filter, 'once'));
 end

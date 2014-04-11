@@ -18,55 +18,72 @@
 % subfolders instead.
 %
 % @details
-% Returns an unambiguous path to the first file that matches @a fileName.
-% If the match was found within @a rootFolder, this is the relative path to
-% the matched file starting from @a rootFolder.  For example,
-% @code
-% % find a file within rootFolder
-% unambiguousPath = ResolveFilePath(fileInRootFolder, rootFolder);
-%
-% % build the full absolute path, if needed
-% fullPath = fullfile(rootFolder, unambiguousPath);
-% @endcode
-%
-% @details
-% If the match was found on the Matlab path, and not in @rootFolder,
-% returns the full absolute path to the matched file.  For example,
-% @code
-% % find a file within on the Matlab path
-% fullPath = ResolveFilePath(fileOnPath, rootFolder);
-% @endcode
+% Returns a struct of info about the given @a fileName, with the following
+% fields:
+%   - @b verbatimName - @a fileName exactly as given
+%   - @b rootFolder - @a rootFolder exactly as given, or pwd()
+%   - @b isRootFolderMatch - true only if @a fileName was found within @a
+%   rootFolder
+%   - @b resolvedPath - An unambiguous path to the given @a fileName.
+%   - @b absolutePath - full absolute path to the given @a fileName, if
+%   found.
+%   .
 %
 % @details
-% If no match was found, returns an empty string ''.
+% @b resolvedPath will be an unambiguous path to the first file that
+% matches @a fileName.   If the match was found within @a rootFolder, @b
+% resolvedPath is the relative path to the matched file, starting from @b
+% rootFolder.  If the match was found on the Matlab path, but not in
+% @b rootFolder, @b resolvedPath is the full absolute path to the matched
+% file.  If no match was found, @b resolvedPath is the empty string ''.
 %
 % @details
-% In all cases, also returns a logical flag indicating where the match was
-% found, if any.  If the flag is true, the match was found within @a
-% rootFolder. Otherwise, the flag is false.
-%
-% @details
-% Also returns the root folder that was searched.  This may be equal to the
-% given @a rootFolder, or the current folder if @a rootFolder was omitted.
+% In all cases, @b isRootFolderMatch indicates whether or not a match was
+% found within @a rootFolder.  When @b isRootFolderMatch is true, @b
+% resolvedPath should be treated as a relative path.
 %
 % @details
 % Usage:
-%   [filePath, isRootFolderMatch, rootFolder] = ResolveFilePath(fileName, rootFolder)
+%   fileInfo = ResolveFilePath(fileName, rootFolder)
 %
 % @ingroup Utilities
-function [filePath, isRootFolderMatch, rootFolder] = ResolveFilePath(fileName, rootFolder)
+function fileInfo = ResolveFilePath(fileName, rootFolder)
+
+fileInfo = struct( ...
+    'verbatimName', {}, ...
+    'rootFolder', {}, ...
+    'isRootFolderMatch', {}, ...
+    'resolvedPath', {}, ...
+    'absolutePath', {});
+
+if nargin < 1 || isempty(fileName)
+    return;
+end
 
 if nargin < 2 || isempty(rootFolder)
     rootFolder = pwd();
 end
 
-matches = FindFiles(rootFolder, fileName);
-if ~isempty(matches)
-    isRootFolderMatch = true;
-    firstMatch = matches{1};
-    [isPrefix, filePath] = IsPathPrefix(rootFolder, firstMatch);
-    return;
+fileInfo(1).verbatimName = fileName;
+fileInfo(1).rootFolder = rootFolder;
+fileInfo(1).isRootFolderMatch = false;
+if exist(fileName, 'file')
+    whichFile = which(fileName);
+    if isempty(whichFile)
+        fileInfo(1).resolvedPath = fileName;
+        fileInfo(1).absolutePath = fileName;
+    else
+        fileInfo(1).resolvedPath = whichFile;
+        fileInfo(1).absolutePath = whichFile;
+        
+    end
 end
 
-isRootFolderMatch = false;
-filePath = which(fileName);
+matches = FindFiles(rootFolder, fileName, false, true);
+if ~isempty(matches)
+    firstMatch = matches{1};
+    [isPrefix, relativePath] = IsPathPrefix(rootFolder, firstMatch);
+    fileInfo(1).isRootFolderMatch = true;
+    fileInfo(1).resolvedPath = relativePath;
+    fileInfo(1).absolutePath = fullfile(rootFolder, relativePath);
+end

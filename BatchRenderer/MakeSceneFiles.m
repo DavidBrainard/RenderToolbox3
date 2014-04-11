@@ -222,7 +222,8 @@ if any(isMatch)
 end
 [scenePath, sceneBase, sceneExt] = fileparts(colladaFile);
 if isempty(scenePath) && exist(colladaFile, 'file')
-    colladaFile = ResolveFilePath(colladaFile, hints.workingFolder);
+    fileInfo = ResolveFilePath(colladaFile, hints.workingFolder);
+    colladaFile = fileInfo.resolvedPath;
 end
 
 isMatch = strcmp('mappingsFile', varNames);

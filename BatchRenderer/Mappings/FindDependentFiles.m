@@ -6,7 +6,6 @@
 %   @param parentSceneFile name of a Collada scene file
 %   @param conditionsFile name of a RenderToolbox3 conditions file
 %   @param mappingsFile name of a RenderToolbox3 mappings file
-%   @param extraFileNames cell array of extra files to include
 %   @param hints struct of RenderToolbox3 options
 %
 % @details
@@ -24,29 +23,21 @@
 % about renderer adjustments.
 %
 % @details
-% if @a extraFileNames is included, it must be a cell array of additional
-% file names to include along with the files detected by scanning the
-% given input files.
-%
-% @details
-% Returns a struct array with one element per detected dependency.  Each
-% element of the struct array will have the following fields:
-%   - @b verbatimName - the name of the dependent file just as it appeared
-%   in the given input files.
-%   - @b fullLocalPath - the full local path and name of the dependent file
-%   as it appears on the Matlab path.
+% Returns a struct array with one element per detected dependency, as
+% returned from ResolveFilePath().  Each element will have an additional
+% field as well:
 %   - @b portablePath - a "portable" representation of the @b
-%   fullLocalPath, that uses placeholders for RenderToolbox3 output paths
+%   absolutePath, that uses placeholders for RenderToolbox3 output paths
 %   as returned from GetOutputPath().
 %   .
 %
 % @details
 % Usage:
 %   dependencies = FindDependentFiles(parentSceneFile, conditionsFile, ...
-% mappingsFile, extraFileNames, hints)
+% mappingsFile, hints)
 %
 % @ingroup Mappings
-function dependencies = FindDependentFiles(parentSceneFile, conditionsFile, mappingsFile, extraFileNames, hints)
+function dependencies = FindDependentFiles(parentSceneFile, conditionsFile, mappingsFile, hints)
 
 dependencies = [];
 
@@ -63,11 +54,7 @@ if nargin < 3 || isempty(mappingsFile)
         RenderToolboxRoot(), 'RenderData', 'DefaultMappings.txt');
 end
 
-if nargin < 4 || isempty(extraFileNames)
-    extraFileNames = {};
-end
-
-if nargin < 5
+if nargin < 4
     hints = GetDefaultHints();
 else
     hints = GetDefaultHints(hints);
@@ -101,17 +88,12 @@ for ii = whichConditions
     end
 end
 
-% append any extra files
-extras = struct('verbatimName', extraFileNames, ...
-    'fullLocalPath', extraFileNames);
-dependencies = cat(2, dependencies, extras);
-
 % only care about unique dependencies
-[uniques, uniqueIndices] = unique({dependencies.fullLocalPath});
+[uniques, uniqueIndices] = unique({dependencies.absolutePath});
 dependencies = dependencies(uniqueIndices);
 
 %% Get a RenderTooblox3 "portable" path for each local path.
 for ii = 1:numel(dependencies)
     dependencies(ii).portablePath = ...
-        LocalPathToPortablePath(dependencies(ii).fullLocalPath, hints);
+        LocalPathToPortablePath(dependencies(ii).absolutePath, hints);
 end
