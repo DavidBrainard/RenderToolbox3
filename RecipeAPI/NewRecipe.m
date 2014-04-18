@@ -21,9 +21,12 @@
 % RenderToolbox3ConfigurationTemplate.
 %
 % @details
-% @a executive should be the name or function_handle of an executive script
-% or function that will carry out the recipe, or a cell array of such
-% scripts or functions to be executed in sequence.
+% @a executive should be a cell array of function_handles or string script
+% names to be executed in order to carry out the recipe.  All
+% function_handles must refer to functions that expect a recipe as the
+% first argument return the recipe as the first output.  All strings must
+% refer to m-files that use CurrentRecipe() to access and modify the
+% current recipe.
 %
 % @details
 % @a parentSceneFile should be the name name of a Collada parent scene
