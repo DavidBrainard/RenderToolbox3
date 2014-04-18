@@ -50,10 +50,10 @@ indirectInfo = FindDependentFiles( ...
     recipe.input.mappingsFile, ...
     recipe.input.hints);
 
-% only take input files if they're inside the recipe working folder
+% only take input files if in working folder or temp folder
 inputInfo = cat(2, inputInfo, indirectInfo);
-isRootFolderMatch = [inputInfo.isRootFolderMatch];
-inputInfo = inputInfo(isRootFolderMatch);
+takeIt = [inputInfo.isRootFolderMatch];
+inputInfo = inputInfo(takeIt);
 
 
 %% Take any rendered or processed output files.
@@ -80,6 +80,7 @@ dependenciesInfo = dependenciesInfo(uniqueIndices);
 % Get full path to files on Matlab path, excluding RenderToolbox3 files.
 function filesInfo = getFilesInfoIfAny(fileNames, hints)
 infoCell = cell(size(fileNames));
+tempFolder = GetOutputPath('tempFolder', hints);
 for ii = 1:numel(fileNames)
     
     fileName = fileNames{ii};
@@ -97,6 +98,11 @@ for ii = 1:numel(fileNames)
     if ~isempty(fileInfo) && ~isempty(fileInfo.absolutePath)
         fileInfo.portablePath = ...
             LocalPathToPortablePath(fileInfo.absolutePath, hints);
+        
+        % treat temp files as working folder matches
+        tempInfo = ResolveFilePath(fileName, tempFolder);
+        fileInfo.isRootFolderMatch = ...
+            fileInfo.isRootFolderMatch || tempInfo.isRootFolderMatch;
         infoCell{ii} = fileInfo;
     end
 end
