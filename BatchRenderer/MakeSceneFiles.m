@@ -182,7 +182,7 @@ function colladaCopy = remodelCollada(colladaFile, hints, functionName, varargin
 colladaCopy = colladaFile;
 if ~isempty(colladaFile) && ~isempty(hints.remodeler)
     % get the user-defined remodeler function
-    remodelerFunction = GetRemodelerAPIFunction(functionName, hints.remodeler);
+    remodelerFunction = GetRemodelerAPIFunction(functionName, hints);
     if ~isempty(remodelerFunction)
         % read original Collada document into memory
         [scenePath, sceneBase, sceneExt] = fileparts(colladaFile);
@@ -267,7 +267,7 @@ colladaCopy = WriteReducedColladaScene(colladaCopy);
 
 %% Initialize renderer-native adjustments to receive mappings data.
 applyMappingsFunction = ...
-    GetRendererAPIFunction('ApplyMappings', hints.renderer);
+    GetRendererAPIFunction('ApplyMappings', hints);
 if isempty(applyMappingsFunction)
     return;
 end
@@ -334,7 +334,7 @@ colladaCopy = remodelCollada(colladaCopy, hints, 'AfterCondition', ...
 
 %% Produce a renderer-native scene from Collada and adjustments.
 importColladaFunction = ...
-    GetRendererAPIFunction('ImportCollada', hints.renderer);
+    GetRendererAPIFunction('ImportCollada', hints);
 if isempty(importColladaFunction)
     return;
 end

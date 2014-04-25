@@ -63,7 +63,7 @@ end
 
 %% Locate renderer-native adjustments.
 applyMappingsFunction = ...
-    GetRendererAPIFunction('ApplyMappings', hints.renderer);
+    GetRendererAPIFunction('ApplyMappings', hints);
 if isempty(applyMappingsFunction)
     adjustments = [];
 else

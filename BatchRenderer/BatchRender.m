@@ -143,13 +143,13 @@ if hints.isDryRun
 end
 
 % record renderer version info
-versionInfoFunction = GetRendererAPIFunction('VersionInfo', hints.renderer);
+versionInfoFunction = GetRendererAPIFunction('VersionInfo', hints);
 if ~isempty(versionInfoFunction)
     versionInfo.rendererVersionInfo = feval(versionInfoFunction);
 end
 
 % render the scene
-renderFunction = GetRendererAPIFunction('Render', hints.renderer);
+renderFunction = GetRendererAPIFunction('Render', hints);
 if isempty(renderFunction)
     return
 end
@@ -164,7 +164,7 @@ end
 
 % convert rendered image to radiance units
 dataToRadianceFunction = ...
-    GetRendererAPIFunction('DataToRadiance', hints.renderer);
+    GetRendererAPIFunction('DataToRadiance', hints);
 if isempty(dataToRadianceFunction)
     return
 end

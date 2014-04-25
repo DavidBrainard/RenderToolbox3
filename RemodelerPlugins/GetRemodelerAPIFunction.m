@@ -4,17 +4,17 @@
 %
 % Find the function_handle of a RenderToolbox3 Remodeling API function.
 %   @param functionName the name of a collada API function
-%   @param remodeler the name of a set of Remodeling API functions
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Attempts to locate the named Remodeling API function that belogs to the
-% named "remodeler", or set of remodeling functions.  Remodeler API
+% Attempts to locate the named Remodeling API function that belongs to the
+% named "remodeler", which is a set of remodeling functions.  Remodeler API
 % functions must on the Matlab path.  They must have names that folow the
 % pattern RTB_@a functionName_@a remodeler, for example
 % RTB_BeforeAll_SampleRemodeler.
 %
 % @details
-% @a remodeler may be the name of any set of user-defined remodeler
+% @a hints.remodeler may be the name of any set of user-defined remodeler
 % functions, for exampole, "SampleRemodeler".
 %
 % @details
@@ -31,15 +31,15 @@
 %
 % @details
 % Returns the function_handle of the RenderToolbox3 Remodeler API function,
-% for the given @a remodeler and @a functionName.  If no such function is
-% found, retuns an empty [].  Also returns the full path to the named
-% function, if found.
+% for the given @a hints.remodeler and @a functionName.  If no such
+% function is found, retuns an empty [].  Also returns the full path to the
+% named function, if found.
 %
 % Usage:
-%   [remodelerFunction, functionPath] = GetRemodelerAPIFunction(functionName, remodeler)
+%   [remodelerFunction, functionPath] = GetRemodelerAPIFunction(functionName, hints)
 %
 % @ingroup RemodelerPlugins
-function [remodelerFunction, functionPath] = GetRemodelerAPIFunction(functionName, remodeler)
+function [remodelerFunction, functionPath] = GetRemodelerAPIFunction(functionName, hints)
 
 remodelerFunction = [];
 functionPath = '';
@@ -54,11 +54,11 @@ if ~any(strcmp(validFunctionNames, functionName))
 end
 
 % build a standard function name
-standardName = ['RTB_' functionName '_' remodeler];
+standardName = ['RTB_' functionName '_' hints.remodeler];
 
 % try to find the API function by name
-functionPath = which(standardName);
-if isempty(functionPath)
+info = ResolveFilePath(standardName, hints.workingFolder);
+if isempty(info.resolvedPath)
     disp(['function not found: ' standardName])
     return
 end

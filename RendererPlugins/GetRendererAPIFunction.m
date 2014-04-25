@@ -4,16 +4,16 @@
 %
 % Find the function_handle of a RenderToolbox3 renderer API function.
 %   @param functionName the name of a renderer API function
-%   @param renderer the name of a renderer
+%   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Attempts to locate the named API function for the given @a renderer.
-% Renderer API functions must on the Matlab path.  They must have names
-% that folow the pattern RTB_@a functionName_@a renderer, for example
-% RTB_ApplyMappings_SampleRenderer.
+% Attempts to locate the named API function for the given @a
+% hints.renderer. Renderer API functions must on the Matlab path or within
+% hints.workingFolder.  They must have names that folow the pattern RTB_@a
+% functionName_@a renderer, for example RTB_ApplyMappings_SampleRenderer.
 %
 % @details
-% @a renderer may be the name of any supported renderer, for example,
+% @a hints.renderer may be the name of any supported renderer, for example,
 % "SampleRenderer", "PBRT", or "Mitsuba".
 %
 % @details
@@ -23,8 +23,8 @@
 %   to renderer-native scene adjustments
 %   - @b ImportCollada: the function that converts Collada parent scene
 %   files to the @a renderer-native format
-%   - @b Render: the function that invokes the given @a renderer
-%   - @b DataToRadiance: the function that converts @a renderer outputs to
+%   - @b Render: the function that invokes the given @a hints.renderer
+%   - @b DataToRadiance: the function that converts @a hints.renderer outputs to
 %   physical radiance units
 %   - @b VersionInfo: the function that returns version information about
 %   a renderer.
@@ -32,15 +32,15 @@
 %
 % @details
 % Returns the function_handle of the RenderToolbox3 Renderer API function,
-% for the given @a renderer and @a functionName.  If no such function is
-% found, retuns an empty [].  Also returns the full path to the named
+% for the given @a hints.renderer and @a functionName.  If no such function
+% is found, retuns an empty [].  Also returns the full path to the named
 % function, if found.
 %
 % Usage:
-%   [rendererFunction, functionPath] = GetRendererAPIFunction(functionName, renderer)
+%   [rendererFunction, functionPath] = GetRendererAPIFunction(functionName, hints)
 %
 % @ingroup RendererPlugins
-function [rendererFunction, functionPath] = GetRendererAPIFunction(functionName, renderer)
+function [rendererFunction, functionPath] = GetRendererAPIFunction(functionName, hints)
 
 rendererFunction = [];
 functionPath = '';
@@ -55,11 +55,11 @@ if ~any(strcmp(validFunctionNames, functionName))
 end
 
 % build a standard function name
-standardName = ['RTB_' functionName '_' renderer];
+standardName = ['RTB_' functionName '_' hints.renderer];
 
 % try to find the API function by name
-functionPath = which(standardName);
-if isempty(functionPath)
+info = ResolveFilePath(standardName, hints.workingFolder);
+if isempty(info.resolvedPath)
     disp(['function not found: ' standardName])
     return
 end
