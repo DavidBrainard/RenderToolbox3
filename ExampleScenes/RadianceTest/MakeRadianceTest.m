@@ -32,6 +32,7 @@ hints.imageWidth = 100;
 hints.imageHeight = 100;
 hints.outputSubfolder = mfilename();
 hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Choose illuminant spectra.
 % uniform white spectrum sampled every 5mn

@@ -14,7 +14,8 @@ hints.whichConditions = [];
 hints.imageHeight = 100;
 hints.imageWidth = 160;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer

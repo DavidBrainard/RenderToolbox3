@@ -5,10 +5,10 @@
 %% Probe the RGB spectral promotion algortigms of renderers.
 
 %% Move to temp folder before creating new files.
-originalFolder = pwd();
 hints = GetDefaultHints();
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullfile'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Choose some illuminants and RGB colors to render
 % yellow daylight

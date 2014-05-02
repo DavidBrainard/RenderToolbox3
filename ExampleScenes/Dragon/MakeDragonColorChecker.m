@@ -17,7 +17,8 @@ hints.whichConditions = [];
 hints.imageWidth = 150;
 hints.imageHeight = 120;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 % capture and save renderer output, or display it live in Command Window
 hints.isCaptureCommandResults = true;
@@ -63,5 +64,3 @@ for renderer = {'Mitsuba', 'PBRT'}
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
-
-cd(originalFolder);

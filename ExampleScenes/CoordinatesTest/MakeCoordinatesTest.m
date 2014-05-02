@@ -11,7 +11,8 @@ parentSceneFile = 'CoordinatesTest.dae';
 hints.imageWidth = 320;
 hints.imageHeight = 240;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;

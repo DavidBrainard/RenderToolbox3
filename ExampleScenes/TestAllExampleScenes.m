@@ -105,7 +105,7 @@ for ii = 1:numel(makeFunctions)
         results(ii).error = err;
     end
     
-    % sometimes the Matlab java heap files up.  If
+    % sometimes the Matlab java heap fills up.  If
     % the jheapcl function is on the path, call it
     % to clear the Java heap.  This may help a bit.
     %
@@ -150,7 +150,6 @@ setpref('RenderToolbox3', ...
     fieldnames(originalPrefs), struct2cell(originalPrefs));
 
 %% Save lots of results to a .mat file.
-hints = GetDefaultHints();
 if isempty(outputRoot)
     resultsPath = getpref('RenderToolbox3', 'outputDataFolder');
 else

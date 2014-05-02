@@ -15,7 +15,8 @@ hints.whichConditions = 1:nSteps;
 hints.imageWidth = 320;
 hints.imageHeight = 240;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Write graded spectrum files.
 % choose two spectrums to grade between
@@ -57,5 +58,3 @@ for renderer = {'Mitsuba'}
         ShowXYZAndSRGB([], SRGBMontage, montageName);
     end
 end
-
-cd(originalFolder);

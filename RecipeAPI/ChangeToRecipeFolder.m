@@ -28,10 +28,12 @@ end
 
 errorData = [];
 try
-    if ~exist(workingFolder, 'dir')
-        mkdir(workingFolder)
+    wasCreated = ChangeToFolder(workingFolder);
+    if wasCreated
+        message = ['Created ' workingFolder];
+    else
+        message = ['Move to ' workingFolder];
     end
-    cd(workingFolder);
     
 catch errorData
     % fills in placeholder above, log it below
@@ -39,5 +41,5 @@ end
 
 % put this execution in the log with any error data
 recipe = AppendRecipeLog(recipe, ...
-    [mfilename() ' cd() to ' workingFolder], ...
-    @cd, errorData, 0);
+    [mfilename() ' ' message], ...
+    @ChangeToFolder, errorData, 0);

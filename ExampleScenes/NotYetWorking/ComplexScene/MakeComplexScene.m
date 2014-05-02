@@ -12,7 +12,8 @@ parentSceneFile = 'interior.dae';
 hints.imageHeight = 480;
 hints.imageWidth = 640;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Use the automatic, default mappings file.
 colors = { ...

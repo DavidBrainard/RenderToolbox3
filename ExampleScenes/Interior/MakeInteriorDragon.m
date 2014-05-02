@@ -16,7 +16,8 @@ mappingsFile = 'InteriorDragonMappings.txt';
 hints.imageHeight = 480;
 hints.imageWidth = 640;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Write some spectra to use.
 load B_cieday
