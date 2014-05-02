@@ -22,8 +22,6 @@ if nargin > 0
 end
 
 %% Choose example files, make sure they're on the Matlab path.
-examplePath = fileparts(mfilename('fullpath'));
-AddWorkingPath(examplePath);
 parentSceneFile = 'RadianceTest.dae';
 conditionsFile = 'RadianceTestConditions.txt';
 mappingsFile = 'RadianceTestMappings.txt';
@@ -33,23 +31,20 @@ hints.whichConditions = [];
 hints.imageWidth = 100;
 hints.imageHeight = 100;
 hints.outputSubfolder = mfilename();
-
-%% Move to temp folder before creating new files.
-originalFolder = pwd();
-tempFolder = GetOutputPath('tempFolder', hints);
-AddWorkingPath(tempFolder);
-cd(tempFolder);
+hints.workingFolder = GetOutputPath('tempFolder', hints);
 
 %% Choose illuminant spectra.
 % uniform white spectrum sampled every 5mn
 wls = 300:5:800;
 magnitudes = ones(size(wls));
-WriteSpectrumFile(wls, magnitudes, 'uniformSpectrum5nm.spd');
+WriteSpectrumFile(wls, magnitudes, ...
+    fullfile(hints.workingFolder, 'uniformSpectrum5nm.spd'));
 
 % uniform white spectrum sampled every 10mn
 wls = 300:10:800;
 magnitudes = ones(size(wls));
-WriteSpectrumFile(wls, magnitudes, 'uniformSpectrum10nm.spd');
+WriteSpectrumFile(wls, magnitudes, ...
+    fullfile(hints.workingFolder, 'uniformSpectrum10nm.spd'));
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage for the default renderer
@@ -61,8 +56,9 @@ oldRadiometricScale = getpref(hints.renderer, 'radiometricScaleFactor');
 setpref(hints.renderer, 'radiometricScaleFactor', 1);
 
 % make multi-spectral renderings, saved in .mat files
-nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
-radianceDataFiles = BatchRender(nativeSceneFiles, hints);
+[nativeScenes, requiredFiles] = ...
+    MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
+radianceDataFiles = BatchRender(nativeScenes, hints);
 
 % restore radiometric unit scaling
 setpref(hints.renderer, 'radiometricScaleFactor', oldRadiometricScale);
@@ -75,5 +71,3 @@ montageFile = [montageName '.png'];
 
 % display the sRGB montage
 ShowXYZAndSRGB([], SRGBMontage, montageName);
-
-cd(originalFolder);
