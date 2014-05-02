@@ -14,7 +14,8 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;

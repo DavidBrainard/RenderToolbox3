@@ -13,7 +13,8 @@ hints.whichConditions = [];
 hints.imageWidth = 1000;
 hints.imageHeight = 750;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Render the scene.
 toneMapFactor = 4;

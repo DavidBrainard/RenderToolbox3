@@ -28,7 +28,8 @@ hints.workingPath = pwd();
 
 % put output files in a subfolder named like this script
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Create scene files for Mistuba and PBRT.
 %   this could happen on "machine A"
@@ -57,7 +58,6 @@ portableFolder = fullfile(GetOutputPath('tempFolder', hints), 'portable-scenes')
 % how to convert multi-spectral images to sRGB
 toneMapFactor = 100;
 isScaleGamma = true;
-originalFolder = pwd();
 for renderer = {'Mitsuba', 'PBRT'}
     % choose one renderer
     hints.renderer = renderer{1};
@@ -80,5 +80,3 @@ for renderer = {'Mitsuba', 'PBRT'}
     % display the sRGB montage
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
-
-cd(originalFolder);

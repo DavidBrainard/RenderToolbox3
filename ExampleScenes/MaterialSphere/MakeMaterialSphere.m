@@ -19,7 +19,8 @@ hints.imageHeight = 160;
 
 % put outputs in a subfolder named like this script
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Choose some color matching functions to make sensor images.
 % choose several Pyschtoolbox matching functions

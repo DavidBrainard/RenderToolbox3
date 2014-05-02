@@ -97,10 +97,12 @@ for mm = 1:numel(mappings)
     end
     
     % find files within working folder or on Matlab path
-    fileInfo = ResolveFilePath(map.right.value, hints.workingFolder);
-    if ~isempty(fileInfo) && ~isempty(fileInfo.resolvedPath)
-        requiredFiles(end+1) = fileInfo;
-        map.right.value = fileInfo.resolvedPath;
+    if ~isempty(regexp(map.right.value, '\.\S*$', 'once'))
+        fileInfo = ResolveFilePath(map.right.value, hints.workingFolder);
+        if ~isempty(fileInfo) && ~isempty(fileInfo.resolvedPath)
+            requiredFiles(end+1) = fileInfo;
+            map.right.value = fileInfo.resolvedPath;
+        end
     end
     
     mappings(mm) = map;

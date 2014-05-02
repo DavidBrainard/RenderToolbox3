@@ -12,7 +12,8 @@ mappingsFile = 'ScalingTestMappings.txt';
 %% Choose batch renderer options.
 hints.whichConditions = [];
 hints.outputSubfolder = mfilename();
-hints.workingFolder = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer
