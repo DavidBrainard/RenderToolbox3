@@ -5,7 +5,6 @@
 %% Render the ColorIllusion scene, with a texture.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'ColorIllusion.dae';
 mappingsFile = 'ColorIllusionMappings.txt';
 
@@ -14,6 +13,7 @@ hints.whichConditions = [];
 hints.imageWidth = 320;
 hints.imageHeight = 240;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;

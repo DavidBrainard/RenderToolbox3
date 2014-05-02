@@ -5,7 +5,6 @@
 %% Render the MaterialSphere scene with 3 materials.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'MaterialSphere.dae';
 conditionsFile = 'MaterialSphereConditions.txt';
 mappingsFile = 'MaterialSphereMappings.txt';
@@ -20,6 +19,7 @@ hints.imageHeight = 160;
 
 % put outputs in a subfolder named like this script
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Choose some color matching functions to make sensor images.
 % choose several Pyschtoolbox matching functions

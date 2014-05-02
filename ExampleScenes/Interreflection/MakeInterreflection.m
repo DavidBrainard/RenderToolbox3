@@ -5,7 +5,6 @@
 %% Render two panels with light reflecting betwen them.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'Interreflection.dae';
 conditionsFile = 'InterreflectionConditions.txt';
 mappingsFile = 'InterreflectionMappings.txt';
@@ -15,6 +14,7 @@ hints.whichConditions = [];
 hints.imageHeight = 100;
 hints.imageWidth = 160;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer

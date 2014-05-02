@@ -5,7 +5,6 @@
 %% Render the Dragon scene with 5 graded colors.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'Dragon.dae';
 conditionsFile = 'DragonGradedConditions.txt';
 mappingsFile = 'DragonGradedMappings.txt';
@@ -16,12 +15,7 @@ hints.whichConditions = 1:nSteps;
 hints.imageWidth = 320;
 hints.imageHeight = 240;
 hints.outputSubfolder = mfilename();
-
-%% Move to temp folder before creating new files.
-originalFolder = pwd();
-tempFolder = GetOutputPath('tempFolder', hints);
-AddWorkingPath(tempFolder);
-cd(tempFolder);
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Write graded spectrum files.
 % choose two spectrums to grade between
@@ -38,13 +32,15 @@ for ii = 1:nSteps
     srf = alpha(ii)*srfA + (1-alpha(ii))*srfB;
     imageNames{ii} = sprintf('GradedDragon-%d', ii);
     fileNames{ii} = sprintf('GradedSpectrum-%d.spd', ii);
-    WriteSpectrumFile(wlsA, srf, fileNames{ii});
+    WriteSpectrumFile(wlsA, srf, ...
+        fullfile(hints.workingFolder, fileNames{ii}));
 end
 
 % write a conditions file with image names and spectrum file names.
 varNames = {'imageName', 'dragonColor'};
 varValues = cat(2, imageNames, fileNames);
-WriteConditionsFile(conditionsFile, varNames, varValues);
+WriteConditionsFile( ...
+    fullfile(hints.workingFolder, conditionsFile), varNames, varValues);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;

@@ -5,7 +5,6 @@
 %% Render an illusion from parent scene generated procedurally.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'CheckerShadowNoDimples.dae';
 mappingsFile    = 'CheckerShadowSceneMappings.txt';
 
@@ -14,6 +13,7 @@ hints.whichConditions = [];
 hints.imageWidth = 1000;
 hints.imageHeight = 750;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render the scene.
 toneMapFactor = 4;

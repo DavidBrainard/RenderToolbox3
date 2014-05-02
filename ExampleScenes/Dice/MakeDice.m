@@ -5,7 +5,6 @@
 %% Render the Dice scene, with a texture.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'Dice.dae';
 mappingsFile = 'DiceMappings.txt';
 
@@ -14,6 +13,7 @@ hints.whichConditions = [];
 hints.imageWidth = 640;
 hints.imageHeight = 480;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;

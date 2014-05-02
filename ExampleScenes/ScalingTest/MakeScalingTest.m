@@ -5,7 +5,6 @@
 %% Render a sphere with conditions that might affect output scaling.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'ScalingTest.dae';
 conditionsFile = 'ScalingTestConditions.txt';
 mappingsFile = 'ScalingTestMappings.txt';
@@ -13,6 +12,7 @@ mappingsFile = 'ScalingTestMappings.txt';
 %% Choose batch renderer options.
 hints.whichConditions = [];
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer

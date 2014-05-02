@@ -5,13 +5,13 @@
 %% Render the CoordinatesTest scene.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'CoordinatesTest.dae';
 
 %% Choose batch renderer options.
 hints.imageWidth = 320;
 hints.imageHeight = 240;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;

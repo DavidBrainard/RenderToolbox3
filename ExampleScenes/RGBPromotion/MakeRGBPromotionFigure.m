@@ -8,9 +8,7 @@
 originalFolder = pwd();
 hints = GetDefaultHints();
 hints.outputSubfolder = mfilename();
-tempFolder = GetOutputPath('tempFolder', hints);
-AddWorkingPath(tempFolder);
-cd(tempFolder);
+hints.workingFolder = fileparts(mfilename('fullfile'));
 
 %% Choose some illuminants and RGB colors to render
 % yellow daylight
@@ -18,13 +16,15 @@ load B_cieday
 temp = 4000;
 spd = GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
-yellowDay = WriteSpectrumFile(wls, spd, sprintf('CIE-day-%d.spd', temp));
+yellowDay = WriteSpectrumFile(wls, spd, ...
+    fullfile(hints.workingFolder, sprintf('CIE-day-%d.spd', temp)));
 
 % blue daylight
 temp = 10000;
 spd = GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
-blueDay = WriteSpectrumFile(wls, spd, sprintf('CIE-day-%d.spd', temp));
+blueDay = WriteSpectrumFile(wls, spd, ...
+    fullfile(hints.workingFolder, sprintf('CIE-day-%d.spd', temp)));
 
 illuminants = {yellowDay, blueDay};
 RGBs = {[0.8, 0.1, 0.3], [1 0 0], [0 1 0], [0 0 1], [1 1 1], [1 1 1], 0.5*[1 1 1]};
@@ -176,5 +176,3 @@ l = legend(axRGB, RGBLegend, 'Location', 'southeast');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
 l = legend(axSpectra, renderers, 'Location', 'southwest');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
-
-cd(originalFolder)

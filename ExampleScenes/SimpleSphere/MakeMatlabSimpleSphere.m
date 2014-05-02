@@ -14,9 +14,6 @@
 % This script is based on DoMatlabSphereRender.m from Render Toolbox
 % version 2, by Dan Lichtman and David Brainard.
 
-%% Make sure working folder is on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
-
 %% Check whether the Matalb Sphere Renderer is installed.
 checkFile = 'SphereRender_BatchRender.m';
 if exist(checkFile, 'file')
