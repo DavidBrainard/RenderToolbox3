@@ -5,7 +5,6 @@
 %% Render the Dice scene with various spatial transformations.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'Dice.dae';
 mappingsFile = 'DiceTransformationsMappings.txt';
 conditionsFile = 'DiceTransformationsConditions.txt';
@@ -14,11 +13,12 @@ conditionsFile = 'DiceTransformationsConditions.txt';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
 hints.outputSubfolder = mfilename();
+hints.workingPath = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;
 isScale = true;
-for renderer = {'Mitsuba'}%, 'PBRT'}
+for renderer = {'Mitsuba','PBRT'}
     hints.renderer = renderer{1};
     nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
     radianceDataFiles = BatchRender(nativeSceneFiles, hints);

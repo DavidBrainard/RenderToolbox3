@@ -5,7 +5,6 @@
 %% Try to render an unknown, complex scene without totally barfing.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 %parentSceneFile = 'cup.dae';
 parentSceneFile = 'interior.dae';
 
@@ -13,12 +12,7 @@ parentSceneFile = 'interior.dae';
 hints.imageHeight = 480;
 hints.imageWidth = 640;
 hints.outputSubfolder = mfilename();
-
-%% Move to temp folder before creating new files.
-originalFolder = pwd();
-tempFolder = GetOutputPath('tempFolder', hints);
-AddWorkingPath(tempFolder);
-cd(tempFolder);
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Use the automatic, default mappings file.
 colors = { ...
@@ -27,7 +21,8 @@ colors = { ...
     'mccBabel-3.spd', ...
     'mccBabel-4.spd', ...
     };
-mappingsFile = WriteDefaultMappingsFile(parentSceneFile, '', '', colors);
+mappingsFile = WriteDefaultMappingsFile( ...
+    fullfile(hints.workingFolder, parentSceneFile), '', '', colors);
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;
@@ -42,5 +37,3 @@ for renderer = {'Mitsuba', 'PBRT'}
         MakeMontage(radianceDataFiles, montageFile, toneMapFactor, isScale, hints);
     ShowXYZAndSRGB([], SRGBMontage, montageName);
 end
-
-cd(originalFolder);

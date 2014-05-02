@@ -11,7 +11,6 @@
 % RecipeAPI, when the RecipeAPI is complete.
  
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'MaterialSphere.dae';
 conditionsFile = 'MaterialSphereConditions.txt';
 mappingsFile = 'MaterialSphereBumpsMappings.txt';
@@ -29,6 +28,7 @@ hints.workingPath = pwd();
 
 % put output files in a subfolder named like this script
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Create scene files for Mistuba and PBRT.
 %   this could happen on "machine A"

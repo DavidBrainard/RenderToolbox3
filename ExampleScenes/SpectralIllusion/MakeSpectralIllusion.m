@@ -5,7 +5,6 @@
 %% Render the SpectralIllusion scene, with sampled spectra on a cube.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'SpectralIllusion.dae';
 mappingsFile = 'SpectralIllusionMappings.txt';
 initialConditionsFile = 'SpectralIllusionConditionsInitial.txt';
@@ -17,15 +16,10 @@ hints.renderer = 'Mitsuba';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 toneMapFactor = 100;
 isScale = true;
-
-%% Move to temp folder before creating new files.
-originalFolder = pwd();
-tempFolder = GetOutputPath('tempFolder', hints);
-AddWorkingPath(tempFolder);
-cd(tempFolder);
 
 %% Write some initial spectrum files.
 % get basis CIE daylight basis vectors
@@ -36,21 +30,24 @@ temp = 4000;
 scale = 1;
 spd = scale * GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
-WriteSpectrumFile(wls, spd, sprintf('CIE-daylight-%d.spd', temp));
+WriteSpectrumFile(wls, spd, ...
+    fullfile(hints.workingFolder, sprintf('CIE-daylight-%d.spd', temp)));
 
 % make the dimmer blue sky
 temp = 10000;
 scale = 0.001;
 spd = scale * GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
-WriteSpectrumFile(wls, spd, sprintf('CIE-daylight-%d.spd', temp));
+WriteSpectrumFile(wls, spd, ...
+    fullfile(hints.workingFolder, sprintf('CIE-daylight-%d.spd', temp)));
 
 % make a target reflectance that is not too bright
 originalSpectrum = 'mccBabel-11.spd';
 [wls, originalReflect] = ReadSpectrum(originalSpectrum);
 scale = 1;
 srf = scale * originalReflect;
-WriteSpectrumFile(wls, srf, 'SpectralIllusionTarget.spd');
+WriteSpectrumFile(wls, srf, ...
+    fullfile(hints.workingFolder 'SpectralIllusionTarget.spd'));
 
 %% Plot the initial target and destination reflectances.
 % read target and destination reflectances from conditions file
@@ -153,7 +150,8 @@ end
 %% Compute a clever new destination spectrum and write it to file.
 destIllumNonzero = max(destIllum, 0.001);
 cleverReflect = targPixelResampled ./ destIllumNonzero;
-WriteSpectrumFile(destWls, cleverReflect, 'SpectralIllusionDestination.spd');
+WriteSpectrumFile(destWls, cleverReflect, ...
+    fullfile(hints.workingFolder, 'SpectralIllusionDestination.spd'));
 
 %% Plot the clever new reflectance
 if hints.isPlot
@@ -210,5 +208,3 @@ if hints.isPlot
         'Marker', '*', ...
         'Color', [1 0 0])
 end
-
-cd(originalFolder);

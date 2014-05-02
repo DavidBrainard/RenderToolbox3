@@ -5,7 +5,6 @@
 %% Render the CubanSphere scene and make a montage.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'CubanSphere.dae';
 conditionsFile = 'CubanSphereConditions.txt';
 mappingsFile = 'CubanSphereMappings.txt';
@@ -15,6 +14,7 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;

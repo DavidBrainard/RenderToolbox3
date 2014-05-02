@@ -5,7 +5,6 @@
 %% Render the Checkerboard scene with variable dimensions.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'Checkerboard.dae';
 mappingsFile = 'CheckerboardMappings.txt';
 
@@ -13,12 +12,7 @@ mappingsFile = 'CheckerboardMappings.txt';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
 hints.outputSubfolder = mfilename();
-
-%% Move to temp folder before creating new files.
-originalFolder = pwd();
-tempFolder = GetOutputPath('tempFolder', hints);
-AddWorkingPath(tempFolder);
-cd(tempFolder);
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Write scene parameters to a new conditions file.
 distance = 76.4;
@@ -32,7 +26,7 @@ values = {...
     distance,     -eyeSep/2     hFov    width       height; ...
     distance,     +eyeSep/2     hFov    width       height};
 
-conditionsPath = fullfile(RenderToolboxRoot(), 'ExampleScenes', 'Checkerboard');
+conditionsPath = fullfile(hints.workingFolder, 'ExampleScenes', 'Checkerboard');
 conditionsFile = fullfile(conditionsPath, 'CheckerboardConditions.txt');
 conditionsFile = WriteConditionsFile(conditionsFile, names, values);
 

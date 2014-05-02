@@ -5,7 +5,6 @@
 %% Render the Dragon scene with 24 ColorChecker colors.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'Dragon.dae';
 conditionsFile = 'DragonColorCheckerConditions.txt';
 mappingsFile = 'DragonColorCheckerMappings.txt';
@@ -18,15 +17,10 @@ hints.whichConditions = [];
 hints.imageWidth = 150;
 hints.imageHeight = 120;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 % capture and save renderer output, or display it live in Command Window
 hints.isCaptureCommandResults = true;
-
-%% Move to temp folder before creating new files.
-originalFolder = pwd();
-tempFolder = GetOutputPath('tempFolder', hints);
-AddWorkingPath(tempFolder);
-cd(tempFolder);
 
 %% Make a fresh conditions file.
 % choose spectrum file names and output image names
@@ -41,7 +35,8 @@ end
 % write file names and image names to a conditions file
 varNames = {'imageName', 'dragonColor'};
 varValues = cat(2, imageNames, fileNames);
-WriteConditionsFile(conditionsFile, varNames, varValues);
+WriteConditionsFile( ...
+    fullfile(hints.workingFolder, conditionsFile), varNames, varValues);
 
 %% Render with Mitsuba and PBRT.
 

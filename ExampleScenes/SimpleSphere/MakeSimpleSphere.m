@@ -5,7 +5,6 @@
 %% Render a Ward sphere under a point light and orthogonal camera.
 
 %% Choose example files, make sure they're on the Matlab path.
-AddWorkingPath(mfilename('fullpath'));
 parentSceneFile = 'SimpleSphere.dae';
 mappingsFile = 'SimpleSphereMappings.txt';
 
@@ -13,6 +12,7 @@ mappingsFile = 'SimpleSphereMappings.txt';
 hints.imageWidth = 201;
 hints.imageHeight = 201;
 hints.outputSubfolder = mfilename();
+hints.workingFolder = fileparts(mfilename('fullpath'));
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;
