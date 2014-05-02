@@ -250,8 +250,16 @@ end
 %   meshes cause the XML DOM to run out of memory!
 
 % create a new file named like the polylist name
-fileName = sprintf('mesh-data-%s.pbrt', polyName);
-fid = fopen(fileName, 'w');
+% useful to use a file name relative to the current working folder
+% that way generated scene files can be portable across machines
+meshFolder = 'pbrt-mesh-data';
+meshFullPath = fullfile(hints.workingFolder, meshFolder);
+if ~exist(meshFullPath, 'dir')
+    mkdir(meshFullPath);
+end
+meshName = sprintf('mesh-data-%s.pbrt', polyName);
+meshFilePath = fullfile(meshFullPath, meshName);
+fid = fopen(meshFilePath, 'w');
 fprintf(fid, '# mesh data %s\n', polyName);
 
 % assemble mesh data and PBRT file format metadata
@@ -293,7 +301,9 @@ if ischar(materialID) && ~isempty(materialID)
     AddReference(stubIDMap, id, refName, 'Material', materialID);
 end
 
-        
+
 % include the newly converted geometry
-AddReference(stubIDMap, id, polyName, 'Include', fileName);
+% use path relative to working folder for portability
+includeName = fullfile(meshFolder, meshName);
+AddReference(stubIDMap, id, polyName, 'Include', includeName);
 

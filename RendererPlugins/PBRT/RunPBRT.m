@@ -16,6 +16,14 @@
 % of the output image in a new figure.
 %
 % @details
+% RenderToolbox3 assumes that relative paths in scene files are relatice to
+% @a hints.workingFolder.  But PBRT assumes that relative paths are
+% relative to the folder that contains the scene file.  These are usually
+% different folders.  This function copies @a sceneFile into @a
+% hints.workingFolder so that relative paths will work using the
+% RenderTooblox3 convention. 
+%
+% @details
 % Returns the numeric status code and text output from PBRT.
 % Also returns the name of the expected output file from PBRT.
 %
@@ -32,8 +40,14 @@ end
 InitializeRenderToolbox();
 
 %% Where to get/put the input/output
-[scenePath, sceneBase] = fileparts(sceneFile);
+[scenePath, sceneBase, sceneExt] = fileparts(sceneFile);
 output = fullfile(scenePath, [sceneBase '.dat']);
+
+% copy scene file to working folder 
+% so that PBRT can resolve relative paths from there
+sceneCopy = fullfile(hints.workingFolder, [sceneBase, sceneExt]);
+fprintf('PBRT needs to copy %s \n  to %s\n', sceneFile, sceneCopy);
+copyfile(sceneFile, hints.workingFolder, 'f');
 
 %% Invoke PBRT.
 % set the dynamic library search path
@@ -41,7 +55,7 @@ output = fullfile(scenePath, [sceneBase '.dat']);
 
 % find the PBRT executable
 pbrt = getpref('PBRT', 'executable');
-renderCommand = sprintf('%s --outfile %s %s', pbrt, output, sceneFile);
+renderCommand = sprintf('%s --outfile %s %s', pbrt, output, sceneCopy);
 fprintf('%s\n', renderCommand);
 [status, result] = RunCommand(renderCommand, hints);
 

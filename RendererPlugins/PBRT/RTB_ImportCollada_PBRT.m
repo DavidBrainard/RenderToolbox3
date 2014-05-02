@@ -75,5 +75,5 @@ else
 end
 
 %% Detect auxiliary geometry files.
-auxiliaryFiles = FindFiles(pwd(), 'mesh-data-[^\.]+.pbrt');
+auxiliaryFiles = FindFiles(fullfile(hints.workingFolder, 'pbrt-mesh-data'));
 requiredFiles = cat(2, requiredFiles, auxiliaryFiles);
