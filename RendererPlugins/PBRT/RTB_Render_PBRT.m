@@ -16,9 +16,12 @@
 %   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
 function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
 
-% invoke PBRT!
-sceneFile = scene.pbrtFile;
+% resolve the scene which should be located in hints.workingFolder
+[scenePath, sceneBase, sceneExt] = fileparts(scene.pbrtFile);
+sceneFileInfo = ResolveFilePath([sceneBase, sceneExt], hints.workingFolder);
+sceneFile = sceneFileInfo.absolutePath;
 
+% invoke PBRT!
 [status, result, output] = RunPBRT(sceneFile, hints);
 if status ~= 0
     error('PBRT rendering failed\n  %s\n  %s\n', sceneFile, result);
