@@ -52,3 +52,32 @@ recipe = ExecuteRecipe(recipe, 1);
 fullZipFileName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
 [recipe, fullZipFileName] = PackUpRecipe(recipe, fullZipFileName);
 
+% note that above, only scene files were generated
+% but no rendering was done
+
+%% Un-pack and render in a new location -- could be on another computer.
+
+% note that below, no scene files are generated
+% but the pre-generated scene files are rendered
+
+% locate the packed-up recipe
+% change this fullZipFileName if you moved to another computer
+fullZipFileName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
+
+% choose a folder to un-pack the recipe into
+% this could also be on another computer
+newFolder = fullfile(GetUserFolder(), 'AnotherComputer');
+hints.workingFolder = fullfile(newFolder, 'unpack-recipe');
+
+% choose new RenderToolbox3 output folders
+% this might be unnecessary if you moved to another computer
+hints.tempFolder = fullfile(newFolder, 'temp');
+hints.outputDataFolder = fullfile(newFolder, 'data');
+hints.outputImageFolder = fullfile(newFolder, 'images');
+hints.resourcesFolder = fullfile(newFolder, 'resources');
+
+% un-pack the recipe into the new folder
+recipe = UnpackRecipe(fullZipFileName, true, hints);
+
+% render the pre-generated scene files
+recipe = ExecuteRecipe(recipe);
