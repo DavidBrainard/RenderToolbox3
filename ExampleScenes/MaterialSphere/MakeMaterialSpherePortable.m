@@ -2,7 +2,8 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render MaterialSphere in a portable fashion using the Recipe API.
+%% Render MaterialSphere in a portable fashion using the Recipe API.c
+clear
 
 %% Choose inputs for a new recipe.
 % replace this config script with your own config script
@@ -35,7 +36,7 @@ hints.outputSubfolder = mfilename();
 hints.workingFolder = GetOutputPath('tempFolder', hints);
 
 % choose the renderer
-hints.renderer = 'Mitsuba';
+hints.renderer = 'PBRT';
 
 %% Make a new recipe that contains all of the above choices.
 recipe = NewRecipe(configScript, executive, parentSceneFile, ...
@@ -52,14 +53,17 @@ recipe = ExecuteRecipe(recipe, 1);
 fullZipFileName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
 [recipe, fullZipFileName] = PackUpRecipe(recipe, fullZipFileName);
 
-% note that above, only scene files were generated
-% but no rendering was done
+% boldly delete generated scene files from the temp folder
+% since they're already packed up with the recipe
+sceneFileFolder = ...
+    fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
+rmdir(sceneFileFolder, 's');
+
+%% Note: above, scene files were generated but no rendering was done.
+
+%% Note: below, only pre-generated scene files are rendererd.
 
 %% Un-pack and render in a new location -- could be on another computer.
-
-% note that below, no scene files are generated
-% but the pre-generated scene files are rendered
-
 % locate the packed-up recipe
 % change this fullZipFileName if you moved to another computer
 fullZipFileName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
@@ -78,6 +82,11 @@ hints.resourcesFolder = fullfile(newFolder, 'resources');
 
 % un-pack the recipe into the new folder
 recipe = UnpackRecipe(fullZipFileName, true, hints);
+
+% choose a configuration script for this machine
+% change this configureScript if you moved to a new machine.
+configureScript = 'RenderToolbox3ConfigurationTemplate';
+recipe.input.configureScript = configureScript;
 
 % render the pre-generated scene files
 recipe = ExecuteRecipe(recipe);
