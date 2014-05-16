@@ -150,6 +150,7 @@ setpref('RenderToolbox3', ...
     fieldnames(originalPrefs), struct2cell(originalPrefs));
 
 %% Save lots of results to a .mat file.
+hints = GetDefaultHints();
 if isempty(outputRoot)
     resultsPath = getpref('RenderToolbox3', 'outputDataFolder');
 else
