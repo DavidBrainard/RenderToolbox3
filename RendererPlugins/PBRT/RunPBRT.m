@@ -21,7 +21,7 @@
 % relative to the folder that contains the scene file.  These are usually
 % different folders.  This function copies @a sceneFile into @a
 % hints.workingFolder so that relative paths will work using the
-% RenderTooblox3 convention. 
+% RenderTooblox3 convention.
 %
 % @details
 % Returns the numeric status code and text output from PBRT.
@@ -43,11 +43,18 @@ InitializeRenderToolbox();
 [scenePath, sceneBase, sceneExt] = fileparts(sceneFile);
 output = fullfile(scenePath, [sceneBase '.dat']);
 
-% copy scene file to working folder 
+% copy scene file to working folder
 % so that PBRT can resolve relative paths from there
-sceneCopy = fullfile(hints.workingFolder, [sceneBase, sceneExt]);
+if IsStructFieldPresent(hints, 'workingFolder')
+    copyDir = hints.workingFolder;
+else
+    warning('RenderToolbox3:NoWorkingFolderGiven', ...
+        'hints.workingFolder is missing, using pwd() instead');
+    copyDir = pwd();
+end
+sceneCopy = fullfile(copyDir, [sceneBase, sceneExt]);
 fprintf('PBRT needs to copy %s \n  to %s\n', sceneFile, sceneCopy);
-copyfile(sceneFile, hints.workingFolder, 'f');
+copyfile(sceneFile, copyDir, 'f');
 
 %% Invoke PBRT.
 % set the dynamic library search path
