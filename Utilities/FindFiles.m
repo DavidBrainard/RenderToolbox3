@@ -91,7 +91,7 @@ for ii = 1:numel(subfolders)
     if ~isempty(sf) && ~any(sf=='.')
         absSubfolder = fullfile(folder, sf);
         fileList = cat(2, fileList, ...
-            FindFiles(absSubfolder, filter, isFolders));
+            FindFiles(absSubfolder, filter, isFolders, isExact));
     end
 end
 
