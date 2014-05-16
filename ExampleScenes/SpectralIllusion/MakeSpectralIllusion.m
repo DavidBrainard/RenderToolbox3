@@ -48,7 +48,7 @@ originalSpectrum = 'mccBabel-11.spd';
 scale = 1;
 srf = scale * originalReflect;
 WriteSpectrumFile(wls, srf, ...
-    fullfile(hints.workingFolder 'SpectralIllusionTarget.spd'));
+    fullfile(hints.workingFolder, 'SpectralIllusionTarget.spd'));
 
 %% Plot the initial target and destination reflectances.
 % read target and destination reflectances from conditions file
