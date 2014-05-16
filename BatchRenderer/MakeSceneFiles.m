@@ -144,32 +144,55 @@ colladaFile = remodelCollada(colladaFile, hints, 'BeforeAll');
 
 %% Make a scene file for each condition.
 scenes = cell(1, nConditions);
-requiredFiles = {};
+requiredFiles = cell(1, nConditions);
 
 err = [];
 try
-    for cc = 1:nConditions
-        % choose variable values for this condition
-        if isempty(varValues)
-            conditionVarValues = {};
-        else
-            conditionVarValues = varValues(cc,:);
+    fprintf('\nMakeSceneFiles started with isParallel=%d at %s.\n\n', ...
+        hints.isParallel, datestr(now(), 0));
+    renderTick = tic();
+    
+    if hints.isParallel
+        % distributed "parfor" loop
+        parfor cc = 1:nConditions
+            % choose variable values for this condition
+            if isempty(varValues)
+                conditionVarValues = {};
+            else
+                conditionVarValues = varValues(cc,:);
+            end
+            
+            % make a the scene file for this condition
+            [scenes{cc}, requiredFiles{cc}] = makeSceneForCondition( ...
+                colladaFile, mappingsFile, cc, ...
+                varNames, conditionVarValues, hints);
         end
-        
-        % make a the scene file for this condition
-        [scenes{cc}, sceneRequiredFiles] = makeSceneForCondition( ...
-            colladaFile, mappingsFile, cc, ...
-            varNames, conditionVarValues, hints);
-        
-        % append to running list of required files
-        requiredFiles = cat(2, requiredFiles, sceneRequiredFiles);
+    else
+        % local "for" loop
+        for cc = 1:nConditions
+            % choose variable values for this condition
+            if isempty(varValues)
+                conditionVarValues = {};
+            else
+                conditionVarValues = varValues(cc,:);
+            end
+            
+            % make a the scene file for this condition
+            [scenes{cc}, requiredFiles{cc}] = makeSceneForCondition( ...
+                colladaFile, mappingsFile, cc, ...
+                varNames, conditionVarValues, hints);
+        end
     end
+    
+    fprintf('\nMakeSceneFiles finished at %s (%.1fs elapsed).\n\n', ...
+        datestr(now(), 0), toc(renderTick));
+    
 catch err
     disp('Scene conversion error!');
 end
 
-% only care about unique required files
-requiredFiles = unique(requiredFiles);
+% collapse required files across conditions and make unique
+requiredFiles = unique(cat(2, requiredFiles{:}));
 
 % report any error
 if ~isempty(err)
@@ -261,7 +284,7 @@ end
 
 %% Copy the collada file and reduce to known characters and elements.
 tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
-colladaCopy = fullfile(tempFolder, [sceneBase sceneExt]);
+colladaCopy = fullfile(tempFolder, [sceneBase '-' imageName sceneExt]);
 [isSuccess, result] = copyfile(colladaFile, colladaCopy);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
 colladaCopy = WriteReducedColladaScene(colladaCopy);
