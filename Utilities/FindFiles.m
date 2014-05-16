@@ -98,7 +98,8 @@ end
 function isMatch = checkMatch(filePath, filter, isExact)
 if isExact
     [pathPrefix, baseName, extension] = fileparts(filePath);
-    isMatch = strcmp(filter, [baseName, extension]);
+    isMatch = strcmp(filter, [baseName, extension]) ...
+        || strcmp(filter, filePath);
 else
     isMatch = isempty(filter) || ~isempty(regexp(filePath, filter, 'once'));
 end
