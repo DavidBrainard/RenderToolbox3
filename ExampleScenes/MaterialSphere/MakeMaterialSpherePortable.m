@@ -10,6 +10,8 @@
 % make recipes portable.  This recipe should be updated to demonstrate the
 % RecipeAPI, when the RecipeAPI is complete.
  
+return
+
 %% Choose example files, make sure they're on the Matlab path.
 parentSceneFile = 'MaterialSphere.dae';
 conditionsFile = 'MaterialSphereConditions.txt';
