@@ -13,12 +13,13 @@ conditionsFile = 'DiceTransformationsConditions.txt';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
 hints.outputSubfolder = mfilename();
-hints.workingPath = fileparts(mfilename('fullpath'));
+hints.workingFolder = GetOutputPath('tempFolder', hints);
+ChangeToFolder(hints.workingFolder);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;
 isScale = true;
-for renderer = {'Mitsuba','PBRT'}
+for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
     nativeSceneFiles = MakeSceneFiles(parentSceneFile, conditionsFile, mappingsFile, hints);
     radianceDataFiles = BatchRender(nativeSceneFiles, hints);
