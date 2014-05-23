@@ -11,9 +11,8 @@ parentSceneFile = 'interior.dae';
 %% Choose batch renderer options.
 hints.imageHeight = 480;
 hints.imageWidth = 640;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Use the automatic, default mappings file.
 colors = { ...
@@ -23,7 +22,8 @@ colors = { ...
     'mccBabel-4.spd', ...
     };
 mappingsFile = WriteDefaultMappingsFile( ...
-    fullfile(hints.workingFolder, parentSceneFile), '', '', colors);
+    fullfile(GetWorkingPath('resources', false, hints), parentSceneFile), ...
+    '', '', colors);
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

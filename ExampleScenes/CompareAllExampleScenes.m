@@ -30,7 +30,7 @@
 %
 % @details
 % If @a outputRootA or @a outputRootB is omitted or empty, uses the default
-% output data folder from GetOutputPath('outputDataFolder').
+% output data folder from GetWorkingFolder('renderings').
 %
 % @details
 % By default, compares all data files found in @a outputRootA, and @a
@@ -51,14 +51,14 @@
 % of all matched output pairs.  The summary shows the name of each pair,
 % and some difference statistics for multi-spectral data A vs B.  Also
 % saves a Matlab figure-file for the summary figure in the folder given by
-% GetOutputPath('outputImageFolder').
+% GetWorkingFolder('images').
 %
 % @details
 % If @a visualize is greater than 1, makes a detailed figure for each
 % matched pair.  Each figure shows sRGB representations of multi-spectral
 % renderings and rendering differences: A, B, A-B, and B-A.  Also
 % saves each detail figure as a Matlab figure-file and a png-file image,
-% in the folder given by GetOutputPath('outputImageFolder').
+% in the folder given by GetWorkingFolder('images').
 %
 % @details
 % This function is intended to help validate RenderToolbox3 installations
@@ -97,11 +97,11 @@
 function [matchInfo, unmatchedA, unmatchedB] = CompareAllExampleScenes(outputRootA, outputRootB, filterExpression, visualize)
 
 if nargin < 1 || isempty(outputRootA)
-    outputRootA = GetOutputPath('outputDataFolder');
+    outputRootA = GetWorkingFolder('renderings', false);
 end
 
 if nargin < 2 || isempty(outputRootB)
-    outputRootB = GetOutputPath('outputDataFolder');
+    outputRootB = GetWorkingFolder('renderings', false);
 end
 
 if nargin < 3 || isempty(filterExpression)
@@ -178,8 +178,8 @@ else
 end
 
 % compare matched images!
-comparisonFolder = fullfile( ...
-    GetOutputPath('outputImageFolder'), 'comparison');
+hints.recipeName = mfilename();
+comparisonFolder = GetWorkingFolder('images', false, hints);
 for ii = 1:nMatches
     fprintf('%d of %d: %s\n', ii, nMatches, matchInfo(ii).relativeA);
     

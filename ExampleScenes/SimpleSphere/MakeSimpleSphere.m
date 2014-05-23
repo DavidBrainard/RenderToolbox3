@@ -11,9 +11,8 @@ mappingsFile = 'SimpleSphereMappings.txt';
 %% Choose batch renderer options.
 hints.imageWidth = 201;
 hints.imageHeight = 201;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

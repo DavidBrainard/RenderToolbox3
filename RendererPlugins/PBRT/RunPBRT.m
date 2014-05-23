@@ -16,7 +16,7 @@
 % of the output image in a new figure.
 %
 % @details
-% RenderToolbox3 assumes that relative paths in scene files are relatice to
+% RenderToolbox3 assumes that relative paths in scene files are relative to
 % @a hints.workingFolder.  But PBRT assumes that relative paths are
 % relative to the folder that contains the scene file.  These are usually
 % different folders.  This function copies @a sceneFile into @a

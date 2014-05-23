@@ -30,22 +30,23 @@ mappingsFile = 'RadianceTestMappings.txt';
 hints.whichConditions = [];
 hints.imageWidth = 100;
 hints.imageHeight = 100;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
+
+resources = GetWorkingFolder('resources', false, hints);
 
 %% Choose illuminant spectra.
 % uniform white spectrum sampled every 5mn
 wls = 300:5:800;
 magnitudes = ones(size(wls));
 WriteSpectrumFile(wls, magnitudes, ...
-    fullfile(hints.workingFolder, 'uniformSpectrum5nm.spd'));
+    fullfile(resources, 'uniformSpectrum5nm.spd'));
 
 % uniform white spectrum sampled every 10mn
 wls = 300:10:800;
 magnitudes = ones(size(wls));
 WriteSpectrumFile(wls, magnitudes, ...
-    fullfile(hints.workingFolder, 'uniformSpectrum10nm.spd'));
+    fullfile(resources, 'uniformSpectrum10nm.spd'));
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage for the default renderer

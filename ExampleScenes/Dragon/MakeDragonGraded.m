@@ -14,9 +14,10 @@ nSteps = 6;
 hints.whichConditions = 1:nSteps;
 hints.imageWidth = 320;
 hints.imageHeight = 240;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
+
+resources = GetWorkingFolder('resources', false, hints);
 
 %% Write graded spectrum files.
 % choose two spectrums to grade between
@@ -34,14 +35,14 @@ for ii = 1:nSteps
     imageNames{ii} = sprintf('GradedDragon-%d', ii);
     fileNames{ii} = sprintf('GradedSpectrum-%d.spd', ii);
     WriteSpectrumFile(wlsA, srf, ...
-        fullfile(hints.workingFolder, fileNames{ii}));
+        fullfile(resources, fileNames{ii}));
 end
 
 % write a conditions file with image names and spectrum file names.
 varNames = {'imageName', 'dragonColor'};
 varValues = cat(2, imageNames, fileNames);
 WriteConditionsFile( ...
-    fullfile(hints.workingFolder, conditionsFile), varNames, varValues);
+    fullfile(resources, conditionsFile), varNames, varValues);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;

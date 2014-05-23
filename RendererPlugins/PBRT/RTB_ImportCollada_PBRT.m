@@ -75,5 +75,6 @@ else
 end
 
 %% Detect auxiliary geometry files.
-auxiliaryFiles = FindFiles(fullfile(hints.workingFolder, 'pbrt-mesh-data'));
+auxiliaryFiles = FindFiles(...
+    fullfile(GetWorkingFolder('scenes', true, hints), 'pbrt-mesh-data'));
 requiredFiles = cat(2, requiredFiles, auxiliaryFiles);

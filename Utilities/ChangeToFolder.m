@@ -25,5 +25,3 @@ if ~exist(folder, 'dir')
 end
 
 cd(folder);
-
-

@@ -16,9 +16,8 @@ hints.whichConditions = [];
 % pixel size of each rendering
 hints.imageWidth = 150;
 hints.imageHeight = 120;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 % capture and save renderer output, or display it live in Command Window
 hints.isCaptureCommandResults = true;
@@ -37,7 +36,8 @@ end
 varNames = {'imageName', 'dragonColor'};
 varValues = cat(2, imageNames, fileNames);
 WriteConditionsFile( ...
-    fullfile(hints.workingFolder, conditionsFile), varNames, varValues);
+    fullfile(GetWorkingFolder('resources', false, hints), conditionsFile), ...
+    varNames, varValues);
 
 %% Render with Mitsuba and PBRT.
 

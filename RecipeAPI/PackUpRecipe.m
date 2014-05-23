@@ -61,6 +61,8 @@ recipe = AppendRecipeLog(recipe, ...
     @FindRecipeDependentFiles, [], 0);
 
 %% Save the recipe itself to the working folder.
+recipe.input.hints.workingFolder = ...
+    LocalPathToPortablePath(recipe.input.hints.workingFolder, hints);
 recipeFileName = fullfile(workingFolder, 'recipe.mat');
 save(recipeFileName, 'recipe');
 

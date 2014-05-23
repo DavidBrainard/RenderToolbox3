@@ -12,9 +12,10 @@ mappingsFile = 'InteriorMappings.txt';
 
 %% Choose batch renderer options.
 hints.whichConditions = [];
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
+
+resources = GetWorkingFolder('resources', false, hints);
 
 %% Write some spectra to use.
 load B_cieday
@@ -25,7 +26,7 @@ scale = 3;
 spd = scale * GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
 WriteSpectrumFile(wls, spd, ...
-    fullfile(hints.workingFolder, sprintf('YellowLight.spd', temp)));
+    fullfile(resources, sprintf('YellowLight.spd', temp)));
 
 % make strong yellow for the hanging spot light
 temp = 5000;
@@ -33,14 +34,14 @@ scale = 30;
 spd = scale * GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
 WriteSpectrumFile(wls, spd, ...
-    fullfile(hints.workingFolder, sprintf('HangingLight.spd', temp)));
+    fullfile(resources, sprintf('HangingLight.spd', temp)));
 
 % make daylight for the windows behind the camera
 [wavelengths, magnitudes] = ReadSpectrum('D65.spd');
 scale = 1;
 magnitudes = scale * magnitudes;
 WriteSpectrumFile(wavelengths, magnitudes, ...
-    fullfile(hints.workingFolder, 'WindowLight.spd'));
+    fullfile(resources, 'WindowLight.spd'));
 
 %% Render with Mitsuba and PBRT
 toneMapFactor = 10;

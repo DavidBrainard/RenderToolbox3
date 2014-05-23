@@ -13,9 +13,8 @@ mappingsFile = 'DragonMaterialsMappings.txt';
 hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;

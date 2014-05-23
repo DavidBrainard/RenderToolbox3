@@ -6,9 +6,10 @@
 
 %% Move to temp folder before creating new files.
 hints = GetDefaultHints();
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
+
+resources = GetWorkingFolder('resources', false, hints);
 
 %% Choose some illuminants and RGB colors to render
 % yellow daylight
@@ -17,14 +18,14 @@ temp = 4000;
 spd = GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
 yellowDay = WriteSpectrumFile(wls, spd, ...
-    fullfile(hints.workingFolder, sprintf('CIE-day-%d.spd', temp)));
+    fullfile(resources, sprintf('CIE-day-%d.spd', temp)));
 
 % blue daylight
 temp = 10000;
 spd = GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
 blueDay = WriteSpectrumFile(wls, spd, ...
-    fullfile(hints.workingFolder, sprintf('CIE-day-%d.spd', temp)));
+    fullfile(resources, sprintf('CIE-day-%d.spd', temp)));
 
 illuminants = {yellowDay, blueDay};
 RGBs = {[0.8, 0.1, 0.3], [1 0 0], [0 1 0], [0 0 1], [1 1 1], [1 1 1], 0.5*[1 1 1]};

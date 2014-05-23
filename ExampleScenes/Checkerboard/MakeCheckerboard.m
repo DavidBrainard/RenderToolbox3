@@ -12,8 +12,8 @@ mappingsFile = 'CheckerboardMappings.txt';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Write scene parameters to a new conditions file.
 distance = 76.4;
@@ -27,7 +27,8 @@ values = {...
     distance,     -eyeSep/2     hFov    width       height; ...
     distance,     +eyeSep/2     hFov    width       height};
 
-conditionsFile = fullfile(hints.workingFolder, 'CheckerboardConditions.txt');
+conditionsFile = fullfile(GetWorkingFolder('resources', false, hints), ...
+    'CheckerboardConditions.txt');
 conditionsFile = WriteConditionsFile(conditionsFile, names, values);
 
 %% Render with Mitsuba and PBRT.

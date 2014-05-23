@@ -18,9 +18,8 @@ hints.imageWidth = 200;
 hints.imageHeight = 160;
 
 % put outputs in a subfolder named like this script
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 % a set of remodeler functions to modify the Collada parent scene
 hints.remodeler = 'MaterialSphere';

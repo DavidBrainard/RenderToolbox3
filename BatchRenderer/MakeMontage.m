@@ -34,12 +34,6 @@
 %   .
 %
 % @details
-% @a outFile does not determine where the montage will be saved.  The
-% montage will be saved in the folder given by
-% GetOutputPath('outputImageFolder', @a hints), or if @a hints is not
-% provided, GetOutputPath('outputImageFolder', GetDefaultHints()).
-%
-% @details
 % If @a toneMapFactor is provided and greater than 0, montage luminances
 % will be truncated above this factor times the mean luminance of the
 % entire montage.
@@ -130,10 +124,7 @@ end
 SRGBMontage = XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
 
 %% Save to disk.
-imageFolder = GetOutputPath('outputImageFolder', hints);
-if ~exist(imageFolder, 'dir')
-    mkdir(imageFolder)
-end
+imageFolder = GetWorkingFolder('images', true, hints);
 
 outFullPath = fullfile(imageFolder, [outBase outExt]);
 if strcmp(outExt, '.mat')

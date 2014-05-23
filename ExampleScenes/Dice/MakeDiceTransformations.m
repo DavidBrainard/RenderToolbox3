@@ -12,9 +12,8 @@ conditionsFile = 'DiceTransformationsConditions.txt';
 %% Choose batch renderer options.
 hints.imageWidth = 640;
 hints.imageHeight = 480;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;

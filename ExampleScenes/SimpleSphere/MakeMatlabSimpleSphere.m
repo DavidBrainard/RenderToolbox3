@@ -28,14 +28,10 @@ else
 end
 
 %% Create new files in a subfolder next to renderer outputs.
-dataFolder = GetOutputPath('outputDataFolder');
-working = fullfile(dataFolder, 'MakeSimpleSphere', 'SphereRenderer');
-if ~exist(working, 'dir')
-    mkdir(working)
-end
-
-originalPath = pwd();
-cd(working);
+hints.recipeName = 'MakeSimpleSphere';
+hints.renderer = 'SphereRenderer';
+working = GetWorkingFolder('renderings', true, hints);
+ChangeToWorkingFolder(hints);
 
 %% Choose rendering and scene parameters.
 

@@ -6,9 +6,8 @@
 %   @param recipe a recipe struct
 %
 % @details
-% Attempts to change directory to the given @a
-% recipe.input.hints.workingFolder.  Attemptes to create the folder if it
-% doesn't exist yet.
+% Attempts to change directory to the working folder for the given @a
+% recipe.input.hints.  Creates the folder if it doesn't exist yet.
 %
 % @details
 % Returns the given @a recipe, possibly updated with a new error appended.
@@ -20,19 +19,19 @@
 % @ingroup RecipeAPI
 function recipe = ChangeToRecipeFolder(recipe)
 
-if IsStructFieldPresent(recipe.input.hints, 'workingFolder')
-    workingFolder = recipe.input.hints.workingFolder;
+if IsStructFieldPresent(recipe.input, 'hints')
+    hints = recipe.input.hints;
 else
     return;
 end
 
 errorData = [];
 try
-    wasCreated = ChangeToFolder(workingFolder);
+    wasCreated = ChangeToWorkingFolder(hints);
     if wasCreated
-        message = ['Created ' workingFolder];
+        message = ['Created ' pwd()];
     else
-        message = ['Move to ' workingFolder];
+        message = ['Move to ' pwd()];
     end
     
 catch errorData
@@ -42,4 +41,4 @@ end
 % put this execution in the log with any error data
 recipe = AppendRecipeLog(recipe, ...
     [mfilename() ' ' message], ...
-    @ChangeToFolder, errorData, 0);
+    @ChangeToWorkingFolder, errorData, 0);

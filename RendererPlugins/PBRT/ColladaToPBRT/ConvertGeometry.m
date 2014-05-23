@@ -250,10 +250,9 @@ end
 %   meshes cause the XML DOM to run out of memory!
 
 % create a new file named like the polylist name
-% useful to use a file name relative to the current working folder
-% that way generated scene files can be portable across machines
+%   put it in the working scenes folder
 meshFolder = 'pbrt-mesh-data';
-meshFullPath = fullfile(hints.workingFolder, meshFolder);
+meshFullPath = fullfile(GetWorkingPath('scenes', true, hints), meshFolder);
 if ~exist(meshFullPath, 'dir')
     mkdir(meshFullPath);
 end
@@ -303,7 +302,7 @@ end
 
 
 % include the newly converted geometry
-% use path relative to working folder for portability
+% use path relative to scenes folder for portability
 includeName = fullfile(meshFolder, meshName);
 AddReference(stubIDMap, id, polyName, 'Include', includeName);
 

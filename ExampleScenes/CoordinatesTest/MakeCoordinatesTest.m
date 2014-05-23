@@ -10,9 +10,8 @@ parentSceneFile = 'CoordinatesTest.dae';
 %% Choose batch renderer options.
 hints.imageWidth = 320;
 hints.imageHeight = 240;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;

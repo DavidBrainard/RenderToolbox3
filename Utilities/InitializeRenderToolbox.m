@@ -21,18 +21,10 @@
 % @endcode
 %
 % @details
-% You can also set the paths where RenderToolbox3 will put new files.  If
-% you leave as they are, RenderToolbox3 will put new files in the current
-% folder.
+% You can also set the folder where RenderToolbox3 will look for files and
+% write new files.
 % @code
-%   % temporary scene files, etc.
-%   setpref('RenderToolbox3', 'tempFolder', path-to-tempFolder);
-%
-%   % multi-spectral output data files
-%   setpref('RenderToolbox3', 'outputDataFolder', path-to-outputDataFolder);
-%
-%   % RGB output image files
-%   setpref('RenderToolbox3', 'outputImageFolder', path-to-outputImageFolder);
+%   setpref('RenderToolbox3', 'workingFolder', path-to-tempFolder);
 % @endcode
 %
 % @details
@@ -70,14 +62,10 @@ if isForce
         rmpref('RenderToolbox3');
     end
     
-    % default input and output locations
+    % default input and output location
     userFolder = fullfile(GetUserFolder(), 'render-toolbox');
-    RenderToolbox3.tempFolder = fullfile(userFolder, 'temp');
-    RenderToolbox3.outputDataFolder = fullfile(userFolder, 'data');
-    RenderToolbox3.outputImageFolder = fullfile(userFolder, 'images');
-    RenderToolbox3.resourcesFolder = fullfile(userFolder, 'resources');
-    RenderToolbox3.outputSubfolder = '';
-    RenderToolbox3.workingFolder = '';
+    RenderToolbox3.workingFolder = userFolder;
+    RenderToolbox3.recipeName = '';
     
     % default hints
     RenderToolbox3.renderer = 'SampleRenderer';

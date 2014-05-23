@@ -12,9 +12,8 @@ mappingsFile    = 'CheckerShadowSceneMappings.txt';
 hints.whichConditions = [];
 hints.imageWidth = 1000;
 hints.imageHeight = 750;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Render the scene.
 toneMapFactor = 4;

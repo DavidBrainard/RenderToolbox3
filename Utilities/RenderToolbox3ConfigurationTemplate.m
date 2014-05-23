@@ -36,11 +36,7 @@ myFolder = fullfile(GetUserFolder(), 'render-toolbox');
 %myFolder = 'choose/your/output/folder';
 
 % set folders for temp, data, and image outputs
-setpref('RenderToolbox3', 'tempFolder', fullfile(myFolder, 'temp'));
-setpref('RenderToolbox3', 'outputDataFolder', fullfile(myFolder, 'data'));
-setpref('RenderToolbox3', 'outputImageFolder', fullfile(myFolder, 'images'));
-setpref('RenderToolbox3', 'resourcesFolder', fullfile(myFolder, 'resources'));
-
+setpref('RenderToolbox3', 'workingFolder', myFolder);
 
 %% Set Up Mitsuba Preferences.
 if ispref('Mitsuba')

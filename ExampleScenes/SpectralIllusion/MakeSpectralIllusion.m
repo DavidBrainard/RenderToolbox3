@@ -15,9 +15,10 @@ hints = GetDefaultHints();
 hints.renderer = 'Mitsuba';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
+
+resources = GetWorkingFolder('resources', false, hints);
 
 toneMapFactor = 100;
 isScale = true;
@@ -32,7 +33,7 @@ scale = 1;
 spd = scale * GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
 WriteSpectrumFile(wls, spd, ...
-    fullfile(hints.workingFolder, sprintf('CIE-daylight-%d.spd', temp)));
+    fullfile(resources, sprintf('CIE-daylight-%d.spd', temp)));
 
 % make the dimmer blue sky
 temp = 10000;
@@ -40,7 +41,7 @@ scale = 0.001;
 spd = scale * GenerateCIEDay(temp, B_cieday);
 wls = SToWls(S_cieday);
 WriteSpectrumFile(wls, spd, ...
-    fullfile(hints.workingFolder, sprintf('CIE-daylight-%d.spd', temp)));
+    fullfile(resources, sprintf('CIE-daylight-%d.spd', temp)));
 
 % make a target reflectance that is not too bright
 originalSpectrum = 'mccBabel-11.spd';
@@ -48,7 +49,7 @@ originalSpectrum = 'mccBabel-11.spd';
 scale = 1;
 srf = scale * originalReflect;
 WriteSpectrumFile(wls, srf, ...
-    fullfile(hints.workingFolder, 'SpectralIllusionTarget.spd'));
+    fullfile(resources, 'SpectralIllusionTarget.spd'));
 
 %% Plot the initial target and destination reflectances.
 % read target and destination reflectances from conditions file
@@ -152,7 +153,7 @@ end
 destIllumNonzero = max(destIllum, 0.001);
 cleverReflect = targPixelResampled ./ destIllumNonzero;
 WriteSpectrumFile(destWls, cleverReflect, ...
-    fullfile(hints.workingFolder, 'SpectralIllusionDestination.spd'));
+    fullfile(resources, 'SpectralIllusionDestination.spd'));
 
 %% Plot the clever new reflectance
 if hints.isPlot

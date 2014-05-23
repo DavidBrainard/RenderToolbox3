@@ -23,15 +23,6 @@
 % about renderer adjustments.
 %
 % @details
-% Returns a struct array with one element per detected dependency, as
-% returned from ResolveFilePath().  Each element will have an additional
-% field as well:
-%   - @b portablePath - a "portable" representation of the @b
-%   absolutePath, that uses placeholders for RenderToolbox3 output paths
-%   as returned from GetOutputPath().
-%   .
-%
-% @details
 % Usage:
 %   dependencies = FindDependentFiles(parentSceneFile, conditionsFile, ...
 % mappingsFile, hints)
@@ -91,9 +82,3 @@ end
 % only care about unique dependencies
 [uniques, uniqueIndices] = unique({dependencies.absolutePath});
 dependencies = dependencies(uniqueIndices);
-
-%% Get a RenderTooblox3 "portable" path for each local path.
-for ii = 1:numel(dependencies)
-    dependencies(ii).portablePath = ...
-        LocalPathToPortablePath(dependencies(ii).absolutePath, hints);
-end

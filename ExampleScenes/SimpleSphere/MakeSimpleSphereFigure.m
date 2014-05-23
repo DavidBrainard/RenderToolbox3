@@ -11,7 +11,8 @@ MakeSimpleSphere();
 %% Load sphere renderings.
 
 % choose where to look for renderings
-dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeSimpleSphere');
+hints.recipeName = 'MakeSimpleSphere';
+dataFolder = GetWorkingFolder('renderings', false, hints);
 
 % get output from the Render Toolbox reference renderer
 %   normalize it, scale it
