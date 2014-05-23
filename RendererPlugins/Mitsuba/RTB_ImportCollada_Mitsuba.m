@@ -25,12 +25,14 @@ scenesFolder = GetWorkingFolder('scenes', true, hints);
 tempFolder = GetWorkingFolder('temp', true, hints);
 mitsubaFile = fullfile(scenesFolder, [imageName '.xml']);
 unadjustedMitsubaFile = fullfile(tempFolder, [imageName 'Unadjusted.xml']);
+geometryFile = fullfile(tempFolder, [imageName 'Unadjusted.serialized']);
 adjustmentsFile = fullfile(tempFolder, [imageName 'Adjustments.xml']);
 
 % report new files as relative paths
 scene.colladaFile = GetWorkingRelativePath(colladaFile, hints);
 scene.mitsubaFile = GetWorkingRelativePath(mitsubaFile, hints);
 scene.unadjustedMitsubaFile = GetWorkingRelativePath(unadjustedMitsubaFile, hints);
+scene.geometryFile = GetWorkingRelativePath(geometryFile, hints);
 scene.adjustmentsFile = GetWorkingRelativePath(adjustmentsFile, hints);
 
 % high-dynamic-range is a good default film for Mitsuba
@@ -62,7 +64,6 @@ else
         colladaFile, ...
         unadjustedMitsubaFile);
     
-    % run in the destination folder to capture all ouput there
     [status, result] = unix(importCommand);
     if status ~= 0
         error('Mitsuba file conversion failed\n  %s\n  %s\n', ...
@@ -71,6 +72,11 @@ else
     
     % restore the library search path
     setenv(libPathName, originalLibPath);
+    
+    %% Copy Mitsuba's serialized geometry from temp to scene folder.
+    if exist(geometryFile, 'file')
+        movefile(geometryFile, scenesFolder);
+    end
     
     %% Apply adjustments using the RenderToolbox3 custom mechanism.
     %   Mitsuba nodes named "ref" have "id" attrubutes, but are not "id" nodes
