@@ -3,109 +3,77 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Load a recipe and its file dependencies from a zip file.
-%   @param zipFileName name of the zip file to create
-%   @param isCopyDependencies whether or not to copy dependencies locally
+%   @param archiveName name of the archive file to unpack
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
-% Creates a new recipe struct based on the zip archive called @a
-% zipFileName, as produced by PackUpRecipe().  Also unpacks recipe file
-% dependencies that were saved in the archive along with the recipe struct.
+% Creates a new recipe struct based on the given @a archiveName, as
+% produced by PackUpRecipe().  Also unpacks recipe file dependencies that
+% were saved in the archive, to the current working folder.
 %
 % @details
-% If @a isCopyDependencies is provided and true, file dependencies that
-% were saved in the zip archive will be copied to locally configured
-% folders like the RenderToolbox3 outputDataFolder.  See GetOutputPath()
-% for more about RenderToolbox3 configured folders.  @a hints may be
-% provided to customize the behavior of GetOutputPath().
-%
-% @details
-% Returns a new recipe struct that was contained in the zip archive named
-% @a zipFileName.
+% Returns a new recipe struct that was contained in the given @a
+% archiveName.
 %
 % @details
 % Usage:
-%   recipe = UnpackRecipe(zipFileName, isCopyDependencies, hints)
+%   recipe = UnpackRecipe(archiveName, hints)
 %
 % @ingroup RecipeAPI
-function recipe = UnpackRecipe(zipFileName, isCopyDependencies, hints)
+function recipe = UnpackRecipe(archiveName, hints)
 
-if nargin < 1 || ~exist(zipFileName, 'file')
+if nargin < 1 || ~exist(archiveName, 'file')
     error('You must suplpy the name of a zip archive');
 end
-[zipPath, zipBase] = fileparts(zipFileName);
+[zipPath, zipBase] = fileparts(archiveName);
 
 if nargin < 2
-    isCopyDependencies = false;
-end
-
-if nargin < 3
     hints = GetDefaultHints();
 else
     hints = GetDefaultHints(hints);
 end
 
-%% Set up a clean, temporary working folder.
-workingHints = hints;
-workingHints.outputSubfolder = '';
-workingFolder = GetOutputPath('tempFolder', workingHints);
-workingHints.tempFolder = fullfile(workingFolder, 'temp');
-workingHints.outputDataFolder = fullfile(workingFolder, 'data');
-workingHints.outputImageFolder = fullfile(workingFolder, 'images');
-workingHints.resourcesFolder = fullfile(workingFolder, 'resources');
-if exist(workingFolder, 'dir')
-    rmdir(workingFolder, 's');
+%% Set up a clean, temporary folder.
+hints.recipeName = mfilename();
+tempFolder = GetWorkingFolder('temp', false, hints);
+if exist(tempFolder, 'dir')
+    rmdir(tempFolder, 's');
 end
-mkdir(workingFolder);
+mkdir(tempFolder);
 
 
-%% Unpack the zip archive to the working folder.
-unzip(zipFileName, workingFolder);
+%% Unpack the archive to the temporary folder.
+unzip(archiveName, tempFolder);
 
 % extract the recipe struct
-recipeFiles = FindFiles(workingFolder, 'recipe\.mat');
+recipeFiles = FindFiles(tempFolder, 'recipe\.mat');
 if 1 == numel(recipeFiles)
     recipeFileName = recipeFiles{1};
 else
-    error('Could not fing recipe.m in the given zip archive');
+    error('RenderToolbox3:UnpackRecipeNotFound', ...
+        ['Could not find recipe.mat in the given archive ' archiveName]);
 end
 matData = load(recipeFileName);
 recipe = matData.recipe;
 
-%% Update recipe hints with local-specific values.
-recipe.input.hints.workingFolder = ...
-    PortablePathToLocalPath(recipe.input.hints.workingFolder, hints);
-recipe.input.hints.outputSubfolder = hints.outputSubfolder;
-recipe.input.hints.tempFolder = hints.tempFolder;
-recipe.input.hints.outputDataFolder = hints.outputDataFolder;
-recipe.input.hints.outputImageFolder = hints.outputImageFolder;
-recipe.input.hints.resourcesFolder = hints.resourcesFolder;
+%% Update recipe hints with local configuration.
+recipe.input.hints.workingFolder = hints.workingFolder;
 recipe.input.hints.libPathName = hints.libPathName;
 recipe.input.hints.libPath = hints.libPath;
 recipe.input.hints.libPathLast = hints.libPathLast;
 
-%% Copy dependencies from working folder to locally configured folders?
-% the unzipped archive contains an extra folder named for the zip file
-workingHints.workingFolder = fullfile(workingFolder, zipBase);
-if isCopyDependencies
-    hints.outputSubfolder = recipe.input.hints.outputSubfolder;
-    hints.renderer = recipe.input.hints.renderer;
-    dependencyFiles = FindFiles(workingFolder);
-    for ii = 1:numel(dependencyFiles)
-        tempPath = dependencyFiles{ii};
-        if strcmp(tempPath, recipeFileName)
-            continue;
-        end
-        
-        portablePath = LocalPathToPortablePath(tempPath, workingHints);
-        localPath = PortablePathToLocalPath(portablePath, hints);
-        localDir = fileparts(localPath);
-        if ~exist(localDir, 'dir')
-            mkdir(localDir);
-        end
-        copyfile(tempPath, localDir);
+%% Copy dependencies from the temp folder to the local working folder.
+dependencies = FindFiles(tempFolder);
+for ii = 1:numel(dependencies)
+    tempPath = dependencies{ii};
+    [isPrefix, relativePath] = IsPathPrefix(tempFolder, tempPath);
+    localPath = GetWorkingAbsolutePath(relativePath, recipe.input.hints);
+    [isSuccess, message] = copyfile(tempPath, localPath);
+    if ~isSuccess
+        warning('RenderToolbox3:UnpackRecipeCopyError', ...
+            ['Error unpacking recipe file: ' message]);
     end
-    
-    % don't keep redundant copies of dependencies.
-    rmdir(workingFolder, 's');
 end
+
+%% Clean up.
+rmdir(tempFolder, 's');

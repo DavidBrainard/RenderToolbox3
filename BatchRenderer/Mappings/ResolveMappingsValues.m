@@ -51,19 +51,17 @@
 %
 % @details
 % Returns the given @a mappings, updated with expressions replaced by
-% concrete values.  Also returns a struct array describing files
-% encountered during processing, as returned from ResolveFilePath().
+% concrete values.
 %
 % @details
 % Used internally by MakeSceneFiles().
 %
 % @details
 % Usage:
-%   [mappings, requiredFiles] = ResolveMappingsValues(mappings, varNames, varValues, colladaFile, adjustments, hints)
+%   mappings = ResolveMappingsValues(mappings, varNames, varValues, colladaFile, adjustments, hints)
 %
 % @ingroup Mappings
-function [mappings, requiredFiles] = ResolveMappingsValues(mappings, varNames, varValues, colladaFile, adjustments, hints)
-requiredFiles = ResolveFilePath('');
+function mappings = ResolveMappingsValues(mappings, varNames, varValues, colladaFile, adjustments, hints)
 
 % read the colladaFile
 [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
@@ -74,6 +72,8 @@ adjustIDMap = [];
 if ischar(adjustments)
     [adjustDoc, adjustIDMap] = ReadSceneDOM(adjustments);
 end
+
+workingFolder = GetWorkingFolder('', false, hints);
 
 for mm = 1:numel(mappings)
     % replace (varName) expressions with varValue values
@@ -98,9 +98,8 @@ for mm = 1:numel(mappings)
     
     % find files within working folder or on Matlab path
     if ~isempty(regexp(map.right.value, '\.\S*$', 'once'))
-        fileInfo = ResolveFilePath(map.right.value, GetWorkingFolder('', false, hints));
+        fileInfo = ResolveFilePath(map.right.value, workingFolder);
         if ~isempty(fileInfo) && ~isempty(fileInfo.resolvedPath)
-            requiredFiles(end+1) = fileInfo;
             map.right.value = fileInfo.resolvedPath;
         end
     end

@@ -5,7 +5,6 @@
 % Convert a Collada parent scene file the PBRT native format
 %   @param colladaFile input Collada parent scene file name or path
 %   @param adjustments native adjustments data, or file name or path
-%   @param outputFolder folder where to write new files
 %   @param imageName the name to use for this scene and new files
 %   @param hints struct of RenderToolbox3 options
 %
@@ -18,16 +17,21 @@
 %
 % @details
 % Usage:
-%   [scene, requiredFiles] = RTB_ImportCollada_PBRT(colladaFile, adjustments, outputFolder, imageName, hints)
-function [scene, requiredFiles] = RTB_ImportCollada_PBRT(colladaFile, adjustments, outputFolder, imageName, hints)
+%   scene = RTB_ImportCollada_PBRT(colladaFile, adjustments, imageName, hints)
+function scene = RTB_ImportCollada_PBRT(colladaFile, adjustments, imageName, hints)
 
-% declare new and required files
-scene.colladaFile = colladaFile;
-scene.pbrtFile = fullfile(outputFolder, [imageName '.pbrt']);
-scene.pbrtXMLFile = fullfile(outputFolder, [imageName '.pbrt.xml']);
-scene.adjustmentsFile = fullfile(outputFolder, [imageName 'Adjustments.xml']);
-requiredFiles = ...
-    {scene.colladaFile, scene.pbrtFile, scene.pbrtXMLFile, scene.adjustmentsFile};
+% choose new files to create
+scenesFolder = GetWorkingFolder('scenes', true, hints);
+tempFolder = GetWorkingFolder('temp', true, hints);
+pbrtFile = fullfile(scenesFolder, [imageName '.pbrt']);
+pbrtXMLFile = fullfile(tempFolder, [imageName 'pbrt.xml']);
+adjustmentsFile = fullfile(tempFolder, [imageName 'Adjustments.xml']);
+
+% report new files as relative paths
+scene.colladaFile = GetWorkingRelativePath(colladaFile, hints);
+scene.pbrtFile = GetWorkingRelativePath(pbrtFile, hints);
+scene.pbrtXMLFile = GetWorkingRelativePath(pbrtXMLFile, hints);
+scene.adjustmentsFile = GetWorkingRelativePath(adjustmentsFile, hints);
 
 % image is a safe default film for PBRT
 if isempty(hints.filmType)
@@ -42,7 +46,7 @@ if hints.isReuseSceneFiles
     
 else
     %% Invoke several Collada to PBRT utilities.
-    fprintf('Converting %s\n  to %s.\n', colladaFile, scene.pbrtFile);
+    fprintf('Converting %s\n  to %s.\n', colladaFile, pbrtFile);
     
     % read the collada file
     [colladaDoc, colladaIDMap] = ReadSceneDOM(colladaFile);
@@ -67,14 +71,9 @@ else
     
     % write the adjusted PBRT-XML document to file
     MergeAdjustments(pbrtDoc, adjustments.docNode);
-    WriteSceneDOM(scene.pbrtXMLFile, pbrtDoc);
-    WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
+    WriteSceneDOM(pbrtXMLFile, pbrtDoc);
+    WriteSceneDOM(adjustmentsFile, adjustments.docNode);
     
     % dump the PBRT-XML document into a .pbrt text file
-    WritePBRTFile(scene.pbrtFile, scene.pbrtXMLFile, hints);
+    WritePBRTFile(pbrtFile, pbrtXMLFile, hints);
 end
-
-%% Detect auxiliary geometry files.
-auxiliaryFiles = FindFiles(...
-    fullfile(GetWorkingFolder('scenes', true, hints), 'pbrt-mesh-data'));
-requiredFiles = cat(2, requiredFiles, auxiliaryFiles);

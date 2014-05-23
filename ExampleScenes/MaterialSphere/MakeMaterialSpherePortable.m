@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render MaterialSphere in a portable fashion using the Recipe API.c
+%% Render MaterialSphere in a portable fashion using the Recipe API
 clear
 
 %% Choose inputs for a new recipe.
@@ -40,10 +40,10 @@ hints.renderer = 'PBRT';
 recipe = NewRecipe(configScript, executive, parentSceneFile, ...
     conditionsFile, mappingsFile, hints);
 
-% add a log message to the recipe
+% add a log message about creating this new recipe
 recipe = AppendRecipeLog(recipe, 'Portable recipe for Material Sphere');
 
-%% Generate sceen files and pack up the recipe.
+%% Generate scene files and pack up the recipe.
 % generate all the scene files for the recipe
 recipe = ExecuteRecipe(recipe, 1);
 
@@ -51,15 +51,10 @@ recipe = ExecuteRecipe(recipe, 1);
 fullZipFileName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
 [recipe, fullZipFileName] = PackUpRecipe(recipe, fullZipFileName);
 
-% boldly delete generated scene files from the temp folder
-% since they're now packed up with the recipe
-sceneFileFolder = ...
-    fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
-rmdir(sceneFileFolder, 's');
-
-%% Note: above, scene files were generated but no rendering was done.
-
-%% Note: below, only pre-generated scene files are rendererd.
+% boldly delete generated scene files from the recipe's working folder
+% since they're now packed up with the recipe archive
+scenesFolder = GetWorkingFolder('scenes', false, hints);
+rmdir(scenesFolder, 's');
 
 %% Un-pack and render in a new location -- could be on another computer.
 % locate the packed-up recipe
@@ -69,22 +64,14 @@ fullZipFileName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
 % choose a folder to un-pack the recipe into
 % this could also be on another computer
 newFolder = fullfile(GetUserFolder(), 'AnotherComputer');
-hints.workingFolder = fullfile(newFolder, 'unpack-recipe');
-
-% choose new RenderToolbox3 output folders
-% this might be unnecessary if you moved to another computer
-hints.tempFolder = fullfile(newFolder, 'temp');
-hints.outputDataFolder = fullfile(newFolder, 'data');
-hints.outputImageFolder = fullfile(newFolder, 'images');
-hints.resourcesFolder = fullfile(newFolder, 'resources');
+hints.workingFolder = newFolder;
 
 % un-pack the recipe into the new folder
-recipe = UnpackRecipe(fullZipFileName, true, hints);
+recipe = UnpackRecipe(fullZipFileName, hints);
 
-% choose a configuration script for this machine
-% change this configureScript if you moved to a new machine.
+% change the recipe's configureScript if you moved to a new machine.
 configureScript = 'RenderToolbox3ConfigurationTemplate';
 recipe.input.configureScript = configureScript;
 
-% render the pre-generated scene files
+% render the recipe from pre-generated scene files
 recipe = ExecuteRecipe(recipe);

@@ -16,10 +16,8 @@
 %   [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, hints)
 function [status, result, multispectralImage, S] = RTB_Render_Mitsuba(scene, hints)
 
-% resolve the scene which should be located in hints.workingFolder
-[scenePath, sceneBase, sceneExt] = fileparts(scene.mitsubaFile);
-sceneFileInfo = ResolveFilePath([sceneBase, sceneExt], hints.workingFolder);
-sceneFile = sceneFileInfo.absolutePath;
+% resolve the scene which should be located in the working folder
+sceneFile = GetWorkingAbsolutePath(scene.mitsubaFile, hints);
 
 % invoke Mitsuba!
 [status, result, output] = RunMitsuba(sceneFile, hints);

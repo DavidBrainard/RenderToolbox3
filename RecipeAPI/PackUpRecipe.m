@@ -4,84 +4,68 @@
 %
 % Save a recipe and its file dependencies to a zip file.
 %   @param recipe a recipe struct
-%   @param zipFileName name of the zip file to create
-%   @param extras cell array of extra files to include
+%   @param archiveName name of the archive file to create
 %
 % @details
-% Creates a new zip archive named @a zipFileName which contains the given
-% @a recipe (in a mat-file) along with its file dependencies, including
-% input files and recource files that are referenced from the input files.
-% @a extras may include a cell array of extra files to include in the zip
-% archive.
+% Creates a new zip archive named @a archiveName which contains the given
+% @a recipe (in a mat-file) along with its file dependencies from the
+% current working folder.  See GetWorkingFolder().
 %
 % @details
-% Returns the given @a recipe, with @a recipe.dependencies filled in.  Also
-% returns the name of the zip archive that was created, which may be the
-% same as the given @a zipFileName.
+% Returns the name of the zip archive that was created, which may be the
+% same as the given @a archiveName.
 %
 % @details
 % Usage:
-%   [recipe, zipFileName] = PackUpRecipe(recipe, zipFileName, extras)
+%   archiveName = PackUpRecipe(recipe, archiveName)
 %
 % @ingroup RecipeAPI
-function [recipe, zipFileName] = PackUpRecipe(recipe, zipFileName, extras)
+function archiveName = PackUpRecipe(recipe, archiveName)
 
 if nargin < 1 || ~isstruct(recipe)
     error('You must suplpy a recipe struct');
 end
 
 if nargin < 2
-    zipFileName = 'recipe.zip';
+    archiveName = 'recipe.zip';
 end
-[zipPath, zipBase] = fileparts(zipFileName);
+[zipPath, zipBase] = fileparts(archiveName);
 
-if nargin < 3
-    extras = {};
+
+%% Set up a clean, temporary folder.
+hints.recipeName = mfilename();
+tempFolder = GetWorkingFolder('temp', false, hints);
+if exist(tempFolder, 'dir')
+    rmdir(tempFolder, 's');
 end
-
-%% Set up a clean, temporary working folder.
-hints = recipe.input.hints;
-hints.outputSubfolder = zipBase;
-workingFolder = GetOutputPath('tempFolder', hints);
-hints.tempFolder = fullfile(workingFolder, 'temp');
-hints.outputDataFolder = fullfile(workingFolder, 'data');
-hints.outputImageFolder = fullfile(workingFolder, 'images');
-hints.resourcesFolder = fullfile(workingFolder, 'resources');
-if exist(workingFolder, 'dir')
-    rmdir(workingFolder, 's');
-end
-mkdir(workingFolder);
-
-%% Before saving, detect dependencies for this recipe.
-dependencies = FindRecipeDependentFiles(recipe, extras);
-recipe.dependencies = dependencies;
-
-recipe = AppendRecipeLog(recipe, ...
-    ['run automatically by ' mfilename()], ...
-    @FindRecipeDependentFiles, [], 0);
+mkdir(tempFolder);
 
 %% Save the recipe itself to the working folder.
-recipe.input.hints.workingFolder = ...
-    LocalPathToPortablePath(recipe.input.hints.workingFolder, hints);
-recipeFileName = fullfile(workingFolder, 'recipe.mat');
+recipeFileName = fullfile(tempFolder, 'recipe.mat');
 save(recipeFileName, 'recipe');
 
-%% Copy dependencies to subfolders of the working folder.
-hints.workingFolder = workingFolder;
-for ii = 1:numel(recipe.dependencies)
-    originalPath = recipe.dependencies(ii).absolutePath;
-    portablePath = recipe.dependencies(ii).portablePath;
-    tempPath = PortablePathToLocalPath(portablePath, hints);
-    tempDir = fileparts(tempPath);
-    if ~exist(tempDir, 'dir')
-        mkdir(tempDir);
+%% Copy dependencies from the working folder to the temp folder.
+
+% TODO: optionally specify working folder names to ignore
+
+workingFolder = GetWorkingFolder('', false, hints);
+dependencies = FindFiles(workingFolder);
+for ii = 1:numel(dependencies)
+    localPath = dependencies{ii};
+    relativePath = GetWorkingRelativePath(localPath, hints);
+    tempPath = fullfile(tempPath, relativePath);
+    [isSuccess, message] = copyfile(localPath, tempPath);
+    if ~isSuccess
+        warning('RenderToolbox3:PackUpRecipeCopyError', ...
+            ['Error packing up recipe file: ' message]);
     end
-    copyfile(originalPath, tempPath);
 end
 
-%% Zip up the whole working folder and clean it up.
+%% Zip up the whole temp folder with recipe and dependencies.
 if ~exist(zipPath, 'dir')
     mkdir(zipPath);
 end
-zip(zipFileName, workingFolder);
-rmdir(workingFolder, 's');
+zip(archiveName, tempFolder);
+
+%% Clean up.
+rmdir(tempFolder, 's');

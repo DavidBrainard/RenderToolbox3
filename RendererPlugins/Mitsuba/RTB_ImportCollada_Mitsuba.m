@@ -5,7 +5,6 @@
 % Convert a Collada parent scene file the Mitsuba native format
 %   @param colladaFile input Collada parent scene file name or path
 %   @param adjustments native adjustments data, or file name or path
-%   @param outputFolder folder where to write new files
 %   @param imageName the name to use for this scene and new files
 %   @param hints struct of RenderToolbox3 options
 %
@@ -18,16 +17,21 @@
 %
 % @details
 % Usage:
-%   [scene, requiredFiles] = RTB_ImportCollada_Mitsuba(colladaFile, adjustments, outputFolder, imageName, hints)
-function [scene, requiredFiles] = RTB_ImportCollada_Mitsuba(colladaFile, adjustments, outputFolder, imageName, hints)
+%   scene = RTB_ImportCollada_Mitsuba(colladaFile, adjustments, imageName, hints)
+function scene = RTB_ImportCollada_Mitsuba(colladaFile, adjustments, imageName, hints)
 
-% declare new and required files
-scene.colladaFile = colladaFile;
-scene.mitsubaFile = fullfile(outputFolder, [imageName '.xml']);
-scene.unadjustedMitsubaFile = fullfile(outputFolder, [imageName 'Unadjusted.xml']);
-scene.adjustmentsFile = fullfile(outputFolder, [imageName 'Adjustments.xml']);
-requiredFiles = ...
-    {scene.mitsubaFile, scene.unadjustedMitsubaFile, scene.adjustmentsFile};
+% choose new files to create
+scenesFolder = GetWorkingFolder('scenes', true, hints);
+tempFolder = GetWorkingFolder('temp', true, hints);
+mitsubaFile = fullfile(scenesFolder, [imageName '.xml']);
+unadjustedMitsubaFile = fullfile(tempFolder, [imageName 'Unadjusted.xml']);
+adjustmentsFile = fullfile(tempFolder, [imageName 'Adjustments.xml']);
+
+% report new files as relative paths
+scene.colladaFile = GetWorkingRelativePath(colladaFile, hints);
+scene.mitsubaFile = GetWorkingRelativePath(mitsubaFile, hints);
+scene.unadjustedMitsubaFile = GetWorkingRelativePath(unadjustedMitsubaFile, hints);
+scene.adjustmentsFile = GetWorkingRelativePath(adjustmentsFile, hints);
 
 % high-dynamic-range is a good default film for Mitsuba
 if isempty(hints.filmType)
@@ -50,13 +54,13 @@ else
     importer = fullfile( ...
         getpref('Mitsuba', 'app'), ...
         getpref('Mitsuba', 'importer'));
-    fprintf('Converting %s\n  to %s.\n', colladaFile, scene.mitsubaFile);
+    fprintf('Converting %s\n  to %s.\n', colladaFile, mitsubaFile);
     importCommand = sprintf('%s -r %dx%d -l %s %s %s', ...
         importer, ...
         hints.imageWidth, hints.imageHeight, ...
         hints.filmType, ...
         colladaFile, ...
-        scene.unadjustedMitsubaFile);
+        unadjustedMitsubaFile);
     
     % run in the destination folder to capture all ouput there
     [status, result] = unix(importCommand);
@@ -71,12 +75,8 @@ else
     %% Apply adjustments using the RenderToolbox3 custom mechanism.
     %   Mitsuba nodes named "ref" have "id" attrubutes, but are not "id" nodes
     excludePattern = '^ref$';
-    mitsubaDoc = ReadSceneDOM(scene.unadjustedMitsubaFile, excludePattern);
+    mitsubaDoc = ReadSceneDOM(unadjustedMitsubaFile, excludePattern);
     MergeAdjustments(mitsubaDoc, adjustments.docNode, excludePattern);
-    WriteSceneDOM(scene.mitsubaFile, mitsubaDoc);
-    WriteSceneDOM(scene.adjustmentsFile, adjustments.docNode);
+    WriteSceneDOM(mitsubaFile, mitsubaDoc);
+    WriteSceneDOM(adjustmentsFile, adjustments.docNode);
 end
-
-%% Detect auxiliary geometry files.
-auxiliaryFiles = FindFiles(pwd(), '\.serialized');
-requiredFiles = cat(2, requiredFiles, auxiliaryFiles);

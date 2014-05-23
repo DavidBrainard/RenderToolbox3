@@ -62,16 +62,11 @@
 % with the value of 'imageName'.
 %
 % @details
-% Also retrurns a cell array of file names for required files on which the
-% scene description depends, such as text scene files, and adjustments
-% files, geometry files, image files, spectrum data files, etc.
-%
-% @details
 % Usage:
-%   [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
+%   scenes = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
 %
 % @ingroup BatchRenderer
-function [scenes, requiredFiles] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
+function scenes = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
 
 InitializeRenderToolbox();
 
@@ -126,7 +121,6 @@ colladaFile = remodelCollada(colladaFile, hints, 'BeforeAll');
 
 %% Make a scene file for each condition.
 scenes = cell(1, nConditions);
-requiredFiles = cell(1, nConditions);
 
 err = [];
 try
@@ -145,7 +139,7 @@ try
             end
             
             % make a the scene file for this condition
-            [scenes{cc}, requiredFiles{cc}] = makeSceneForCondition( ...
+            scenes{cc} = makeSceneForCondition( ...
                 colladaFile, mappingsFile, cc, ...
                 varNames, conditionVarValues, hints);
         end
@@ -160,7 +154,7 @@ try
             end
             
             % make a the scene file for this condition
-            [scenes{cc}, requiredFiles{cc}] = makeSceneForCondition( ...
+            scenes{cc} = makeSceneForCondition( ...
                 colladaFile, mappingsFile, cc, ...
                 varNames, conditionVarValues, hints);
         end
@@ -172,9 +166,6 @@ try
 catch err
     disp('Scene conversion error!');
 end
-
-% collapse required files across conditions and make unique
-requiredFiles = unique(cat(2, requiredFiles{:}));
 
 % report any error
 if ~isempty(err)
@@ -209,12 +200,10 @@ end
 
 
 %% Create a renderer-native scene description for one condition.
-function [scene, requiredFiles] = makeSceneForCondition( ...
-    colladaFile, mappingsFile, conditionNumber, ...
-    varNames, varValues, hints)
+function scene = makeSceneForCondition(colladaFile, mappingsFile, ...
+    conditionNumber, varNames, varValues, hints)
 
-scene = '';
-requiredFiles = {};
+scene = [];
 
 %% Choose parameter values from conditions file or hints.
 isMatch = strcmp('renderer', varNames);
@@ -281,8 +270,7 @@ adjustments = feval(applyMappingsFunction, [], []);
 
 %% Apply mappings to the renderer-native adjustments.
 % replace various mappings file expressions with concrete values
-% and collect required file names
-[mappings, mappingsRequiredFiles] = ResolveMappingsValues( ...
+mappings = ResolveMappingsValues( ...
     mappings, varNames, varValues, colladaCopy, adjustments, hints);
 
 %% Allow remodeler to modify Collada document before each condition.
@@ -344,9 +332,8 @@ importColladaFunction = ...
 if isempty(importColladaFunction)
     return;
 end
-scenesFolder = GetWorkingFolder('scenes', true, hints);
-[scene, importRequiredFiles] = feval(importColladaFunction, ...
-    colladaCopy, adjustments, scenesFolder, imageName, hints);
+scene = feval( ...
+    importColladaFunction, colladaCopy, adjustments, imageName, hints);
 [scene.imageName] = deal(imageName);
 
 % store Collada authoring info along with the scene description
@@ -355,7 +342,3 @@ scenesFolder = GetWorkingFolder('scenes', true, hints);
 authorInfo.authoringTool = authoringTool;
 authorInfo.asset = asset;
 [scene.authorInfo] = deal(authorInfo);
-
-% full list of required files
-requiredFiles = cat(2, ...
-    {mappingsRequiredFiles.verbatimName}, importRequiredFiles);

@@ -75,7 +75,6 @@ if exist(fileName, 'file')
     else
         fileInfo(1).resolvedPath = whichFile;
         fileInfo(1).absolutePath = whichFile;
-        
     end
 end
 

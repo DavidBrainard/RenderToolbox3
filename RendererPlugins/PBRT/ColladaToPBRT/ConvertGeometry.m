@@ -302,7 +302,7 @@ end
 
 
 % include the newly converted geometry
-% use path relative to scenes folder for portability
-includeName = fullfile(meshFolder, meshName);
+% use relative path for portability
+includeName = GetWorkingRelativePath(meshFullPath, hints);
 AddReference(stubIDMap, id, polyName, 'Include', includeName);
 
