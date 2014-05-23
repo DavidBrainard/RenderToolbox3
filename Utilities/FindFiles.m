@@ -54,7 +54,11 @@ else
     initalFolder = pwd();
     cd(folder)
     folder = pwd();
-    cd(initalFolder);
+    
+    % oddly enough, pwd() may not have existed!
+    if exist(initalFolder, 'dir')
+        cd(initalFolder);
+    end
 end
 
 % find all files in the present folder

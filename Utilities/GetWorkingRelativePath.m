@@ -28,8 +28,18 @@ else
     hints = GetDefaultHints(hints);
 end
 
+% try to resolve using real, existing files
+%   which works best for partial file names
 workingFolder = GetWorkingFolder('', false, hints);
 [isPrefix, relativePath] = IsPathPrefix(workingFolder, originalPath);
-if ~isPrefix
+if isPrefix
+    return
+end
+
+% fall back on string comparison of paths
+matchIndex = strfind(originalPath, workingFolder);
+if 1 == matchIndex
+    relativePath = originalPath(numel(workingFolder)+2:end);
+else
     relativePath = '';
 end

@@ -46,7 +46,7 @@ output = fullfile(scenePath, [sceneBase '.dat']);
 % copy scene file to working folder
 % so that PBRT can resolve relative paths from there
 if IsStructFieldPresent(hints, 'workingFolder')
-    copyDir = hints.workingFolder;
+    copyDir = GetWorkingFolder('', false, hints);
 else
     warning('RenderToolbox3:NoWorkingFolderGiven', ...
         'hints.workingFolder is missing, using pwd() instead');
@@ -54,7 +54,7 @@ else
 end
 sceneCopy = fullfile(copyDir, [sceneBase, sceneExt]);
 fprintf('PBRT needs to copy %s \n  to %s\n', sceneFile, sceneCopy);
-copyfile(sceneFile, copyDir, 'f');
+[isSuccess, message] = copyfile(sceneFile, sceneCopy, 'f');
 
 %% Invoke PBRT.
 % set the dynamic library search path

@@ -252,7 +252,7 @@ end
 % create a new file named like the polylist name
 %   put it in the working scenes folder
 meshFolder = 'pbrt-mesh-data';
-meshFullPath = fullfile(GetWorkingPath('scenes', true, hints), meshFolder);
+meshFullPath = fullfile(GetWorkingFolder('scenes', true, hints), meshFolder);
 if ~exist(meshFullPath, 'dir')
     mkdir(meshFullPath);
 end
@@ -303,6 +303,6 @@ end
 
 % include the newly converted geometry
 % use relative path for portability
-includeName = GetWorkingRelativePath(meshFullPath, hints);
+includeName = GetWorkingRelativePath(meshFilePath, hints);
 AddReference(stubIDMap, id, polyName, 'Include', includeName);
 

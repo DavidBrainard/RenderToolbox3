@@ -101,6 +101,10 @@ for mm = 1:numel(mappings)
         fileInfo = ResolveFilePath(map.right.value, workingFolder);
         if ~isempty(fileInfo) && ~isempty(fileInfo.resolvedPath)
             map.right.value = fileInfo.resolvedPath;
+            
+            if ~fileInfo.isRootFolderMatch
+                disp(['Using absolute resource path: ' fileInfo.resolvedPath])
+            end
         end
     end
     

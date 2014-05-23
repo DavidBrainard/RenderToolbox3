@@ -48,6 +48,9 @@
 % @ingroup Utilities
 function [isPrefix, remainder] = IsPathPrefix(pathA, pathB)
 
+isPrefix = false;
+remainder = '';
+
 % strip off any file base names and extensions
 if exist(pathA, 'dir')
     compareA = pathA;
@@ -58,8 +61,7 @@ elseif exist(pathA, 'file')
         compareA = fileparts(which(pathA));
     end
 else
-    message = ['"' pathA '" is not a file or folder name'];
-    error('RenderToolbox3:IsPathPrefix', message);
+    return;
 end
 
 if exist(pathB, 'dir')
@@ -73,8 +75,7 @@ elseif exist(pathB, 'file')
     end
     fileB = [baseB extB];
 else
-    message = ['"' pathB '" is not a file or folder name'];
-    error('RenderToolbox3:IsPathPrefix', message);
+    return;
 end
 
 % use pwd() to compare e.g. absolute and relative paths

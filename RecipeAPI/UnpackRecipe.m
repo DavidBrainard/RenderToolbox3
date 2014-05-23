@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Load a recipe and its file dependencies from a zip file.
+% Load a recipe and its file dependencies from an archive file.
 %   @param archiveName name of the archive file to unpack
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
@@ -23,9 +23,9 @@
 function recipe = UnpackRecipe(archiveName, hints)
 
 if nargin < 1 || ~exist(archiveName, 'file')
-    error('You must suplpy the name of a zip archive');
+    error('You must suplpy the name of an archive file');
 end
-[zipPath, zipBase] = fileparts(archiveName);
+[archivePath, archiveBase] = fileparts(archiveName);
 
 if nargin < 2
     hints = GetDefaultHints();
@@ -35,7 +35,7 @@ end
 
 %% Set up a clean, temporary folder.
 hints.recipeName = mfilename();
-tempFolder = GetWorkingFolder('temp', false, hints);
+tempFolder = GetWorkingFolder('', false, hints);
 if exist(tempFolder, 'dir')
     rmdir(tempFolder, 's');
 end
@@ -63,11 +63,22 @@ recipe.input.hints.libPath = hints.libPath;
 recipe.input.hints.libPathLast = hints.libPathLast;
 
 %% Copy dependencies from the temp folder to the local working folder.
-dependencies = FindFiles(tempFolder);
+unpackedFolder = fullfile(tempFolder, archiveBase);
+dependencies = FindFiles(unpackedFolder);
 for ii = 1:numel(dependencies)
     tempPath = dependencies{ii};
-    [isPrefix, relativePath] = IsPathPrefix(tempFolder, tempPath);
+    if strfind(tempPath, 'recipe.mat')
+        continue;
+    end
+    
+    [isPrefix, relativePath] = IsPathPrefix(unpackedFolder, tempPath);
     localPath = GetWorkingAbsolutePath(relativePath, recipe.input.hints);
+    
+    localPrefix = fileparts(localPath);
+    if ~exist(localPrefix, 'dir')
+        mkdir(localPrefix);
+    end
+    
     [isSuccess, message] = copyfile(tempPath, localPath);
     if ~isSuccess
         warning('RenderToolbox3:UnpackRecipeCopyError', ...

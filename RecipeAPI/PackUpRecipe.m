@@ -29,12 +29,12 @@ end
 if nargin < 2
     archiveName = 'recipe.zip';
 end
-[zipPath, zipBase] = fileparts(archiveName);
+[archivePath, archiveBase] = fileparts(archiveName);
 
 
 %% Set up a clean, temporary folder.
-hints.recipeName = mfilename();
-tempFolder = GetWorkingFolder('temp', false, hints);
+hints.recipeName = archiveBase;
+tempFolder = GetWorkingFolder('', false, hints);
 if exist(tempFolder, 'dir')
     rmdir(tempFolder, 's');
 end
@@ -48,12 +48,22 @@ save(recipeFileName, 'recipe');
 
 % TODO: optionally specify working folder names to ignore
 
-workingFolder = GetWorkingFolder('', false, hints);
+workingFolder = GetWorkingFolder('', false, recipe.input.hints);
 dependencies = FindFiles(workingFolder);
 for ii = 1:numel(dependencies)
     localPath = dependencies{ii};
-    relativePath = GetWorkingRelativePath(localPath, hints);
-    tempPath = fullfile(tempPath, relativePath);
+    relativePath = GetWorkingRelativePath(localPath, recipe.input.hints);
+    tempPath = fullfile(tempFolder, relativePath);
+    
+    if exist(tempPath, 'file')
+        continue;
+    end
+    
+    tempPrefix = fileparts(tempPath);
+    if ~exist(tempPrefix, 'dir')
+        mkdir(tempPrefix);
+    end
+    
     [isSuccess, message] = copyfile(localPath, tempPath);
     if ~isSuccess
         warning('RenderToolbox3:PackUpRecipeCopyError', ...
@@ -62,8 +72,8 @@ for ii = 1:numel(dependencies)
 end
 
 %% Zip up the whole temp folder with recipe and dependencies.
-if ~exist(zipPath, 'dir')
-    mkdir(zipPath);
+if ~exist(archivePath, 'dir')
+    mkdir(archivePath);
 end
 zip(archiveName, tempFolder);
 
