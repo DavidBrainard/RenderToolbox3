@@ -12,9 +12,8 @@ mappingsFile = 'InteriorMappings.txt';
 
 %% Choose batch renderer options.
 hints.whichConditions = [];
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Write some spectra to use.
 load B_cieday

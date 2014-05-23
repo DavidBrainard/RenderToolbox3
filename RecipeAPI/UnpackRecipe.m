@@ -73,7 +73,8 @@ matData = load(recipeFileName);
 recipe = matData.recipe;
 
 %% Update recipe hints with local-specific values.
-recipe.input.hints.workingFolder = hints.workingFolder;
+recipe.input.hints.workingFolder = ...
+    PortablePathToLocalPath(recipe.input.hints.workingFolder, hints);
 recipe.input.hints.outputSubfolder = hints.outputSubfolder;
 recipe.input.hints.tempFolder = hints.tempFolder;
 recipe.input.hints.outputDataFolder = hints.outputDataFolder;

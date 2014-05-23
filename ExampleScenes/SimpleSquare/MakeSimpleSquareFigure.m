@@ -45,7 +45,8 @@ mitsuba = pbrt;
 predicted = pbrt;
 
 % choose where to look for renderings
-dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeSimpleSquare');
+hints.recipeName = 'MakeSimpleSquare';
+dataFolder = GetWorkingFolder('renderings', false, hints);
 
 % fill in multi-spectral data for each Color Checker condition.
 for ii = 1:nImages

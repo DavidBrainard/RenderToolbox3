@@ -11,9 +11,8 @@ parentSceneFile = 'interior.dae';
 %% Choose batch renderer options.
 hints.imageHeight = 480;
 hints.imageWidth = 640;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Use the automatic, default mappings file.
 colors = { ...

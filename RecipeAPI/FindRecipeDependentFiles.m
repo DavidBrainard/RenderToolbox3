@@ -96,8 +96,6 @@ for ii = 1:numel(fileNames)
     
     fileInfo = ResolveFilePath(fileName, hints.workingFolder);
     if ~isempty(fileInfo) && ~isempty(fileInfo.absolutePath)
-        fileInfo.portablePath = ...
-            LocalPathToPortablePath(fileInfo.absolutePath, hints);
         
         % treat temp files as working folder matches
         tempInfo = ResolveFilePath(fileName, tempFolder);

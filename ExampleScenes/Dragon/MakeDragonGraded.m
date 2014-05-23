@@ -14,9 +14,8 @@ nSteps = 6;
 hints.whichConditions = 1:nSteps;
 hints.imageWidth = 320;
 hints.imageHeight = 240;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Write graded spectrum files.
 % choose two spectrums to grade between

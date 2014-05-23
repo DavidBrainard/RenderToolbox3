@@ -30,10 +30,8 @@ hints.imageWidth = 200;
 hints.imageHeight = 160;
 
 % put output files in a subfolder named like this script
-hints.outputSubfolder = mfilename();
-
-% resources like textures files should be located in the working folder
-hints.workingFolder = GetOutputPath('tempFolder', hints);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 % choose the renderer
 hints.renderer = 'PBRT';
@@ -54,7 +52,7 @@ fullZipFileName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
 [recipe, fullZipFileName] = PackUpRecipe(recipe, fullZipFileName);
 
 % boldly delete generated scene files from the temp folder
-% since they're already packed up with the recipe
+% since they're now packed up with the recipe
 sceneFileFolder = ...
     fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
 rmdir(sceneFileFolder, 's');

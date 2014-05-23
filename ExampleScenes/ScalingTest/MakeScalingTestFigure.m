@@ -26,7 +26,8 @@ pbrt = struct( ...
 mitsuba = pbrt;
 
 % choose where to look for renderings
-dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeScalingTest');
+hints.recipeName = 'MakeScalingTest';
+dataFolder = GetWorkingFolder('renderings', false, hints);
 
 % fill in multi-spectral data for each condition
 for ii = 1:nImages

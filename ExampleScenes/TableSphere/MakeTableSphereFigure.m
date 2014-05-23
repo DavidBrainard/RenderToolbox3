@@ -39,7 +39,8 @@ imageNames = values(:, strcmp('imageName', names));
 nImages = numel(imageNames);
 
 % choose where to look for renderings
-dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeTableSphere');
+hints.recipeName = 'MakeTableSphere';
+dataFolder = GetWorkingFolder('renderings', false, hints);
 for ii = 1:nImages
     % make a PBRT sRGB image and read the pixel of interest
     PBRTImage = FindFiles(dataFolder, ['PBRT.+' imageNames{ii}]);

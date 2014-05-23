@@ -16,9 +16,8 @@ hints.whichConditions = [];
 % pixel size of each rendering
 hints.imageWidth = 150;
 hints.imageHeight = 120;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 % capture and save renderer output, or display it live in Command Window
 hints.isCaptureCommandResults = true;

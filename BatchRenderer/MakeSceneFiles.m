@@ -116,24 +116,6 @@ else
     varValues = varValues(hints.whichConditions,:);
 end
 
-%% Create folders to receive new scene files for each renderer.
-% determine which renderers may be used
-isMatch = strcmp('renderer', varNames);
-if any(isMatch)
-    renderers = varValues{:, find(isMatch, 1, 'first')};
-else
-    renderers = {hints.renderer};
-end
-
-% create a temp folder for each renderer.
-for ii = 1:numel(renderers)
-    renderer = renderers{ii};
-    tempFolder = fullfile(GetOutputPath('tempFolder', hints), renderer);
-    if ~exist(tempFolder, 'dir')
-        mkdir(tempFolder);
-    end
-end
-
 %% Call out the original Collada authoring tool (Blender, etc.)
 %   any remodelling function might have modified the authoring info
 authoringTool = GetColladaAuthorInfo(colladaFile);
@@ -219,7 +201,7 @@ if ~isempty(colladaFile) && ~isempty(hints.remodeler)
         colladaDoc = feval(remodelerFunction, colladaDoc, varargin{:}, hints);
         
         % write modified document to new file
-        tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
+        tempFolder = fullfile(GetWorkingFolder('temp', true, hints));
         colladaCopy = fullfile(tempFolder, [sceneBase '-' functionName sceneExt]);
         WriteSceneDOM(colladaCopy, colladaDoc);
     end
@@ -283,7 +265,7 @@ end
 
 
 %% Copy the collada file and reduce to known characters and elements.
-tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
+tempFolder = GetWorkingFolder('temp', true, hints);
 colladaCopy = fullfile(tempFolder, [sceneBase '-' imageName sceneExt]);
 [isSuccess, result] = copyfile(colladaFile, colladaCopy);
 colladaCopy = WriteASCII7BitOnly(colladaCopy);
@@ -362,9 +344,9 @@ importColladaFunction = ...
 if isempty(importColladaFunction)
     return;
 end
-tempFolder = fullfile(GetOutputPath('tempFolder', hints), hints.renderer);
+scenesFolder = GetWorkingFolder('scenes', true, hints);
 [scene, importRequiredFiles] = feval(importColladaFunction, ...
-    colladaCopy, adjustments, tempFolder, imageName, hints);
+    colladaCopy, adjustments, scenesFolder, imageName, hints);
 [scene.imageName] = deal(imageName);
 
 % store Collada authoring info along with the scene description

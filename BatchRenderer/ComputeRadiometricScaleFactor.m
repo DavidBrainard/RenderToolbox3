@@ -72,7 +72,8 @@ irradiance_PowerPerUnitAreaUnitWl = ...
 radiance_PowerPerAreaSrUnitWl = irradiance_PowerPerUnitAreaUnitWl/(pi);
 
 %% Compute a radiometric unit scale factor the given render.
-dataFolder = fullfile(GetOutputPath('outputDataFolder'), 'MakeRadianceTest');
+hints.recipeName = 'MakeRadianceTest';
+dataFolder = GetWorkingFolder('renderings', true, hints);
 
 % locate RadianceTest "reference" data file
 dataFile = FindFiles(dataFolder, [renderer '.+reference']);

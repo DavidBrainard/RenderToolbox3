@@ -15,9 +15,8 @@ mappingsFile = 'InteriorDragonMappings.txt';
 %% Choose batch renderer options.
 hints.imageHeight = 480;
 hints.imageWidth = 640;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Write some spectra to use.
 load B_cieday

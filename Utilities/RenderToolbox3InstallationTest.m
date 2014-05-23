@@ -134,7 +134,7 @@ end
 
 %% Compare renderings to reference renderings?
 if ~isempty(referenceRoot)
-    localRoot = GetOutputPath('outputDataFolder');
+    localRoot = GetWorkingFolder('renderings');
     fprintf('\nComparing local renderings\n  %s\n', localRoot);
     fprintf('with reference renderings\n  %s\n', referenceRoot);
     fprintf('You should see several more figures.\n\n');

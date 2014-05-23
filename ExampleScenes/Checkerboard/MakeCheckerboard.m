@@ -12,8 +12,8 @@ mappingsFile = 'CheckerboardMappings.txt';
 hints.imageWidth = 640;
 hints.imageHeight = 480;
 hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Write scene parameters to a new conditions file.
 distance = 76.4;

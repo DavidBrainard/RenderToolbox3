@@ -6,9 +6,8 @@
 
 %% Move to temp folder before creating new files.
 hints = GetDefaultHints();
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Choose some illuminants and RGB colors to render
 % yellow daylight

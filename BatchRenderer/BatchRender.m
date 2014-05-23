@@ -80,12 +80,6 @@ else
     hints = GetDefaultHints(hints);
 end
 
-%% Create the output folder for this renderer.
-outPath = fullfile(GetOutputPath('outputDataFolder', hints), hints.renderer);
-if ~exist(outPath, 'dir')
-    mkdir(outPath);
-end
-
 %% Render each scene file.
 % save toolbox version info with renderings
 versionInfo = GetRenderToolbox3VersionInfo();
@@ -172,7 +166,7 @@ end
     feval(dataToRadianceFunction, multispectralImage, scene, hints);
 
 % save a .mat file with multispectral data and metadata
-outPath = fullfile(GetOutputPath('outputDataFolder', hints), hints.renderer);
+outPath = GetWorkingFolder('renderings', true, hints);
 outFile = fullfile(outPath, [scene(1).imageName '.mat']);
 save(outFile, 'multispectralImage', 'S', 'radiometricScaleFactor', ...
     'hints', 'scene', 'versionInfo', 'commandResult');

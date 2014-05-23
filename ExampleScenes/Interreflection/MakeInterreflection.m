@@ -13,9 +13,8 @@ mappingsFile = 'InterreflectionMappings.txt';
 hints.whichConditions = [];
 hints.imageHeight = 100;
 hints.imageWidth = 160;
-hints.outputSubfolder = mfilename();
-hints.workingFolder = GetOutputPath('tempFolder', hints);
-ChangeToFolder(hints.workingFolder);
+hints.recipeName = mfilename();
+ChangeToWorkingFolder(hints);
 
 %% Render with Mitsuba and PBRT.
 % make an sRGB montage with each renderer
