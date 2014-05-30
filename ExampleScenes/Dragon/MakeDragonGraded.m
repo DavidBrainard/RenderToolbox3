@@ -41,7 +41,7 @@ end
 % write a conditions file with image names and spectrum file names.
 varNames = {'imageName', 'dragonColor'};
 varValues = cat(2, imageNames, fileNames);
-WriteConditionsFile( ...
+conditionsFile = WriteConditionsFile( ...
     fullfile(resources, conditionsFile), varNames, varValues);
 
 %% Render with Mitsuba and PBRT.
