@@ -18,13 +18,13 @@
 % @code
 %   % folder paths
 %   pathA = '/foo/bar/';
-%   pathB = '/foo/bar/';
-%   shouldBeTrue = IsFilePathsEqual(pathA, pathB);
+%   pathB = '/foo/bar/baz';
+%   shouldBeTrue = IsPathPrefix(pathA, pathB);
 %
 %   % full file paths
 %   pathA = '/foo/bar/fileA.txt';
-%   pathB = '/foo/bar/fileB.png';
-%   alsoShouldBeTrue = IsFilePathsEqual(pathA, pathB);
+%   pathB = '/foo/bar/baz/fileB.png';
+%   alsoShouldBeTrue = IsPathPrefix(pathA, pathB);
 % @endcode
 %
 % @details
@@ -33,8 +33,8 @@
 % follows @a pathA, if any.  For example,
 % @code
 %   pathA = '/foo/bar/';
-%   pathB = '/foo/bar/baz';
-%   [isPrefix, remainder] = IsFilePathsEqual(pathA, pathB);
+%   pathB = '/foo/bar/baz/thing.txt';
+%   [isPrefix, remainder] = IsPathPrefix(pathA, pathB);
 %   % remainder == 'baz';
 %
 %   % reproduce pathB
@@ -51,60 +51,47 @@ function [isPrefix, remainder] = IsPathPrefix(pathA, pathB)
 isPrefix = false;
 remainder = '';
 
-% strip off any file base names and extensions
-if exist(pathA, 'dir')
-    compareA = pathA;
-elseif exist(pathA, 'file')
-    compareA = fileparts(pathA);
-    if isempty(compareA) && ~exist(fullfile(pwd(), pathA), 'file')
-        % file exists on path, not at pwd()
-        compareA = fileparts(which(pathA));
+[tokensA, baseA, extA] = pathTokens(pathA);
+[tokensB, baseB, extB] = pathTokens(pathB);
+
+nA = numel(tokensA);
+nB = numel(tokensB);
+nCompare = min(nA, nB);
+
+if nA > nB
+    % A cannot be a prefix because it's longer than B
+    return;
+end
+
+for ii = 1:nCompare
+    % A and B disagree about this parent folder
+    if ~strcmp(tokensA{ii}, tokensB{ii})
+        return;
     end
+end
+
+isPrefix = true;
+remainder = fullfile(tokensB{nCompare+1:end}, [baseB, extB]);
+
+%% Break a full path into separate tokens.
+function [tokens, base, ext] = pathTokens(path)
+[folder, base, ext] = fileparts(path);
+
+if isempty(ext)
+    % treat whole thing as a path
+    tokens = folderTokens(fullfile(folder, base));
+    base = '';
 else
-    return;
+    % take off trailing file name
+    tokens = folderTokens(fullfile(folder));
 end
 
-if exist(pathB, 'dir')
-    compareB = pathB;
-    fileB = '';
-elseif exist(pathB, 'file')
-    [compareB, baseB, extB] = fileparts(pathB);
-    if isempty(compareB) && ~exist(fullfile(pwd(), pathB), 'file')
-        % file exists on path, not at pwd()
-        [compareB, baseB, extB] = fileparts(which(pathB));
-    end
-    fileB = [baseB extB];
-else
+
+%% Break a folder path into folder tokens.
+function tokens = folderTokens(path)
+if isempty(path)
+    tokens = {};
     return;
 end
-
-% use pwd() to compare e.g. absolute and relative paths
-startDir = pwd();
-isPrefix = false;
-remainder = '';
-try
-    cd(compareA);
-    realPathA = pwd();
-catch errorData
-    warning(errorData.identifier, errorData.message)
-    cd(startDir);
-    return;
-end
-cd(startDir);
-
-try
-    cd(compareB);
-    realPathB = pwd();
-catch errorData
-    warning(errorData.identifier, errorData.message)
-    cd(startDir);
-    return;
-end
-cd(startDir);
-
-% match should always occur at beginning
-matchIndex = strfind(realPathB, realPathA);
-if 1 == matchIndex
-    isPrefix = true;
-    remainder = fullfile(realPathB(numel(realPathA)+2:end), fileB);
-end
+scanResult = textscan(path, '%s', 'Delimiter', filesep());
+tokens = scanResult{1};
