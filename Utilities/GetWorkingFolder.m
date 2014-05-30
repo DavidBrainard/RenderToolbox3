@@ -33,7 +33,7 @@
 %
 % @details
 % Usage:
-%   path = GetWorkingFolder(folderName, hints)
+%   folder = GetWorkingFolder(folderName, isRendererSpecific, hints)
 %
 % @ingroup Utilities
 function folder = GetWorkingFolder(folderName, isRendererSpecific, hints)

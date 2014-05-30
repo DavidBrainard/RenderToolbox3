@@ -48,8 +48,9 @@ recipe = AppendRecipeLog(recipe, 'Portable recipe for Material Sphere');
 recipe = ExecuteRecipe(recipe, 1);
 
 % pack up the recipe with its pre-generated scene files
+%   don't pack up boring temp files
 archiveName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
-PackUpRecipe(recipe, archiveName);
+PackUpRecipe(recipe, archiveName, {'temp'});
 
 % boldly delete the recipe working folder now that it's packed up
 scenesFolder = GetWorkingFolder('', false, hints);
