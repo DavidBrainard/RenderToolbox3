@@ -55,6 +55,7 @@ PackUpRecipe(recipe, archiveName);
 scenesFolder = GetWorkingFolder('', false, hints);
 rmdir(scenesFolder, 's');
 
+
 %% Un-pack and render in a new location -- could be on another computer.
 % locate the packed-up recipe
 % change this archiveName if you moved to another computer

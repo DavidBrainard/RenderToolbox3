@@ -39,8 +39,7 @@ tempFolder = GetWorkingFolder('', false, hints);
 if exist(tempFolder, 'dir')
     rmdir(tempFolder, 's');
 end
-mkdir(tempFolder);
-
+ChangeToFolder(tempFolder);
 
 %% Unpack the archive to the temporary folder.
 unzip(archiveName, tempFolder);
