@@ -28,18 +28,10 @@ else
     hints = GetDefaultHints(hints);
 end
 
-% try to resolve using real, existing files
-%   which works best for partial file names
-workingFolder = GetWorkingFolder('', false, hints);
-[isPrefix, relativePath] = IsPathPrefix(workingFolder, originalPath);
-if isPrefix
-    return
-end
+relativePath = '';
 
-% fall back on string comparison of paths
-matchIndex = strfind(originalPath, workingFolder);
-if 1 == matchIndex
-    relativePath = originalPath(numel(workingFolder)+2:end);
-else
-    relativePath = '';
+workingFolder = GetWorkingFolder('', false, hints);
+info = ResolveFilePath(originalPath, workingFolder);
+if info.isRootFolderMatch
+    relativePath = info.resolvedPath;
 end

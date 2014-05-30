@@ -34,7 +34,7 @@ hints.recipeName = 'MakeMaterialSpherePortable';
 ChangeToWorkingFolder(hints);
 
 % choose the renderer
-hints.renderer = 'Mitsuba';
+hints.renderer = 'PBRT';
 
 %% Make a new recipe that contains all of the above choices.
 recipe = NewRecipe(configScript, executive, parentSceneFile, ...

@@ -218,7 +218,7 @@ end
 [scenePath, sceneBase, sceneExt] = fileparts(colladaFile);
 if isempty(scenePath) && exist(colladaFile, 'file')
     fileInfo = ResolveFilePath(colladaFile, GetWorkingFolder('', false, hints));
-    colladaFile = fileInfo.resolvedPath;
+    colladaFile = fileInfo.absolutePath;
 end
 
 isMatch = strcmp('mappingsFile', varNames);

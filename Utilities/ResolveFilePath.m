@@ -64,25 +64,64 @@ if nargin < 2 || isempty(rootFolder)
     rootFolder = pwd();
 end
 
+% basic info as given
 fileInfo(1).verbatimName = fileName;
 fileInfo(1).rootFolder = rootFolder;
-fileInfo(1).isRootFolderMatch = false;
-if exist(fileName, 'file')
-    whichFile = which(fileName);
-    if isempty(whichFile)
-        fileInfo(1).resolvedPath = fileName;
-        fileInfo(1).absolutePath = fileName;
-    else
-        fileInfo(1).resolvedPath = whichFile;
-        fileInfo(1).absolutePath = whichFile;
-    end
+
+% given a path relative to workingFolder?
+rootRelative = fullfile(rootFolder, fileName);
+if exist(rootRelative, 'file')
+    fileInfo(1).absolutePath = rootRelative;
+    [fileInfo(1).isRootFolderMatch, fileInfo(1).resolvedPath] = ...
+        checkRootPath(rootRelative, rootFolder);
+    return;
 end
 
+% given a plain file within workingFolder?
 matches = FindFiles(rootFolder, fileName, false, true);
 if ~isempty(matches)
-    firstMatch = matches{1};
-    [isPrefix, relativePath] = IsPathPrefix(rootFolder, firstMatch);
+    fileInfo(1).absolutePath = matches{1};
+    [fileInfo(1).isRootFolderMatch, fileInfo(1).resolvedPath] = ...
+        checkRootPath(matches{1}, rootFolder);
+    return;
+end
+
+% given a path relative to pwd()?
+pwdRelative = fullfile(pwd(), fileName);
+if exist(pwdRelative, 'file')
+    fileInfo(1).absolutePath = pwdRelative;
+    [fileInfo(1).isRootFolderMatch, fileInfo(1).resolvedPath] = ...
+        checkRootPath(pwdRelative, rootFolder);
+    return;
+end
+
+% given an absolute path or a plain file on the Matlab path?
+whichFile = which(fileName);
+if ~isempty(whichFile)
+    fileInfo(1).absolutePath = whichFile;
+    [fileInfo(1).isRootFolderMatch, fileInfo(1).resolvedPath] = ...
+        checkRootPath(whichFile, rootFolder);
+    return;
+end
+
+% file doesn't seem to exist, but try to resolve it based on syntax alone
+[matchesRoot, resolvedPath] = checkRootPath(fileName, rootFolder);
+if matchesRoot
+    fileInfo(1).absolutePath = fullfile(rootFolder, fileName);
     fileInfo(1).isRootFolderMatch = true;
-    fileInfo(1).resolvedPath = relativePath;
-    fileInfo(1).absolutePath = fullfile(rootFolder, relativePath);
+    fileInfo(1).resolvedPath = resolvedPath;
+else
+    fileInfo(1).absolutePath = '';
+    fileInfo(1).isRootFolderMatch = false;
+    fileInfo(1).resolvedPath = '';
+end
+
+
+%% Get relative path from rootFolder, if any.
+function [isPrefix, resolvedPath] = checkRootPath(path, rootFolder)
+[isPrefix, relativePath] = IsPathPrefix(rootFolder, path);
+if isPrefix
+    resolvedPath = relativePath;
+else
+    resolvedPath = path;
 end
