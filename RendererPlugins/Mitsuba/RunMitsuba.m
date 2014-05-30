@@ -33,7 +33,8 @@ InitializeRenderToolbox();
 
 %% Where to get/put the input/output
 [scenePath, sceneBase] = fileparts(sceneFile);
-output = fullfile(scenePath, [sceneBase '.exr']);
+renderings = GetWorkingFolder('renderings', true, hints);
+output = fullfile(renderings, [sceneBase '.exr']);
 
 %% Invoke Mitsuba.
 % set the dynamic library search path
