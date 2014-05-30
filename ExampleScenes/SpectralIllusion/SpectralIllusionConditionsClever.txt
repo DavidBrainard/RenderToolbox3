@@ -1,2 +1,2 @@
-imageName	targetColor			destinationColor
-clever		SpectralIllusionTarget.spd	SpectralIllusionDestination.spd
+imageName	targetColor				destinationColor
+clever		resources/SpectralIllusionTarget.spd	resources/SpectralIllusionDestination.spd

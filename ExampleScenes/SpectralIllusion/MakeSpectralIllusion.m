@@ -48,8 +48,8 @@ originalSpectrum = 'mccBabel-11.spd';
 [wls, originalReflect] = ReadSpectrum(originalSpectrum);
 scale = 1;
 srf = scale * originalReflect;
-WriteSpectrumFile(wls, srf, ...
-    fullfile(resources, 'SpectralIllusionTarget.spd'));
+targetSpectrumFile = fullfile(resources, 'SpectralIllusionTarget.spd');
+WriteSpectrumFile(wls, srf, targetSpectrumFile);
 
 %% Plot the initial target and destination reflectances.
 % read target and destination reflectances from conditions file
@@ -152,8 +152,8 @@ end
 %% Compute a clever new destination spectrum and write it to file.
 destIllumNonzero = max(destIllum, 0.001);
 cleverReflect = targPixelResampled ./ destIllumNonzero;
-WriteSpectrumFile(destWls, cleverReflect, ...
-    fullfile(resources, 'SpectralIllusionDestination.spd'));
+destinationSpectrumFile = fullfile(resources, 'SpectralIllusionDestination.spd');
+WriteSpectrumFile(destWls, cleverReflect, destinationSpectrumFile);
 
 %% Plot the clever new reflectance
 if hints.isPlot
