@@ -24,7 +24,7 @@ function scene = RTB_ImportCollada_PBRT(colladaFile, adjustments, imageName, hin
 scenesFolder = GetWorkingFolder('scenes', true, hints);
 tempFolder = GetWorkingFolder('temp', true, hints);
 pbrtFile = fullfile(scenesFolder, [imageName '.pbrt']);
-pbrtXMLFile = fullfile(tempFolder, [imageName 'pbrt.xml']);
+pbrtXMLFile = fullfile(scenesFolder, [imageName 'pbrt.xml']);
 adjustmentsFile = fullfile(tempFolder, [imageName 'Adjustments.xml']);
 
 % report new files as relative paths

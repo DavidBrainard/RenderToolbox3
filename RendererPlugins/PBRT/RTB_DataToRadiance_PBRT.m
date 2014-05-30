@@ -29,7 +29,8 @@ end
 %% Compare pixel reconstruction filter to default.
 defaultAdjustments = 'PBRTDefaultAdjustments.xml';
 [defaultDoc, defaultIdMap] = ReadSceneDOM(defaultAdjustments);
-[pbrtDoc, pbrtIdMap] = ReadSceneDOM(scene.pbrtXMLFile);
+pbrtXMLFile = GetWorkingAbsolutePath(scene.pbrtXMLFile, hints);
+[pbrtDoc, pbrtIdMap] = ReadSceneDOM(pbrtXMLFile);
 
 nodePath = 'filter.type';
 sceneFilterType = GetSceneValue(pbrtIdMap, nodePath);
