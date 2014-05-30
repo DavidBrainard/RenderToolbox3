@@ -3,7 +3,8 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 %% Render MaterialSphere in a portable fashion using the Recipe API
-clear
+
+%% Top Half.
 
 %% Choose inputs for a new recipe.
 % replace this config script with your own config script
@@ -56,6 +57,7 @@ PackUpRecipe(recipe, archiveName, {'temp'});
 scenesFolder = GetWorkingFolder('', false, hints);
 rmdir(scenesFolder, 's');
 
+%% Bottom Half.
 
 %% Un-pack and render in a new location -- could be on another computer.
 % locate the packed-up recipe
