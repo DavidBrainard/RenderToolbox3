@@ -25,11 +25,8 @@ pbrt = struct( ...
     'S', []);
 mitsuba = pbrt;
 
-% choose where to look for renderings
-hints.recipeName = 'MakeInterreflection';
-dataFolder = GetWorkingFolder('renderings', false, hints);
-
 % fill in multi-spectral data for each condition
+hints.recipeName = 'MakeInterreflection';
 for ii = 1:nImages
     % read PBRT data for this condition
     hints.renderer = 'PBRT';
