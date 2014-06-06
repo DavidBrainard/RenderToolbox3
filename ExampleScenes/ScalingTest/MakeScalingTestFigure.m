@@ -25,21 +25,22 @@ pbrt = struct( ...
     'S', []);
 mitsuba = pbrt;
 
-% choose where to look for renderings
-hints.recipeName = 'MakeScalingTest';
-dataFolder = GetWorkingFolder('renderings', false, hints);
-
 % fill in multi-spectral data for each condition
+hints.recipeName = 'MakeScalingTest';
 for ii = 1:nImages
     % read PBRT data for this condition
-    file = FindFiles(dataFolder, ['PBRT.+' imageNames{ii}]);
+    hints.renderer = 'PBRT';
+    dataFolder = GetWorkingFolder('renderings', true, hints);
+    file = FindFiles(dataFolder, [imageNames{ii} '.mat']);
     data = load(file{1});
     pbrt(ii).imageSpectral = data.multispectralImage;
     pbrt(ii).maxSpectral = max(data.multispectralImage(:));
     pbrt(ii).S = data.S;
     
-    % read PBRT data for this condition
-    file = FindFiles(dataFolder, ['Mitsuba.+' imageNames{ii}]);
+    % read Mitsuba data for this condition
+    hints.renderer = 'Mitsuba';
+    dataFolder = GetWorkingFolder('renderings', true, hints);
+    file = FindFiles(dataFolder, [imageNames{ii} '.mat']);
     data = load(file{1});
     mitsuba(ii).imageSpectral = data.multispectralImage;
     mitsuba(ii).maxSpectral = max(data.multispectralImage(:));
