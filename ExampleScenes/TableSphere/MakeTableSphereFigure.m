@@ -38,21 +38,23 @@ lightSpectrums = values(:, strcmp('lightColor', names));
 imageNames = values(:, strcmp('imageName', names));
 nImages = numel(imageNames);
 
-% choose where to look for renderings
 hints.recipeName = 'MakeTableSphere';
-dataFolder = GetWorkingFolder('renderings', false, hints);
 for ii = 1:nImages
     % make a PBRT sRGB image and read the pixel of interest
-    PBRTImage = FindFiles(dataFolder, ['PBRT.+' imageNames{ii}]);
-    PBRTData = load(PBRTImage{1});
+    hints.renderer = 'PBRT';
+    dataFolder = GetWorkingFolder('renderings', true, hints);
+    file = FindFiles(dataFolder, [imageNames{ii} '.mat']);
+    PBRTData = load(file{1});
     PBRTSRGB = MultispectralToSRGB(PBRTData.multispectralImage, ...
         PBRTData.S, toneMapFactor, isScale);
     [PBRTPixWls, PBRTPixMags] = GetPixelSpectrum( ...
         PBRTData.multispectralImage, PBRTData.S, pixX, pixY);
     
     % make a Mitsuba sRGB image and read the pixel of interest
-    mitsubaImage = FindFiles(dataFolder, ['Mitsuba.+' imageNames{ii}]);
-    mitsubaData = load(mitsubaImage{1});
+    hints.renderer = 'Mitsuba';
+    dataFolder = GetWorkingFolder('renderings', true, hints);
+    file = FindFiles(dataFolder, [imageNames{ii} '.mat']);
+    mitsubaData = load(file{1});
     mitsubaSRGB = MultispectralToSRGB(mitsubaData.multispectralImage, ...
         mitsubaData.S, toneMapFactor, isScale);
     [mitsubaPixWls, mitsubaPixMags] = GetPixelSpectrum( ...
