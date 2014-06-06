@@ -30,8 +30,8 @@ end
 %% Create new files in a subfolder next to renderer outputs.
 hints.recipeName = 'MakeSimpleSphere';
 hints.renderer = 'SphereRenderer';
-working = GetWorkingFolder('renderings', true, hints);
-ChangeToWorkingFolder(hints);
+renderings = GetWorkingFolder('renderings', true, hints);
+ChangeToFolder(renderings);
 
 %% Choose rendering and scene parameters.
 
@@ -77,5 +77,3 @@ dataFile = 'SimpleSphere.mat';
 sphereData = load('sphereRenderer_imageData.mat');
 multispectralImage = sphereData.imageData;
 save(dataFile, 'multispectralImage', 'S');
-
-cd(originalPath);
