@@ -2,6 +2,13 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
+% @defgroup RecipeAPI Recipe API
+% Utilities for workign with recipes.
+% @details
+% These utilities facilitate working with recipes, including making new
+% recipes, executing them, packing up recipe archives and unpacking them,
+% and logging progress and errors.
+%
 % @defgroup BatchRenderer Batch Renderer
 % Render a family of related scenes based on a Collada parent scene.
 % @details
@@ -9,13 +16,6 @@
 % Collada parent scene file, applies manipulations specified in a
 % conditions file and a mappings file, and produces a family of
 % renderer-native scene files and renderings.
-%
-% @defgroup RecipeAPI Recipe API
-% Utilities for workign with recipes.
-% @details
-% These utilities facilitate working with recipes, including making new
-% recipes, executing them, packing up recipe archives and unpacking them,
-% and logging progress and errors.
 %
 % @defgroup RendererPlugins Renderer Plugin API
 % Plugins to work with various renderers.
