@@ -10,6 +10,13 @@
 % conditions file and a mappings file, and produces a family of
 % renderer-native scene files and renderings.
 %
+% @defgroup RecipeAPI Recipe API
+% Utilities for workign with recipes.
+% @details
+% These utilities facilitate working with recipes, including making new
+% recipes, executing them, packing up recipe archives and unpacking them,
+% and logging progress and errors.
+%
 % @defgroup RendererPlugins Renderer Plugin API
 % Plugins to work with various renderers.
 % @details
