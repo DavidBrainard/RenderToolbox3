@@ -35,47 +35,36 @@ end
 renderResults = [];
 comparison = [];
 
-%% Check output folders for write permission.
-% locate and test 3 different folders
-outPrefs(1).prefGroup = 'RenderToolbox3';
-outPrefs(1).prefName = 'tempFolder';
-outPrefs(2).prefGroup = 'RenderToolbox3';
-outPrefs(2).prefName = 'outputDataFolder';
-outPrefs(3).prefGroup = 'RenderToolbox3';
-outPrefs(3).prefName = 'outputImageFolder';
+%% Check working folder for write permission.
+workingFolder = GetWorkingFolder();
+fprintf('\nChecking working folder:\n');
 
-% try to write into each folder
-for ii = 1:numel(outPrefs)
-    outPath = getpref(outPrefs(ii).prefGroup, outPrefs(ii).prefName);
-    
-    fprintf('\nChecking %s:\n', outPrefs(ii).prefName);
-    
-    % make sure the folder exists
-    if exist(outPath, 'dir')
-        fprintf(' folder exists: %s\n', outPath);
-    else
-        fprintf('  creating folder: %s\n', outPath);
-        [status, message] = mkdir(outPath);
-        if 1 == status
-            fprintf('  OK.\n');
-        else
-            error('Could not create folder %s:\n  %s\n', ...
-                outPath, message);
-        end
-    end
-    
-    % make sure Matlab can write to the folder
-    fprintf('Trying to write to %s:\n', outPrefs(ii).prefName);
-    testFile = fullfile(outPath, 'test.txt');
-    [fid, message] = fopen(testFile, 'w');
-    if fid < 0
-        error('Could not write to folder %s:\n  %s\n', ...
-            outPath, message);
-    end
-    fclose(fid);
-    delete(testFile);
+% make sure the folder exists
+if exist(workingFolder, 'dir')
+    fprintf('  folder exists: %s\n', workingFolder);
     fprintf('  OK.\n');
+else
+    fprintf('  creating folder: %s\n', workingFolder);
+    [status, message] = mkdir(workingFolder);
+    if 1 == status
+        fprintf('  OK.\n');
+    else
+        error('Could not create folder %s:\n  %s\n', ...
+            workingFolder, message);
+    end
 end
+
+% make sure Matlab can write to the folder
+testFile = fullfile(workingFolder, 'test.txt');
+fprintf('Trying to write: %s\n', testFile);
+[fid, message] = fopen(testFile, 'w');
+if fid < 0
+    error('Could not write to folder %s:\n  %s\n', ...
+        workingFolder, message);
+end
+fclose(fid);
+delete(testFile);
+fprintf('  OK.\n');
 
 %% Locate Mitsuba and pbrt executables.
 if ismac()
@@ -111,7 +100,8 @@ for ii = 1:numel(execPrefs)
     
     % make sure the executable exists
     if exist(execFile, 'file')
-        fprintf(' %s exists: %s\n', execPrefs(ii).prefName, execFile);
+        fprintf('  %s exists: %s\n', execPrefs(ii).prefName, execFile);
+        fprintf('  OK.\n');
     else
         error('Could not find %s %s:\n  %s\n', ...
             execPrefs(ii).prefGroup, execPrefs(ii).prefName, execFile);

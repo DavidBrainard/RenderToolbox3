@@ -14,8 +14,8 @@
 %
 % @details
 % @a outputRoot is the base path under which all output data should be
-% saved.  If outputRoot is missing or empty, uses default folders from
-% getpref('RenderToolbox3').
+% saved.  If outputRoot is missing or empty, uses the default from
+% getpref('RenderToolbox3', 'workingFolder').
 %
 % @details
 % Returns a struct with information about each executive script, such as
@@ -25,16 +25,15 @@
 % @details
 % Saves a mat-file with several variables about test parameters and
 % results:
-%   - outputRoot, the given @a outputRoot
+%   - outputRoot, the given @a outputRoot or default workingFolder
 %   - makeFunctions, the given @a makeFunctions
 %   - hints, RenderToolbox3 options, as returned from GetDefaultHints()
 %   - results, the returned struct of results about rendering scripts
 % .
 % @details
-% The mat-file will be saved in the given @a outputRoot folder.  It will
-% have a name that that includes the name of this m-file, plus the date and
-% time.  If @a outputRoot is omited, uses getpref('RenderToolbox3',
-% 'outputDataFolder').
+% The mat-file will be saved in the given @a outputRoot folder or
+% default workingFolder.  It will have a name that that includes the name
+% of this m-file, plus the date and time.
 %
 % @details
 % Usage:
@@ -44,7 +43,9 @@
 function results = TestAllExampleScenes(outputRoot, makeFunctions)
 
 if nargin < 1  || isempty(outputRoot)
-    outputRoot = '';
+    outputRoot = GetWorkingFolder();
+else
+    setpref('RenderToolbox3', 'workingFolder', outputRoot);
 end
 
 if nargin < 2 || isempty(makeFunctions)
@@ -61,27 +62,12 @@ end
 
 testTic = tic();
 
-% allocate a struct for test results
+% declare a struct for test results
 results = struct( ...
     'makeFile', makeFunctions, ...
     'isSuccess', false, ...
     'error', [], ...
     'elapsed', []);
-
-% remember original folder and preferences
-%   since they change during testing
-originalFolder = pwd();
-originalPrefs = getpref('RenderToolbox3');
-
-% choose where to write all outputs
-if ~isempty(outputRoot)
-    setpref('RenderToolbox3', ...
-        'tempFolder', fullfile(outputRoot, 'temp'));
-    setpref('RenderToolbox3', ...
-        'outputDataFolder', fullfile(outputRoot, 'data'));
-    setpref('RenderToolbox3', ...
-        'outputImageFolder', fullfile(outputRoot, 'images'));
-end
 
 % turn of warnings about scaling for this run, so as not
 % to alarm the user of the test program.
@@ -144,24 +130,14 @@ end
 
 toc(testTic)
 
-% restore original folder and preferences
-cd(originalFolder)
-setpref('RenderToolbox3', ...
-    fieldnames(originalPrefs), struct2cell(originalPrefs));
 
 %% Save lots of results to a .mat file.
-hints = GetDefaultHints();
-if isempty(outputRoot)
-    resultsPath = getpref('RenderToolbox3', 'outputDataFolder');
-else
-    resultsPath = outputRoot;
-end
-
-if ~isempty(resultsPath) && ~exist(resultsPath, 'dir')
-    mkdir(resultsPath);
+if ~isempty(outputRoot) && ~exist(outputRoot, 'dir')
+    mkdir(outputRoot);
 end
 baseName = mfilename();
 dateTime = datestr(now(), 30);
 resultsBase = sprintf('%s-%s', baseName, dateTime);
-resultsFile = fullfile(resultsPath, resultsBase);
+resultsFile = fullfile(outputRoot, resultsBase);
+hints = GetDefaultHints();
 save(resultsFile, 'outputRoot', 'makeFunctions', 'results', 'hints');
