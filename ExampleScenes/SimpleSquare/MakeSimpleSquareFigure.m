@@ -44,17 +44,16 @@ pbrt = struct( ...
 mitsuba = pbrt;
 predicted = pbrt;
 
-% choose where to look for renderings
-hints.recipeName = 'MakeSimpleSquare';
-dataFolder = GetWorkingFolder('renderings', false, hints);
-
 % fill in multi-spectral data for each Color Checker condition.
+hints.recipeName = 'MakeSimpleSquare';
 for ii = 1:nImages
     % seatch for data files by condition number
     imageNum = sprintf('SimpleSquare.+%03d', ii);
     
     % read PBRT square data from file
-    file = FindFiles(dataFolder, ['PBRT.+' imageNum]);
+    hints.renderer = 'PBRT';
+    dataFolder = GetWorkingFolder('renderings', true, hints);
+    file = FindFiles(dataFolder, [imageNum '.mat']);
     data = load(file{1});
     pbrt(ii).imageSpectral = data.multispectralImage;
     pbrt(ii).S = data.S;
@@ -62,7 +61,9 @@ for ii = 1:nImages
         data.multispectralImage, data.S, poiInset, poiInset);
     
     % read Mitsuba square data from file
-    file = FindFiles(dataFolder, ['Mitsuba.+' imageNum]);
+    hints.renderer = 'Mitsuba';
+    dataFolder = GetWorkingFolder('renderings', true, hints);
+    file = FindFiles(dataFolder, [imageNum '.mat']);
     data = load(file{1});
     mitsuba(ii).imageSpectral = data.multispectralImage;
     mitsuba(ii).S = data.S;
