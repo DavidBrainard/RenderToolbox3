@@ -56,56 +56,58 @@ if nargin < 1
     isForce = false;
 end
 
-if isForce
-    % remove stale config
-    if ispref('RenderToolbox3')
-        rmpref('RenderToolbox3');
-    end
+%% Choose "out of the box" configuration.
+
+% default input and output location
+defaultConfig.workingFolder = fullfile(GetUserFolder(), 'render-toolbox');
+defaultConfig.recipeName = '';
+
+% default scene file and rendering options
+defaultConfig.renderer = 'SampleRenderer';
+defaultConfig.remodeler = '';
+defaultConfig.filmType = '';
+defaultConfig.imageHeight = 240;
+defaultConfig.imageWidth = 320;
+defaultConfig.whichConditions = [];
+defaultConfig.isDryRun = false;
+defaultConfig.isReuseSceneFiles = false;
+defaultConfig.isParallel = false;
+defaultConfig.isPlot = true;
+defaultConfig.isCaptureCommandResults = true;
+
+% default dynamic library path names and default values
+%   these are applied automatically, via SetRenderToolboxLibraryPath()
+if ispc()
+    % use windows PATH as-is (TODO: is this correct?)
+    defaultConfig.libPathName = 'PATH';
+    defaultConfig.libPath = [];
+    defaultConfig.libPathLast = 'matlab|MATLAB';
     
-    % default input and output location
-    userFolder = fullfile(GetUserFolder(), 'render-toolbox');
-    RenderToolbox3.workingFolder = userFolder;
-    RenderToolbox3.recipeName = '';
-    
-    % default hints
-    RenderToolbox3.renderer = 'SampleRenderer';
-    RenderToolbox3.remodeler = '';
-    RenderToolbox3.filmType = '';
-    RenderToolbox3.imageHeight = 240;
-    RenderToolbox3.imageWidth = 320;
-    RenderToolbox3.whichConditions = [];
-    RenderToolbox3.isDryRun = false;
-    RenderToolbox3.isReuseSceneFiles = false;
-    RenderToolbox3.isParallel = false;
-    RenderToolbox3.isPlot = true;
-    RenderToolbox3.isCaptureCommandResults = true;
-    
-    % choose dynamic library path names and default values
-    %   these are applied automatically, via SetRenderToolboxLibraryPath()
-    if ispc()
-        % use windows PATH as-is (TODO: is this correct?)
-        RenderToolbox3.libPathName = 'PATH';
-        RenderToolbox3.libPath = [];
-        RenderToolbox3.libPathLast = 'matlab|MATLAB';
-        
-    elseif ismac()
-        % don't use OS X DYLD_LIBRARY_PATH at all
-        RenderToolbox3.libPathName = 'DYLD_LIBRARY_PATH';
-        RenderToolbox3.libPath = '';
-        RenderToolbox3.libPathLast = '';
-        
-    else
-        % sort Linux LD_LIBRARY_PATH with "matlab" entries last
-        RenderToolbox3.libPathName = 'LD_LIBRARY_PATH';
-        RenderToolbox3.libPath = [];
-        RenderToolbox3.libPathLast = 'matlab|MATLAB';
-    end
-    
-    % create or overwrite existing values
-    setpref('RenderToolbox3', ...
-        fieldnames(RenderToolbox3), struct2cell(RenderToolbox3));
+elseif ismac()
+    % don't use OS X DYLD_LIBRARY_PATH at all
+    defaultConfig.libPathName = 'DYLD_LIBRARY_PATH';
+    defaultConfig.libPath = '';
+    defaultConfig.libPathLast = '';
     
 else
-    % use preexisting values
-    RenderToolbox3 = getpref('RenderToolbox3');
+    % sort Linux LD_LIBRARY_PATH with "matlab" entries last
+    defaultConfig.libPathName = 'LD_LIBRARY_PATH';
+    defaultConfig.libPath = [];
+    defaultConfig.libPathLast = 'matlab|MATLAB';
+end
+
+
+%% Replace or update current preferences.
+RENDER_TOOLBOX_3 = 'RenderToolbox3';
+if isForce && ispref(RENDER_TOOLBOX_3)
+    % start config from scratch
+    rmpref(RENDER_TOOLBOX_3);
+end
+
+configFields = fieldnames(defaultConfig);
+for ii = 1:numel(configFields)
+    field = configFields{ii};
+    if ~ispref(RENDER_TOOLBOX_3, field)
+        setpref(RENDER_TOOLBOX_3, field, defaultConfig.(field));
+    end
 end
