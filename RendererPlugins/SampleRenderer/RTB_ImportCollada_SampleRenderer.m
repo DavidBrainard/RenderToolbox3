@@ -74,8 +74,6 @@ disp('colladaFile is:');
 disp(colladaFile);
 disp('adjustments is:');
 disp(adjustments);
-disp('outputFolder is:');
-disp(outputFolder);
 disp('imageName is:')
 disp(imageName);
 disp('hints is:');
