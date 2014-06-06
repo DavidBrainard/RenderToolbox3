@@ -96,9 +96,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gaab50f49377da2cd26aae23a6f473b7b6"><td class="memItemLeft" align="right" valign="top">SRGBMontage XYZMontage&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___batch_renderer.html#gaab50f49377da2cd26aae23a6f473b7b6">MakeMontage</a> (inFiles, outFile, toneMapFactor, isScale, hints)</td></tr>
 <tr class="memdesc:gaab50f49377da2cd26aae23a6f473b7b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condense several multi-spectral renderings into one sRGB montage.  <a href="#gaab50f49377da2cd26aae23a6f473b7b6"></a><br/></td></tr>
 <tr class="separator:gaab50f49377da2cd26aae23a6f473b7b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gacda5651f55ae7f142fca4df5413fcdeb"><td class="memItemLeft" align="right" valign="top">scenes requiredFiles&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___batch_renderer.html#gacda5651f55ae7f142fca4df5413fcdeb">MakeSceneFiles</a> (colladaFile, conditionsFile, mappingsFile, hints)</td></tr>
-<tr class="memdesc:gacda5651f55ae7f142fca4df5413fcdeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a family of renderer-native scenes based on a Collada parent scene.  <a href="#gacda5651f55ae7f142fca4df5413fcdeb"></a><br/></td></tr>
-<tr class="separator:gacda5651f55ae7f142fca4df5413fcdeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga37e7d1017e039a55fbd98cdd656137e8"><td class="memItemLeft" align="right" valign="top">scenes&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___batch_renderer.html#ga37e7d1017e039a55fbd98cdd656137e8">MakeSceneFiles</a> (colladaFile, conditionsFile, mappingsFile, hints)</td></tr>
+<tr class="memdesc:ga37e7d1017e039a55fbd98cdd656137e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a family of renderer-native scenes based on a Collada parent scene.  <a href="#ga37e7d1017e039a55fbd98cdd656137e8"></a><br/></td></tr>
+<tr class="separator:ga37e7d1017e039a55fbd98cdd656137e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6fd2d45acff1c8042483a4dca9902019"><td class="memItemLeft" align="right" valign="top">conditionsFile&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___batch_renderer.html#ga6fd2d45acff1c8042483a4dca9902019">WriteConditionsFile</a> (conditionsFile, names, values)</td></tr>
 <tr class="memdesc:ga6fd2d45acff1c8042483a4dca9902019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write conditions data to a text file.  <a href="#ga6fd2d45acff1c8042483a4dca9902019"></a><br/></td></tr>
 <tr class="separator:ga6fd2d45acff1c8042483a4dca9902019"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,7 +142,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Renders multiple renderer-native scene files in one batch. <em>scenes</em> should be a cell array of renderer-native scene descriptions or scene files, such as those produced by <a class="el" href="group___batch_renderer.html#gacda5651f55ae7f142fca4df5413fcdeb" title="Make a family of renderer-native scenes based on a Collada parent scene.">MakeSceneFiles()</a>. All renderer-native files should be intended for the same renderer, which should be specified in <em>hints.renderer</em>.</p>
+<p>Renders multiple renderer-native scene files in one batch. <em>scenes</em> should be a cell array of renderer-native scene descriptions or scene files, such as those produced by <a class="el" href="group___batch_renderer.html#ga37e7d1017e039a55fbd98cdd656137e8" title="Make a family of renderer-native scenes based on a Collada parent scene.">MakeSceneFiles()</a>. All renderer-native files should be intended for the same renderer, which should be specified in <em>hints.renderer</em>.</p>
 <p><em>hints</em> may be a struct with options that affect the rendering process, as returned from <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a>. If <em>hints</em> is omitted, default options are used. For example:</p>
 <ul>
 <li><em>hints.renderer</em> specifies which renderer to use</li>
@@ -306,7 +306,6 @@ Functions</h2></td></tr>
 <li>If the extension is '.mat', the montage XYZ and sRGB matrices will be saved to a .mat data file.</li>
 <li>If the extension matches a standard image format, like '.tiff' or '.png' (default), the sRGB image will be saved in that format, using Matlab's built-in imwrite().</li>
 </ul>
-<p><em>outFile</em> does not determine where the montage will be saved. The montage will be saved in the folder given by GetOutputPath('outputImageFolder', <em>hints</em>), or if <em>hints</em> is not provided, GetOutputPath('outputImageFolder', <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a>).</p>
 <p>If <em>toneMapFactor</em> is provided and greater than 0, montage luminances will be truncated above this factor times the mean luminance of the entire montage.</p>
 <p>If isScale is provided and true, montage luminances will be scaled so that the maximum input luminance of the entire montage matches the maximum possible RGB output luminance.</p>
 <p><em>hints</em> may be a struct with options that affect the montage, such as the output folder, as returned from <a class="el" href="group___batch_renderer.html#ga190c6aa944cd93e93e37b30295c68ac2" title="Get default hints that affect the RenderToolbox3 utilities.">GetDefaultHints()</a>. If <em>hints</em> is omitted, default options are used.</p>
@@ -315,12 +314,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="gacda5651f55ae7f142fca4df5413fcdeb"></a>
+<a class="anchor" id="ga37e7d1017e039a55fbd98cdd656137e8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">scenes requiredFiles MakeSceneFiles </td>
+          <td class="memname">scenes MakeSceneFiles </td>
           <td>(</td>
           <td class="paramtype">colladaFile&#160;</td>
           <td class="paramname">, </td>
@@ -376,8 +375,7 @@ Functions</h2></td></tr>
 </ul>
 <p>This function uses RenderToolbox3 renderer API functions "ApplyMappings" and "ImportCollada". These functions, for the renderer specified in <em>hints.renderer</em>, must be on the Matlab path.</p>
 <p>Returns a cell array of new renderer-native scene descriptions. Each scene description. By default, each scene file will have the same base name as the given <em>colladaFile</em>, plus a numeric suffix. If <em>conditionsFile</em> contains an 'imageName' variable, each scene file be named with the value of 'imageName'.</p>
-<p>Also retrurns a cell array of file names for required files on which the scene description depends, such as text scene files, and adjustments files, geometry files, image files, spectrum data files, etc.</p>
-<p>Usage: [scenes, requiredFiles] = <a class="el" href="group___batch_renderer.html#gacda5651f55ae7f142fca4df5413fcdeb" title="Make a family of renderer-native scenes based on a Collada parent scene.">MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)</a> </p>
+<p>Usage: scenes = <a class="el" href="group___batch_renderer.html#ga37e7d1017e039a55fbd98cdd656137e8" title="Make a family of renderer-native scenes based on a Collada parent scene.">MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)</a> </p>
 
 </div>
 </div>
@@ -506,7 +504,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jun 6 2014 17:23:38 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 6 2014 17:25:43 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>
