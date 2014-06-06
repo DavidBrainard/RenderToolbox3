@@ -44,11 +44,24 @@ recipe = NewRecipe(configScript, executive, parentSceneFile, ...
 % add a log message about creating this new recipe
 recipe = AppendRecipeLog(recipe, 'Portable recipe for Material Sphere');
 
+%% Move resource files inside the workingFolder, so they can be detected.
+resourceFiles = { ...
+    fullfile(RenderToolboxRoot(), 'RenderData/Macbeth-ColorChecker/mccBabel-11.spd'), ...
+    fullfile(RenderToolboxRoot(), 'RenderData/Macbeth-ColorChecker/mccBabel-7.spd'), ...
+    fullfile(RenderToolboxRoot(), 'RenderData/PBRTMetals/Au.eta.spd'), ...
+    fullfile(RenderToolboxRoot(), 'RenderData/PBRTMetals/Au.k.spd'), ...
+    fullfile(RenderToolboxRoot(), 'ExampleScenes/CubanSphere/earthbump1k-stretch-rgb.exr')};
+
+resources = GetWorkingFolder('resources', false, hints);
+for ii = 1:numel(resourceFiles)
+    copyfile(resourceFiles{ii}, resources);
+end
+
 %% Generate scene files and pack up the recipe.
 % generate all the scene files for the recipe
 recipe = ExecuteRecipe(recipe, 1);
 
-% pack up the recipe with its pre-generated scene files
+% pack up the recipe with resources and pre-generated scene files
 %   don't pack up boring temp files
 archiveName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
 PackUpRecipe(recipe, archiveName, {'temp'});
