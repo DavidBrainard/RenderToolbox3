@@ -3,14 +3,14 @@
 # It will only work if you have permission to push to the RenderToolbox3 repositories.
 #
 # If you are making a RenderToolbox3 release, you should copy this script and edit it
-# with values like your local  doxygen path, and the version RenderToolbox3 that you
+# with values like your local doxygen path, and the version RenderToolbox3 that you
 # are releasing.
 #
 # If nothing else, this script should document how to do a RenderToolbox3 release.
 #
 
 # edit these to match your local system
-RTB_VERSION="v1.0"
+RTB_VERSION="v1.2"
 RTB_REPO="git@github.com:DavidBrainard/RenderToolbox3.git"
 RTB_WIKI="git@github.com:DavidBrainard/RenderToolbox3.wiki.git"
 DOXYGEN="/Applications/Doxygen.app/Contents/Resources/doxygen" 
