@@ -187,6 +187,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                 
                 break;
             }
+            
+            default:{
+                typeName = mxCreateString("UNKNOWN");
+                break;
+            }
         }
         mxSetField(plhs[0], channelIndex, "pixelType",  typeName);
         
