@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Render Toolbox 3
-   &#160;<span id="projectnumber">v1.2</span>
+   &#160;<span id="projectnumber">v2.0</span>
    </div>
   </td>
  </tr>
@@ -84,6 +84,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gab2d31ab25e845f303659852577e7583c"><td class="memItemLeft" align="right" valign="top">sortedPath originalPath&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gab2d31ab25e845f303659852577e7583c">DemoteEnvPathEntries</a> (variable, matching)</td></tr>
+<tr class="memdesc:gab2d31ab25e845f303659852577e7583c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move some environment path entries to the end of the path.  <a href="#gab2d31ab25e845f303659852577e7583c"></a><br/></td></tr>
+<tr class="separator:gab2d31ab25e845f303659852577e7583c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7c690636200c42924811e98769751ea4"><td class="memItemLeft" align="right" valign="top">status result output&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga7c690636200c42924811e98769751ea4">RunMitsuba</a> (sceneFile, hints)</td></tr>
 <tr class="memdesc:ga7c690636200c42924811e98769751ea4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invoke the Mitsuba renderer.  <a href="#ga7c690636200c42924811e98769751ea4"></a><br/></td></tr>
 <tr class="separator:ga7c690636200c42924811e98769751ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -99,9 +102,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ga4ce5a5214a8d4dd1fd319f6fd9221c3f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga4ce5a5214a8d4dd1fd319f6fd9221c3f">CleanMatlabPath</a> ()</td></tr>
 <tr class="memdesc:ga4ce5a5214a8d4dd1fd319f6fd9221c3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove '.svn' and '.git' folders from the Matlab path.  <a href="#ga4ce5a5214a8d4dd1fd319f6fd9221c3f"></a><br/></td></tr>
 <tr class="separator:ga4ce5a5214a8d4dd1fd319f6fd9221c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab2d31ab25e845f303659852577e7583c"><td class="memItemLeft" align="right" valign="top">sortedPath originalPath&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gab2d31ab25e845f303659852577e7583c">DemoteEnvPathEntries</a> (variable, matching)</td></tr>
-<tr class="memdesc:gab2d31ab25e845f303659852577e7583c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move some environment path entries to the end of the path.  <a href="#gab2d31ab25e845f303659852577e7583c"></a><br/></td></tr>
-<tr class="separator:gab2d31ab25e845f303659852577e7583c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9e76fcab884299640e5e58c6ef575b90"><td class="memItemLeft" align="right" valign="top">fileList&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga9e76fcab884299640e5e58c6ef575b90">FindFiles</a> (folder, filter, isFolders, isExact)</td></tr>
 <tr class="memdesc:ga9e76fcab884299640e5e58c6ef575b90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locate files at or below the given folder.  <a href="#ga9e76fcab884299640e5e58c6ef575b90"></a><br/></td></tr>
 <tr class="separator:ga9e76fcab884299640e5e58c6ef575b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -197,6 +197,52 @@ libPathName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Miscellaneous utilities. </p>
 <h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="gab2d31ab25e845f303659852577e7583c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">sortedPath originalPath DemoteEnvPathEntries </td>
+          <td>(</td>
+          <td class="paramtype">variable&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">matching&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Move some environment path entries to the end of the path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">variable</td><td>name of an environment variable that contains a path </td></tr>
+    <tr><td class="paramname">matching</td><td>regular expression to match path entries</td></tr>
+  </table>
+  </dd>
+</dl>
+<p><em>variable</em> should be the name of an environment variable that contains a path, such as "PATH" or "LD_LIBRARY_PATH". Modifies the value of the named <em>variable</em> so that path entries matching the given <em>matching</em> regular expression appear last. <em>variable</em> is acceessed with Matlab's built-in getenv() function and modified with the built-in setenv() function.</p>
+<p>Returns the new value for the named path <em>variable</em>, sorted so that path entires that match the given <em>matching</em> expression appear last. Also returns the original value for the named <em>variable</em>.</p>
+<p>Usage: [sortedPath, originalPath] = <a class="el" href="group___utilities.html#gab2d31ab25e845f303659852577e7583c" title="Move some environment path entries to the end of the path.">DemoteEnvPathEntries(variable, matching)</a></p>
+<p>Example usage: </p>
+<div class="fragment"><div class="line">% put <span class="stringliteral">&quot;matlab&quot;</span> entries last <span class="keywordflow">for</span> the OS X <span class="stringliteral">&quot;DYLD_LIBRARY_PATH&quot;</span></div>
+<div class="line">variable = <span class="stringliteral">&#39;DYLD_LIBRARY_PATH&#39;</span>;</div>
+<div class="line">matching = <span class="stringliteral">&#39;matlab|MATLAB&#39;</span>;</div>
+<div class="line">[sortedPath, originalPath] = <a class="code" href="group___utilities.html#gab2d31ab25e845f303659852577e7583c" title="Move some environment path entries to the end of the path.">DemoteEnvPathEntries</a>(variable, matching);</div>
+<div class="line"></div>
+<div class="line">% restore the original library path</div>
+<div class="line">setenv(variable, originalPath);</div>
+</div><!-- fragment --> 
+</div>
+</div>
 <a class="anchor" id="ga7c690636200c42924811e98769751ea4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -345,52 +391,6 @@ libPathName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Modifies the Matlab path, removing path entries that contain '.git' or '.svn'. You should save the path afterwards. You can use this function while the Matlab "Set Path" dialog is open!</p>
 <p>Usage: <a class="el" href="group___utilities.html#ga4ce5a5214a8d4dd1fd319f6fd9221c3f" title="Remove &#39;.svn&#39; and &#39;.git&#39; folders from the Matlab path.">CleanMatlabPath()</a> </p>
 
-</div>
-</div>
-<a class="anchor" id="gab2d31ab25e845f303659852577e7583c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">sortedPath originalPath DemoteEnvPathEntries </td>
-          <td>(</td>
-          <td class="paramtype">variable&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">matching&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Move some environment path entries to the end of the path. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">variable</td><td>name of an environment variable that contains a path </td></tr>
-    <tr><td class="paramname">matching</td><td>regular expression to match path entries</td></tr>
-  </table>
-  </dd>
-</dl>
-<p><em>variable</em> should be the name of an environment variable that contains a path, such as "PATH" or "LD_LIBRARY_PATH". Modifies the value of the named <em>variable</em> so that path entries matching the given <em>matching</em> regular expression appear last. <em>variable</em> is acceessed with Matlab's built-in getenv() function and modified with the built-in setenv() function.</p>
-<p>Returns the new value for the named path <em>variable</em>, sorted so that path entires that match the given <em>matching</em> expression appear last. Also returns the original value for the named <em>variable</em>.</p>
-<p>Usage: [sortedPath, originalPath] = <a class="el" href="group___utilities.html#gab2d31ab25e845f303659852577e7583c" title="Move some environment path entries to the end of the path.">DemoteEnvPathEntries(variable, matching)</a></p>
-<p>Example usage: </p>
-<div class="fragment"><div class="line">% put <span class="stringliteral">&quot;matlab&quot;</span> entries last <span class="keywordflow">for</span> the OS X <span class="stringliteral">&quot;DYLD_LIBRARY_PATH&quot;</span></div>
-<div class="line">variable = <span class="stringliteral">&#39;DYLD_LIBRARY_PATH&#39;</span>;</div>
-<div class="line">matching = <span class="stringliteral">&#39;matlab|MATLAB&#39;</span>;</div>
-<div class="line">[sortedPath, originalPath] = <a class="code" href="group___utilities.html#gab2d31ab25e845f303659852577e7583c" title="Move some environment path entries to the end of the path.">DemoteEnvPathEntries</a>(variable, matching);</div>
-<div class="line"></div>
-<div class="line">% restore the original library path</div>
-<div class="line">setenv(variable, originalPath);</div>
-</div><!-- fragment --> 
 </div>
 </div>
 <a class="anchor" id="ga9e76fcab884299640e5e58c6ef575b90"></a>
@@ -1670,7 +1670,7 @@ libPathName&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jun 6 2014 17:36:01 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 20 2014 17:06:48 for Render Toolbox 3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.2
 </small></address>
