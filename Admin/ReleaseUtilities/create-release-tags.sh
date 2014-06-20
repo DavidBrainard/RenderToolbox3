@@ -10,7 +10,7 @@
 #
 
 # edit these to match your local system
-RTB_VERSION="v1.2"
+RTB_VERSION="v2.0"
 RTB_REPO="git@github.com:DavidBrainard/RenderToolbox3.git"
 RTB_WIKI="git@github.com:DavidBrainard/RenderToolbox3.wiki.git"
 DOXYGEN="/Applications/Doxygen.app/Contents/Resources/doxygen" 
