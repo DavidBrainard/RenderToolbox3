@@ -115,7 +115,7 @@ unmatchedA = {};
 unmatchedB = {};
 
 % find .mat files for sets A and B
-fileFilter = [filterExpression '\.mat$'];
+fileFilter = [filterExpression '[^\.]*\.mat$'];
 filesA = FindFiles(workingFolderA, fileFilter);
 filesB = FindFiles(workingFolderB, fileFilter);
 
