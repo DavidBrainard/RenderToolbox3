@@ -385,16 +385,16 @@ figureName = sprintf('A: %s vs B: %s', ...
     info(1).workingFolderA, info(1).workingFolderB);
 f = figure('Name', figureName, 'NumberTitle', 'off');
 
-% summarize good comparisons
-info = info([info.isGoodComparison]);
-names = {info.relativeA};
-nLines = numel(names);
-
 % sort the summary by size of error
 diffSummary = [info.relNormDiff];
 errorStat = [diffSummary.max];
 [sorted, order] = sort(errorStat);
 info = info(order);
+
+% summarize good comparisons
+info = info([info.isGoodComparison]);
+names = {info.relativeA};
+nLines = numel(names);
 
 % summarize data correlation coefficients
 nLinesAtATime = 25;
