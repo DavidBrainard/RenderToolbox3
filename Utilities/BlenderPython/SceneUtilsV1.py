@@ -386,7 +386,11 @@ class sceneManager:
     # Method to add a sphere with a desired scale, and location
     def addSphere(self,params):
         # Create sphere
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=5, size=1);
+        if 'subdivisions' in params:
+            subdivisionsNum = params['subdivisions'];
+        else:
+            subdivisionsNum = 5;
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=subdivisionsNum, size=1);
         theSphere          = bpy.context.active_object;
         theSphere.name     = params['name'];
         theSphere.scale    = params['scaling'];
