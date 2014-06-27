@@ -25,11 +25,20 @@
 % @ingroup Utilities
 function userFolder = GetUserFolder()
 
-% get a regular path, not a "path string" with colon delimiters
+% get the user's folder from Matlab
 userFolder = userpath();
+
+% want a regular path, not a "path string" with colon delimiters
 colon = find(pathsep() == userFolder, 1, 'first');
 if ~isempty(colon)
     userFolder = userFolder(1:colon-1);
+end
+
+% user folder root should not be empty for RenderToolbox3
+if isempty(userFolder)
+    warning('RenderToolbox3:EmptyUserFolder', ...
+        ['Your Matlab user folder is empty!  ' ...
+        'Please set one with the userpath() function.']);
 end
 
 % can we write into this folder?

@@ -54,6 +54,14 @@ else
     renderer = '';
 end
 
+% working folder root should not be empty
+if isempty(hints.workingFolder)
+    warning('RenderToolbox3:EmptyWorkingFolder', ...
+        ['Your working folder is empty!  ' ...
+        'Please setpref(''RenderToolbox3'', ''workingFolder'', ...)  ' ...
+        'or supply hints.workingFolder.']);
+end
+
 % just the base folder if no named folder given
 if nargin < 1 || isempty(folderName)
     folder = fullfile(hints.workingFolder, hints.recipeName, renderer);
