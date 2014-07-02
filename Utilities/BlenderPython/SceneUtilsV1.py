@@ -305,6 +305,14 @@ class sceneManager:
         theLampType.size_y          = params['width2']
         return(theLampType);
     
+    # Method to generate a directional lamp type     
+    def generateDirectionalLampType(self, params):
+        # generate a lamp type
+        theLampType = bpy.data.lamps.new(params['name'], 'SUN');
+        # configure the lamp type
+        return(theLampType);
+
+
     # Method to add a lamp object to the current scene
     def addLampObject(self,params):
         # generate a lamp object
