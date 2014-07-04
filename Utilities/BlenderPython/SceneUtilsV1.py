@@ -440,7 +440,8 @@ class sceneManager:
         thePlanarQuad.data.show_normal_face = True;
         return(thePlanarQuad);
 
-
+    # Method to add a room. Note: if you want to make openings in the room
+    # using the boreOut method, the room must have a specified 'wallThickness'.
     def addRoom(self, roomParams):
         roomLocation = roomParams['roomLocation'];
         roomWidth    = roomParams['roomWidth'];
