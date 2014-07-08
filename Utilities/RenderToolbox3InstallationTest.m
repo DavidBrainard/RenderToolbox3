@@ -109,14 +109,22 @@ for ii = 1:numel(execPrefs)
 end
 
 %% Render a few example scenes.
+%% Render example scenes.  Set DO_ALL = true to do them
+% all, false to run just a few.
+DO_ALL = false;
 testScenes = { ...
     'MakeCoordinatesTest.m', ...
     'MakeCheckerboard.m', ...
     'MakeMaterialSphere.m'};
-
-fprintf('\nTesting rendering with %d example scripts.\n', numel(testScenes));
-fprintf('You should see several figures with rendered images.\n\n');
-renderResults = TestAllExampleScenes([], testScenes);
+if (DO_ALL)
+    fprintf('\nTesting rendering with all example scripts.\n');
+    fprintf('This might take a while.\n');
+    renderResults = TestAllExampleScenes([], []);
+else
+    fprintf('\nTesting rendering with %d example scripts.\n', numel(testScenes));
+    fprintf('You should see several figures with rendered images.\n\n');
+    renderResults = TestAllExampleScenes([], testScenes);
+end
 
 if all([renderResults.isSuccess])
     fprintf('\nYour RenderToolbox3 installation seems to be working!\n');
