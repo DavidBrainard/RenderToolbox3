@@ -5,6 +5,7 @@
 %% Render MaterialSphere in a portable fashion using the Recipe API
 
 %% Top Half.
+clear;
 
 %% Choose inputs for a new recipe.
 % replace this config script with your own config script
