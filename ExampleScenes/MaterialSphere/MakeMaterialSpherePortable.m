@@ -2,14 +2,12 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render MaterialSphere in a portable fashion using the Recipe API
+%% Render MaterialSphere in a portable fashion using the Recipe API.
 
 %% Top Half.
 clear;
 
 %% Choose inputs for a new recipe.
-% replace this config script with your own config script
-configScript = 'RenderToolbox3ConfigurationTemplate';
 
 % choose the 3D model and parameteric variations
 parentSceneFile = 'MaterialSphere.dae';
@@ -31,15 +29,19 @@ hints.whichConditions = [];
 hints.imageWidth = 200;
 hints.imageHeight = 160;
 
+% use a temporary working folder, which will be deleted below
+workingPortable = fullfile(GetWorkingFolder(), 'portable');
+hints.workingFolder = workingPortable;
+
 % put output files in a subfolder named like this script
 hints.recipeName = 'MakeMaterialSpherePortable';
-ChangeToWorkingFolder(hints);
 
 % choose the renderer
 hints.renderer = 'PBRT';
 
+
 %% Make a new recipe that contains all of the above choices.
-recipe = NewRecipe(configScript, executive, parentSceneFile, ...
+recipe = NewRecipe([], executive, parentSceneFile, ...
     conditionsFile, mappingsFile, hints);
 
 % add a log message about creating this new recipe
@@ -64,31 +66,23 @@ recipe = ExecuteRecipe(recipe, 1);
 
 % pack up the recipe with resources and pre-generated scene files
 %   don't pack up boring temp files
-archiveName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
+archiveName = fullfile(GetWorkingFolder(), 'MaterialSpherePortable.zip');
 PackUpRecipe(recipe, archiveName, {'temp'});
 
-% boldly delete the recipe working folder now that it's packed up
-scenesFolder = GetWorkingFolder('', false, hints);
-rmdir(scenesFolder, 's');
+% boldly delete the working folder, now that the recie is packed up
+rmdir(workingPortable, 's');
 
 %% Bottom Half.
+clear;
 
 %% Un-pack and render in a new location -- could be on another computer.
 % locate the packed-up recipe
 % change this archiveName if you moved to another computer
-archiveName = fullfile(GetUserFolder(), 'MaterialSpherePortable.zip');
-
-% choose a folder to un-pack the recipe into
-% this could also be on another computer
-newFolder = fullfile(GetUserFolder(), 'AnotherComputer');
-hints.workingFolder = newFolder;
+archiveName = fullfile(GetWorkingFolder(), 'MaterialSpherePortable.zip');
 
 % un-pack the recipe into the new folder
+hints = GetDefaultHints();
 recipe = UnpackRecipe(archiveName, hints);
-
-% change the recipe's configureScript if you moved to a new machine.
-configureScript = 'RenderToolbox3ConfigurationTemplate';
-recipe.input.configureScript = configureScript;
 
 % render the recipe from pre-generated scene files
 recipe = ExecuteRecipe(recipe);
