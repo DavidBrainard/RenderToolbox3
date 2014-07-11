@@ -19,6 +19,9 @@ function MakeRadianceTest(renderer)
 hints = GetDefaultHints();
 if nargin > 0
     hints.renderer = renderer;
+else
+    % default to a renderer that works with the radiance test
+    hints.renderer = 'Mitsuba';
 end
 
 %% Choose example files, make sure they're on the Matlab path.
