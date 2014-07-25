@@ -12,9 +12,7 @@
 % @details
 % If @a referenceRoot is provided, it must be the path to a set of
 % RenderToolbox3 reference data.  Rendering produced locally will be
-% compared to renderings in the reference data set. You can download
-% reference data set or clode the reference data repository from GitHub:
-% <a href="https://github.com/DavidBrainard/RenderToolbox3-ReferenceData">RenderToolbox3-ReferenceData</a>.
+% compared to renderings in the reference data set.
 %
 % @details
 % Returns a struct of results from rendering test scenes.  If @a

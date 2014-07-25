@@ -68,8 +68,7 @@
 %   % produce renderings locally
 %   TestAllExampleScenes('my/local/renderings');
 %
-%   % download archived renderings
-%   git clone https://github.com/DavidBrainard/RenderToolbox3-ReferenceData.git my/local/archive
+%   % download archived renderings to 'my/local/archive'
 %
 %   % summarize local vs archived renderings
 %   workingFolderA = 'my/local/renderings/data';
