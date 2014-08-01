@@ -262,6 +262,7 @@ for ii = 1:nMatches
         matchInfo(ii).detailFigure = f;
         
         % save detail figure to disk
+        drawnow();
         [imagePath, imageName] = fileparts(matchInfo(ii).relativeA);
         imageCompPath = fullfile(comparisonFolder, imagePath);
         if ~exist(imageCompPath, 'dir')
@@ -271,6 +272,8 @@ for ii = 1:nMatches
         saveas(f, figName, 'fig');
         pngName = fullfile(imageCompPath, [imageName '.png']);
         saveas(f, pngName, 'png');
+        
+        close(f);
     end
 end
 
@@ -374,8 +377,6 @@ title(ax, 'Difference: A - B');
 ax = subplot(2, 2, 4, 'Parent', f);
 imshow(uint8(imageBA), 'Parent', ax);
 title(ax, 'Difference: B - A');
-
-drawnow();
 
 
 % Show a summary of all difference images.
