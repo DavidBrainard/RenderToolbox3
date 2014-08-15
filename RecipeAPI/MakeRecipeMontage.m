@@ -4,6 +4,8 @@
 %
 % Make an sRGB montage from a recipe's radianceDataFiles.
 %   @param recipe a recipe struct
+%   @toneMapFactor tone mapping scale factor to pass to MakeMontage()
+%   @isScale RGB scaling flag to to pass to MakeMontage()
 %
 % @details
 % Uses the given @a recipe's radiance data files to make an sRGB montage.
@@ -17,7 +19,15 @@
 %   recipe = MakeRecipeMontage(recipe)
 %
 % @ingroup RecipeAPI
-function recipe = MakeRecipeMontage(recipe)
+function recipe = MakeRecipeMontage(recipe, toneMapFactor, isScale)
+
+if nargin < 2 || isempty(toneMapFactor)
+    toneMapFactor = [];
+end
+
+if nargin < 3 || isempty(isScale)
+    isScale = [];
+end
 
 recipe = ChangeToRecipeFolder(recipe);
 
@@ -32,7 +42,7 @@ try
     
     [recipe.processing.srgbMontage, recipe.processing.xyzMontage] = ...
         MakeMontage(recipe.rendering.radianceDataFiles, ...
-        montageFile, [], [], recipe.input.hints);
+        montageFile, toneMapFactor, isScale, recipe.input.hints);
     
     if IsStructFieldPresent(recipe.processing, 'images')
         recipe.processing.images{end+1} = montageFile;
