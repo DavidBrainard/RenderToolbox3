@@ -35,10 +35,7 @@ recipe.processing.xyzMontage = [];
 recipe.processing.srgbMontage = [];
 errorData = [];
 try
-    [dataPath, dataBase] = ...
-        fileparts(recipe.rendering.radianceDataFiles{1});
-    montageName = [dataBase '-montage'];
-    montageFile = [montageName '.png'];
+    montageFile = [recipe.input.hints.recipeName '.png'];
     
     [recipe.processing.srgbMontage, recipe.processing.xyzMontage] = ...
         MakeMontage(recipe.rendering.radianceDataFiles, ...
