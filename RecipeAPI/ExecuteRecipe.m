@@ -20,8 +20,9 @@
 % @details
 % By default, tries to execute all of the scripts and functions in
 % recipe.input.executive.  If @a whichExecutives is provided, it must be an
-% array of indices used to select specific scripts or functions.  Only
-% these elements of recipe.input.executive will be executed.
+% array of indices used to select specific scripts or functions.  All and
+% onlythese elements of recipe.input.executive will be executed, regardless
+% of whether corresponding log entries exist.
 %
 % @details
 % If any executive script or recipe throws an error, logs the error and
@@ -40,7 +41,10 @@
 function recipe = ExecuteRecipe(recipe, whichExecutives, throwException)
 
 if nargin < 2 || isempty(whichExecutives)
+    skipAlreadyLogged = true;
     whichExecutives = 1:numel(recipe.input.executive);
+else
+    skipAlreadyLogged = false;
 end
 
 if nargin < 3 || isempty(throwException)
@@ -54,9 +58,12 @@ for ii = whichExecutives
     
     try
         executive = recipe.input.executive{ii};
-        alreadyExecuted = [recipe.log.executiveIndex];
-        if any(ii == alreadyExecuted)
-            continue;
+        
+        if skipAlreadyLogged
+            alreadyExecuted = [recipe.log.executiveIndex];
+            if any(ii == alreadyExecuted)
+                continue;
+            end
         end
         
         if isa(executive, 'function_handle')
