@@ -73,6 +73,10 @@ if nargin < 2 || isempty(outFile)
 end
 [outPath, outBase, outExt] = fileparts(outFile);
 
+if isempty(outPath)
+    outPath = GetWorkingFolder('images', true, hints);
+end
+
 if nargin < 3 || isempty(toneMapFactor)
     toneMapFactor = 0;
 end
@@ -124,9 +128,7 @@ end
 SRGBMontage = XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
 
 %% Save to disk.
-imageFolder = GetWorkingFolder('images', true, hints);
-
-outFullPath = fullfile(imageFolder, [outBase outExt]);
+outFullPath = fullfile(outPath, [outBase outExt]);
 if strcmp(outExt, '.mat')
     % write multi-spectral data
     save(outFullPath, 'SRGBMontage', 'XYZMontage');

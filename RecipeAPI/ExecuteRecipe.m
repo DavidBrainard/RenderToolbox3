@@ -15,7 +15,7 @@
 %
 % @details
 % To make sure that no executive scripts or functions are skipped, first
-% call CleanRecipe().
+% call CleanRecipe() or supply @a whichExecutives explicitly.
 %
 % @details
 % By default, tries to execute all of the scripts and functions in
