@@ -44,8 +44,7 @@ end
 
 
 %% Set up a clean, temporary folder.
-hints.recipeName = archiveBase;
-tempFolder = GetWorkingFolder('', false, hints);
+tempFolder = fullfile(GetWorkingFolder(), mfilename(), archiveBase);
 if exist(tempFolder, 'dir')
     rmdir(tempFolder, 's');
 end
@@ -108,7 +107,7 @@ rmdir(tempFolder, 's');
 function isIgnore = shouldBeIgnored(filePath, ignorePaths)
 isIgnore = false;
 for ii = 1:numel(ignorePaths)
-    isIgnore = IsPathPrefix(ignorePaths{ii}, filePath);    
+    isIgnore = IsPathPrefix(ignorePaths{ii}, filePath);
     if (isIgnore)
         return;
     end
