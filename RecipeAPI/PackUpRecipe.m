@@ -44,7 +44,9 @@ end
 
 
 %% Set up a clean, temporary folder.
-tempFolder = fullfile(GetWorkingFolder(), mfilename(), archiveBase);
+hints.workingFolder = recipe.input.hints.workingFolder;
+workingFolder = GetWorkingFolder('', false, hints);
+tempFolder = fullfile(workingFolder, mfilename(), archiveBase);
 if exist(tempFolder, 'dir')
     rmdir(tempFolder, 's');
 end
