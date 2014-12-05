@@ -59,7 +59,7 @@ standardName = ['RTB_' functionName '_' hints.remodeler];
 % try to find the API function by name
 info = ResolveFilePath(standardName, hints.workingFolder);
 if isempty(info.resolvedPath)
-    disp(['function not found: ' standardName])
+    disp(['Skipping optional Remodeler API function (not found): ' standardName])
     return
 end
 
