@@ -5,6 +5,7 @@
 % Invoke the Mitsuba renderer.
 %   @param sceneFile filename or path of a Mitsuba-native scene file.
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
+%   @param mitsuba struct of mitsuba config., see getpref("Mitsuba")
 %
 % @details
 % Invoke the Mitsuba renderer on the given Mitsuba-native @a sceneFile.
@@ -23,10 +24,16 @@
 %   [status, result, output] = RunMitsuba(sceneFile, hints)
 %
 % @ingroup Utilities
-function [status, result, output] = RunMitsuba(sceneFile, hints)
+function [status, result, output] = RunMitsuba(sceneFile, hints, mitsuba)
 
-if nargin < 2
+if nargin < 2 || isempty(hints)
     hints = GetDefaultHints();
+else
+    hints = GetDefaultHints(hints);
+end
+
+if nargin < 3 || isempty(mitsuba)
+    mitsuba = getpref('Mitsuba');
 end
 
 InitializeRenderToolbox();
@@ -41,10 +48,8 @@ output = fullfile(renderings, [sceneBase '.exr']);
 [newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
 
 % find the Mitsuba executable
-mitsuba = fullfile( ...
-    getpref('Mitsuba', 'app'), ...
-    getpref('Mitsuba', 'executable'));
-renderCommand = sprintf('%s -o %s %s', mitsuba, output, sceneFile);
+executable = fullfile(mitsuba.app, mitsuba.executable);
+renderCommand = sprintf('%s -o %s %s', executable, output, sceneFile);
 fprintf('%s\n', renderCommand);
 [status, result] = RunCommand(renderCommand, hints);
 
@@ -56,8 +61,7 @@ if status ~= 0
     warning(result)
     warning('Could not render scene "%s".', sceneFile)
 elseif hints.isPlot
-    multispectral = ReadMultispectralEXR(output);
-    S = getpref('PBRT', 'S');
+    [multispectral, wls, S] = ReadMultispectralEXR(output);
     toneMapFactor = 10;
     isScale = true;
     sRGB = MultispectralToSRGB(multispectral, S, toneMapFactor, isScale);
