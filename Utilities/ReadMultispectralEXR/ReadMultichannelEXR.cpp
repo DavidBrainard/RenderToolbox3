@@ -52,7 +52,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     // read the exr file with OpenEXR general interface
     exrFileName = mxArrayToString(prhs[0]);
     InputFile file (exrFileName);
-    mxFree(exrFileName);
     
     // query general file properties
     Box2i dw = file.header().dataWindow();
@@ -60,13 +59,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     height = dw.max.y - dw.min.y + 1;
     
     const ChannelList &channels = file.header().channels();
-    for (ChannelList::ConstIterator iter = channels.begin(); iter != channels.end(); ++iter) {
-        const Channel &channel = iter.channel();
+    for (ChannelList::ConstIterator iter = channels.begin();
+    iter != channels.end();
+    ++iter) {
         nSlices++;
     }
     
-    //mexPrintf("Read \"%s\": width=%d height=%d nSlices=%d\n",
-    //        exrFileName, width, height, nSlices);
+    mexPrintf("Read \"%s\": width=%d height=%d nSlices=%d\n",
+            exrFileName, width, height, nSlices);
+    mxFree(exrFileName);
     
     // return a struct with info about image slices
     mwSize nDims = 2;
@@ -197,9 +198,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         
         channelIndex++;
         
-        //mexPrintf("  channel \"%s\": type=%d xSasmpling=%d ySampling=%d, isLinear=%d\n",
-        //        iter.name(), channel.type,
-        //        channel.xSampling, channel.ySampling, channel.pLinear);
-        
+        mexPrintf("  channel \"%s\": type=%d xSasmpling=%d ySampling=%d, isLinear=%d\n",
+                iter.name(), channel.type,
+                channel.xSampling, channel.ySampling, channel.pLinear);
     }
 }
