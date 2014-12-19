@@ -198,8 +198,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         
         channelIndex++;
         
-        mexPrintf("  channel \"%s\": type=%d xSasmpling=%d ySampling=%d, isLinear=%d\n",
-                iter.name(), channel.type,
-                channel.xSampling, channel.ySampling, channel.pLinear);
+        //mexPrintf("  channel \"%s\": type=%d xSampling=%d ySampling=%d, isLinear=%d\n",
+        //        iter.name(), channel.type,
+        //        channel.xSampling, channel.ySampling, channel.pLinear);
     }
 }
