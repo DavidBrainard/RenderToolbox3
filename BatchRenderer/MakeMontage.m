@@ -11,8 +11,10 @@
 %
 % @details
 % Condenses several multi-spectral renderings stored in mat-files into a
-% single sRGB montage.  Tiles the input images so that the montage has
-% roughly the same aspect ratio as the input images.
+% single sRGB montage.  By default, tiles the input images so that the
+% montage has roughly the same aspect ratio as the input images.  If @a
+% inFiles has size other than 1xn, the dimensions of @a inFiles determine
+% the dimensions of the montage.
 %
 % @details
 % Attempts to conserve system memory by loading only one multi-spectral
@@ -96,10 +98,19 @@ if hints.isDryRun
     return;
 end
 
-%% Make a rectangular montage.
+%% Pick the montage dimensions.
 nIns = numel(inFiles);
-nRows = floor(sqrt(nIns));
+dims = size(inFiles);
+if 1 == dims(1)
+    % default to roughly square
+    nRows = floor(sqrt(nIns));
+else
+    % use given dimensions
+    nRows = dims(1);
+end
 nCols = ceil(nIns / nRows);
+
+%% Assemble the montage.
 for ii = 1:nIns
     % get multispectral data from disk
     inData = load(inFiles{ii});
