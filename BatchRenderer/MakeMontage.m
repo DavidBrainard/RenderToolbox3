@@ -6,7 +6,7 @@
 %   @param inFiles cell array of input mat-file names
 %   @param outFile output montage file name (optional)
 %   @param toneMapFactor how to truncate montage luminance (optional)
-%   @param isScale whether or not to scale montage luminance (optional)
+%   @param isScale whether or how to scale montage luminance (optional)
 %   @param hints struct of RenderToolbox3 options, see GetDefaultHints()
 %
 % @details
@@ -41,9 +41,10 @@
 % entire montage.
 %
 % @details
-% If isScale is provided and true, montage luminances will be scaled so
-% that the maximum input luminance of the entire montage matches the
-% maximum possible RGB output luminance.
+% If isScale is provided and logical true, montage luminances will be 
+% scaled so that the maximum input luminance of the entire montage matches 
+% the maximum possible RGB output luminance.  If isScale is a numeric
+% scalar, the montage luminances will be scaled by this amount.
 %
 % @details
 % @a hints may be a struct with options that affect the montage, such as
@@ -53,14 +54,16 @@
 % @details
 % Returns a matrix containing the tone mapped, scaled, sRGB
 % montage with size [height width 3].  Also returns a matrix containing XYZ
-% image data with the same size.
+% image data with the same size.  Also returns a scalar, the amount by
+% which montage luminances were scaled.  This may be equal to the given @a
+% isScale, or it might have been calculated.
 %
 % @details
 % Usage:
-%   [SRGBMontage, XYZMontage] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
+%   [SRGBMontage, XYZMontage, luminanceScale] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
 %
 % @ingroup BatchRenderer
-function [SRGBMontage, XYZMontage] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
+function [SRGBMontage, XYZMontage, luminanceScale] = MakeMontage(inFiles, outFile, toneMapFactor, isScale, hints)
 
 SRGBMontage = [];
 XYZMontage = [];
@@ -136,7 +139,8 @@ for ii = 1:nIns
 end
 
 %% Convert the whole big XYZ montage to SRGB.
-SRGBMontage = XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
+[SRGBMontage, rawImage, luminanceScale] = ...
+    XYZToSRGB(XYZMontage, toneMapFactor, 0, isScale);
 
 %% Save to disk.
 outFullPath = fullfile(outPath, [outBase outExt]);

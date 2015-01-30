@@ -6,7 +6,7 @@
 %   @param XYZImage matrix of XYZ image data
 %   @param toneMapFactor relative luminance truncation (optional)
 %   @param toneMapMax absolute luminance truncation (optional)
-%   @param isScale whether or not to scale in gamma correction (optional)
+%   @param isScale whether or how to scale in gamma correction (optional)
 %
 % @details
 % Converts an image in XYZ colors to sRGB colors, using a few Psychtoolbox
@@ -19,19 +19,22 @@
 % If @a toneMapMax is greater than 0, truncates luminance above this fixed
 % value.
 %
-% If @a isScale is true, the gamma-corrected image will be scaled to use
-% the gamma-corrected maximum.
+% If @a isScale is logical and true, the gamma-corrected image will be
+% scaled to use the gamma-corrected maximum.  If @a isScale is a numeric
+% scalar, the gamma-corrected image will be scaled by this amount.
 %
 % Returns a matrix of size [height width n] with gamma corrected sRGB color
 % data.  Also returns a matrix of the same size with uncorrected sRGB color
-% data.
+% data.  Also returns a scalar, the amount by which the gamma-corrected
+% image was scaled.  This may have been calculated or it may be equal to
+% the given @a isScale.
 %
 % @details
 % Usage:
-%   [gammaImage, rawImage] = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
+%   [gammaImage, rawImage, scaleFactor] = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
 %
 % @ingroup Utilities
-function [gammaImage, rawImage] = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
+function [gammaImage, rawImage, scaleFactor] = XYZToSRGB(XYZImage, toneMapFactor, toneMapMax, isScale)
 
 %% parameters
 if nargin < 2
@@ -75,7 +78,15 @@ end
 % Convert to sRGB
 %   may allow code to scale input max to output max.
 SRGBPrimaryCalFormat = XYZToSRGBPrimary(XYZCalFormat);
-SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, isScale);
+
+if islogical(isScale)
+    scaleFactor = 1/max(SRGBPrimaryCalFormat(:));
+    SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, isScale);
+else
+    scaleFactor = isScale;
+    SRGBPrimaryCalFormat = SRGBPrimaryCalFormat .* scaleFactor;
+    SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, false);
+end
 
 % Back to image plane format
 rawImage = CalFormatToImage(SRGBPrimaryCalFormat, m, n);
