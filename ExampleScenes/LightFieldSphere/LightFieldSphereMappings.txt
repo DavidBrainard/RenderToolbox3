@@ -16,9 +16,16 @@ Generic {
 }
 
 % lights
-Generic {
+Mitsuba {
 	Hemi-light:emitter:envmap
 	Hemi-light:filename.string = hallstatt4_hd.hdr
+
+}
+
+% lights
+PBRT {
+	Hemi-light:LightSource:infinite
+	Hemi-light:L.spectrum = hallstatt4_hd.hdr
 
 }
 

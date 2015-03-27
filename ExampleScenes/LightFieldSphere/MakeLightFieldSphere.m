@@ -16,6 +16,9 @@
 %   zero.
 %   .
 %
+%   Currently this example only works with Mitsuba.  But other renderers
+%   like PBRT should be possible.
+%
 %% Render the Light Field Sphere Scene.
 
 %% Choose example files.
