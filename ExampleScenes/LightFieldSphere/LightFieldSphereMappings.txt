@@ -19,6 +19,7 @@ Generic {
 Mitsuba {
 	Hemi-light:emitter:envmap
 	Hemi-light:filename.string = hallstatt4_hd.hdr
+	%Hemi-light:filename.string = LightFieldSphere-001.exr
 
 }
 
