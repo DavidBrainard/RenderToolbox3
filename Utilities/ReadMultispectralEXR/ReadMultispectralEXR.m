@@ -4,6 +4,7 @@
 %
 % Read an OpenEXR image with multiple spectral slices.
 %   @param exrFile file name or path of an OpenEXR file
+%   @param namePattern sscanf() pattern to use on slice names
 %
 % @details
 % Reads an OpenEXR image with an arbitrary number of spectral slices.
@@ -23,6 +24,11 @@
 % pattern will be ignored.
 %
 % @details
+% If @a namePattern is provided, it must be an sscanf() pattern to use when
+% scanning channel names for wavelength values, instead of the pattern
+% described above.
+%
+% @details
 % Returns an array of image data with size [height width n], where height
 % and width are image sizes in pixels, and n is the number of spectral
 % slices.  The n slices will be sorted from low to high wavelength.
@@ -31,7 +37,7 @@
 % Also returns the list of n wavelengths, one for each spectral slice.  The
 % wavelength for each slice is taken as the mean of the low and high bounds
 % The list of wavelengths will be sorted from low to high.  See the
-% RenderToolbox3 wiki for more about <a 
+% RenderToolbox3 wiki for more about <a
 % href="https://github.com/DavidBrainard/RenderToolbox3/wiki/Spectrum-Bands">Spectrum
 % Bands</a>
 %
@@ -41,31 +47,20 @@
 %
 % @details
 % Usage:
-%   [imageData, wls, S] = ReadMultispectralEXR(exrFile)
+%   [imageData, wls, S] = ReadMultispectralEXR(exrFilenamePattern)
 %
 % @ingroup Readers
-function [imageData, wls, S] = ReadMultispectralEXR(exrFile)
+function [imageData, wls, S] = ReadMultispectralEXR(exrFile, namePattern)
+
+if nargin < 2 || isempty(namePattern)
+    namePattern = '%f-%f';
+end
 
 % read all channels from the OpenEXR image
 [sliceInfo, imageData] = ReadMultichannelEXR(exrFile);
 
-% look for channels that contain wavelengths
-nSlices = numel(sliceInfo);
-wls = zeros(1, nSlices);
-isSpectralBand = false(1, nSlices);
-for ii = 1:nSlices
-    band = sscanf(sliceInfo(ii).name, '%f-%f');
-    if 2 == numel(band)
-        wls(ii) = mean(band);
-        isSpectralBand(ii) = true;
-    end
-end
+% scan channel names for wavelength info
+[wls, S, order] = GetWlsFromSliceInfo(sliceInfo, namePattern);
 
-% sort slices by wavelength
-[wls, order] = sort(wls);
-imageData(:,:,:) = imageData(:,:,order);
-isSpectralBand = isSpectralBand(order);
-
-% summarize the slice wavelengths
-wls = wls(isSpectralBand);
-S = MakeItS(wls(:));
+% sort data slices by wavelength
+imageData = imageData(:,:,order);
