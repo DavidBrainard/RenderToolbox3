@@ -60,7 +60,8 @@ end
 [sliceInfo, imageData] = ReadMultichannelEXR(exrFile);
 
 % scan channel names for wavelength info
-[wls, S, order] = GetWlsFromSliceInfo(sliceInfo, namePattern);
+sliceNames = {sliceInfo.name};
+[wls, S, order] = GetWlsFromSliceNames(sliceNames, namePattern);
 
 % sort data slices by wavelength
 imageData = imageData(:,:,order);

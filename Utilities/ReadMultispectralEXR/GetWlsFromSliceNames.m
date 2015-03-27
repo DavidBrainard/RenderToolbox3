@@ -3,12 +3,12 @@
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
 % Read scan multi-spectral image slice names for wavelength info
-%   @param sliceInfo struct of image slice info from ReadMultichannelEXR()
+%   @param sliceNames cell array of image slice names
 %   @param namePattern sscanf() pattern to use on slice names
 %
 % @details
-% Scans each multi-spectral image slice described by the given @a sliceInfo
-% for numeric wavelength data.
+% Scans each multi-spectral image slice in the given @a sliceNames for
+% numeric wavelength data.
 %
 % @details
 % By default, scans each slice name using the sscanf() pattern '%f-%f'.  If
@@ -26,25 +26,25 @@
 % The array will be sorted from low to high.  Also returns a summary of the
 % list of wavelengths in "S" format.  This is an array with elements [start
 % delta n].  Finally, returns an array of indices that may be used to sort
-% the given @a sliceInfo from low to high wavelength.
+% the given @a sliceNames or other data from low to high wavelength.
 %
 % @details
 % Usage:
-%   [wls, S, order] = GetWlsFromSliceInfo(sliceInfo, namePattern)
+%   [wls, S, order] = GetWlsFromSliceNames(sliceNames, namePattern)
 %
 % @ingroup Readers
-function [wls, S, order] = GetWlsFromSliceInfo(sliceInfo, namePattern)
+function [wls, S, order] = GetWlsFromSliceNames(sliceNames, namePattern)
 
 if nargin < 2 || isempty(namePattern)
     namePattern = '%f-%f';
 end
 
 % look for channels that contain wavelengths
-nSlices = numel(sliceInfo);
+nSlices = numel(sliceNames);
 wls = zeros(1, nSlices);
 isSpectralBand = false(1, nSlices);
 for ii = 1:nSlices
-    band = sscanf(sliceInfo(ii).name, namePattern);
+    band = sscanf(sliceNames{ii}, namePattern);
     switch numel(band)
         case 1
             wls(ii) = band;
