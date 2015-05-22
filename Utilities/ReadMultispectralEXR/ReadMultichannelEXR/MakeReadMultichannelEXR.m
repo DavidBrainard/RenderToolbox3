@@ -2,19 +2,28 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox3/wiki/About-Us
 %%% RenderToolbox3 is released under the MIT License.  See LICENSE.txt.
 %
-% Compile the MakeReadMultichannelEXR Mex-function.
+%% Compile the MakeReadMultichannelEXR Mex-function.
 %
 % @details
 % Compiles the ReadMultichannelEXR() mex function from source.  Assumes
 % that the OpenEXR libraries have been installed on the system at
-% usr/opt/local or usr/local.  If the libraries are installed somewhere
-% else on your system, you should copy this file and edit the INC and LINC
-% variables to contain the correct include and library paths for your
-% OpenEXR installation.
+% user/, user/local/, or opt/local/.  If the libraries are installed
+% somewhere else on your system, you should copy this file and edit the 
+% INC and LINC variables to contain the correct include and library paths 
+% for your OpenEXR installation.
 %
+% @details
+% On Ubuntu, you may wish to run the following command to get the 
+% dependencies you need:
+% @code
+% sudo apt-get install openexr libopenexr-dev libilmbase-dev zlib1g-dev
+% @endcode
+%
+% @details
 % Should produce a new MakeReadMultichannelEXR() function with a
 % platform-specific Mex-function extension.  See Matlab's mexext().
 %
+% @details
 % Attempts to read a sample OpenEXR image and plot channel data in a new
 % figure, to verify that the funciton compiled successfully.
 %
@@ -31,8 +40,8 @@ source = 'ReadMultichannelEXR.cpp';
 output = '-output ReadMultichannelEXR';
 
 %% Choose library files to include and link with.
-INC = '-I/usr/local/include/OpenEXR -I/opt/local/include/OpenEXR';
-LINC = '-L/usr/local/lib -L/opt/local/lib ';
+INC = '-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR';
+LINC = '-L/usr/local/lib -L/usr/lib -L/opt/local/lib ';
 LIBS = '-lIlmImf -lz -lImath -lHalf -lIex -lIlmThread -lpthread';
 
 %% Build the function.
