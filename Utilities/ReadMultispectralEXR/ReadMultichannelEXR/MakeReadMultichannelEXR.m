@@ -58,12 +58,4 @@ fprintf('If you see a figure with several images, MakeReadMultichannelEXR() is w
 
 % show each image layer
 close all;
-nSlices = numel(sliceInfo);
-rows = round(sqrt(nSlices));
-cols = ceil(nSlices/rows);
-for ii = 1:nSlices
-    subplot(rows,cols,ii)
-    imshow(255*data(:,:,ii))
-    title(sliceInfo(ii).name)
-    xlabel(sliceInfo(ii).pixelType)
-end
+PlotSlices(sliceInfo, data);
