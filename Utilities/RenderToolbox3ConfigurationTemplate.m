@@ -104,7 +104,7 @@ radiometricScaleFactor = 0.0063831432;
 
 % choose spectral sampling
 %   which was sepcified at PBRT compile time
-S = [400 10 31];
+S = [400 10 32];
 
 % use the default path for PBRT
 myPBRT = '/usr/local/bin/pbrt';
