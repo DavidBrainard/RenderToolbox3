@@ -7,6 +7,10 @@ Generic {
     % beige matte sphere
     Material-material:material:matte
     Material-material:diffuseReflectance.spectrum = mccBabel-7.spd
+
+    % explicit spectrum for the point light
+    Point-light:light:point
+    Point-light:intensity.spectrum = 300:1 800:1
 }
 
 Mitsuba-path {
