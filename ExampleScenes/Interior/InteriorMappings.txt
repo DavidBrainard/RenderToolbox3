@@ -104,7 +104,7 @@ Mitsuba {
 
 PBRT directGroup {
     % use the direct lighting integrator
-    integrator:SurfaceIntegrator:directlighting
+    integrator:Integrator:directlighting
     sampler:pixelsamples.integer = 8
 }
 
@@ -117,7 +117,7 @@ Mitsuba directGroup {
 
 PBRT pathGroup {
     % use the path tracer with 5 interreflections (7 total ray segments)
-    integrator:SurfaceIntegrator:path
+    integrator:Integrator:path
     integrator:maxdepth.integer = 5
 
     % up the sample count to prevent graininess

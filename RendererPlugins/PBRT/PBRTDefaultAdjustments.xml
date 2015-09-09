@@ -4,7 +4,7 @@
 
 <pbrt_xml>
 
-    <SurfaceIntegrator id="integrator" type="directlighting"/>
+    <Integrator id="integrator" type="directlighting"/>
 
     <Sampler id="sampler" type="lowdiscrepancy">
         <parameter name="pixelsamples" type="integer">8</parameter>

@@ -51,7 +51,7 @@ else
     writeFilm(pbrtFID, idMap, filmNodeID{1}, hints);
 end
 
-integreatorNodeID = getNodesByIdentifier(idMap, 'SurfaceIntegrator');
+integreatorNodeID = getNodesByIdentifier(idMap, 'Integrator');
 if isempty(integreatorNodeID)
     warning('Scene does not specify a surface integrator!');
 else

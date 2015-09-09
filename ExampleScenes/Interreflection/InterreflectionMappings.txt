@@ -27,7 +27,7 @@ Generic {
 
 PBRT {
     % make sure PBRT uses the path integrator
-    integrator:SurfaceIntegrator:path
+    integrator:Integrator:path
     integrator:maxdepth.integer = (PBRTLength)
 
     % up the sample count to prevent graininess
