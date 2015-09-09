@@ -188,6 +188,7 @@ for ii = 1:nMatches
         matchInfo(ii).error = ...
             sprintf('No multispectral image found in %s', ...
             matchInfo(ii).fileA);
+        disp(matchInfo(ii).error);
         continue;
     end
     multispectralA = dataA.multispectralImage;
@@ -198,15 +199,18 @@ for ii = 1:nMatches
         matchInfo(ii).error = ...
             spritnf('No multispectral image found in %s', ...
             matchInfo(ii).fileB);
+        disp(matchInfo(ii).error);
         continue;
     end
     multispectralB = dataB.multispectralImage;
     
     % check multispectral image dimensions
-    if ~isequal(size(multispectralA), size(multispectralB))
+    if ~isequal(size(multispectralA, 1), size(multispectralB, 1)) ...
+            || ~isequal(size(multispectralA, 2), size(multispectralB, 2))
         matchInfo(ii).error = ...
             sprintf('Image A[%s] is not the same size as image B[%s].', ...
             num2str(size(multispectralA)), num2str(size(multispectralB)));
+        disp(matchInfo(ii).error);
         continue;
     end
     
@@ -214,12 +218,14 @@ for ii = 1:nMatches
     if ~isfield(dataA, 'S')
         matchInfo(ii).error = ...
             sprintf('Data file A has no spectral sampling variable ''S''.');
+        disp(matchInfo(ii).error);
         continue;
     end
     matchInfo(ii).samplingA = dataA.S;
     if ~isfield(dataB, 'S')
         matchInfo(ii).error = ...
             sprintf('Data file B has no spectral sampling variable ''S''.');
+        disp(matchInfo(ii).error);
         continue;
     end
     matchInfo(ii).samplingB = dataB.S;
@@ -227,15 +233,19 @@ for ii = 1:nMatches
         matchInfo(ii).error = ...
             sprintf('Spectral sampling A[%s] is not the same as B[%s].', ...
             num2str(dataA.S), num2str(dataB.S));
-        continue;
+        disp(matchInfo(ii).error);
+        % proceed with comparison, despite sampling mismatch
     end
     
     % comparison passes all sanity checks
     matchInfo(ii).isGoodComparison = true;
     
+    % tolerate different sectral sampling depths
+    [A, B] = truncatePlanes(multispectralA, multispectralB, dataA.S, dataB.S);
+    
     % compute per-pixel component difference stats
-    normA = multispectralA / max(multispectralA(:));
-    normB = multispectralB / max(multispectralB(:));
+    normA = A / max(A(:));
+    normB = B / max(B(:));
     normDiff = normA - normB;
     absNormDiff = abs(normDiff);
     relNormDiff = absNormDiff ./ normA;
@@ -243,8 +253,8 @@ for ii = 1:nMatches
     relNormDiff(normA < cutoff) = nan;
     
     % summarize differnece stats
-    matchInfo(ii).subpixelsA = summarizeData(multispectralA);
-    matchInfo(ii).subpixelsB = summarizeData(multispectralB);
+    matchInfo(ii).subpixelsA = summarizeData(A);
+    matchInfo(ii).subpixelsB = summarizeData(B);
     matchInfo(ii).normA = summarizeData(normA);
     matchInfo(ii).normB = summarizeData(normB);
     matchInfo(ii).normDiff = summarizeData(normDiff);
@@ -252,13 +262,12 @@ for ii = 1:nMatches
     matchInfo(ii).relNormDiff = summarizeData(relNormDiff);
     
     % compute correlation among pixel components
-    r = corrcoef(multispectralA(:), multispectralB(:));
+    r = corrcoef(A(:), B(:));
     matchInfo(ii).corrcoef = r(1, 2);
     
     % plot difference image?
     if visualize > 1
-        f = showDifferenceImage( ...
-            matchInfo(ii), multispectralA, multispectralB);
+        f = showDifferenceImage(matchInfo(ii), A, B);
         matchInfo(ii).detailFigure = f;
         
         % save detail figure to disk
@@ -350,7 +359,7 @@ info = struct( ...
 function f = showDifferenceImage(info, A, B)
 
 % make SRGB images
-S = info.samplingA;
+[A, B, S] = truncatePlanes(A, B, info.samplingA, info.samplingB);
 isScale = true;
 toneMapFactor = 0;
 imageA = MultispectralToSRGB(A, S, toneMapFactor, isScale);
@@ -378,6 +387,13 @@ ax = subplot(2, 2, 4, 'Parent', f);
 imshow(uint8(imageBA), 'Parent', ax);
 title(ax, 'Difference: B - A');
 
+
+% Truncate spectral planes if one image has more planes.
+function [truncA, truncB, truncSampling] = truncatePlanes(A, B, samplingA, samplingB)
+nPlanes = min(samplingA(3), samplingB(3));
+truncSampling = [samplingA(1:2) nPlanes];
+truncA = A(:,:,1:nPlanes);
+truncB = B(:,:,1:nPlanes);
 
 % Show a summary of all difference images.
 function f = showDifferenceSummary(info)

@@ -4,6 +4,7 @@
 %
 % Get multispectral image data out of a .dat file from Stanford.
 %   @param filename string file name (path optional) of the .dat file
+%   @param maxPlanes read only this many spectral planes (optional)
 %
 % @details
 % Reads the given multi-spectral .dat file from @a filename.  The .dat
@@ -26,16 +27,23 @@
 % Also returns the multispectral image dimensions [height width n].
 %
 % @details
+% If @a maxPlanes is provided, n is limited to this number of planes.
+%
+% @details
 % If the given .dat file contains an optional lens description, also
 % returns a struct of lens data with fields @b focalLength, @b fStop,
 % and @b fieldOfView.
 %
 % @details
 % Usage:
-%   [imageData, imageSize, lens] = ReadDAT(filename)
+%   [imageData, imageSize, lens] = ReadDAT(filename, maxPlanes)
 %
 % @ingroup Readers
-function [imageData, imageSize, lens] = ReadDAT(filename)
+function [imageData, imageSize, lens] = ReadDAT(filename, maxPlanes)
+
+if nargin < 2 || isempty(maxPlanes)
+    maxPlanes = [];
+end
 
 imageData = [];
 imageSize = [];
@@ -89,6 +97,12 @@ end
 
 %% shape the serialized data to image dimensions
 imageData = reshape(serializedImage, hSize, wSize, nPlanes);
+
+if ~isempty(maxPlanes) && maxPlanes < nPlanes
+    fprintf('  Limiting %d planes to maxPlanes = %d.\n', imageSize(3), maxPlanes);
+    imageSize(3) = maxPlanes;
+    imageData = imageData(:, :, 1:maxPlanes);
+end
 
 fprintf('OK.\n');
 

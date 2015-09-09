@@ -82,7 +82,7 @@ if status ~= 0
     warning('Could not render scene "%s".', sceneBase)
     
 elseif hints.isPlot
-    multispectral = ReadDAT(output);
+    multispectral = ReadDAT(output, pbrt.S(3));
     toneMapFactor = 10;
     isScale = true;
     sRGB = MultispectralToSRGB(multispectral, pbrt.S, toneMapFactor, isScale);

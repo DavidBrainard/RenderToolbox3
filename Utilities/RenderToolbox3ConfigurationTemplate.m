@@ -107,7 +107,10 @@ radiometricScaleFactor = 0.0063831432;
 S = [400 10 31];
 
 % use the default path for PBRT
-myPBRT = '/usr/local/bin/pbrt';
+%myPBRT = '/usr/local/bin/pbrt';
+
+% testing pbrt-v3!
+myPBRT = '/Users/ben/Documents/Projects/pbrt-v3/build/pbrt';
 
 % or choose where you installed PBRT
 %myPBRT = '/my/path/for/pbrt';

@@ -13,7 +13,7 @@ Mitsuba {
 
 PBRT {
     % choose light transport integrator and sampler
-    integrator:SurfaceIntegrator:path
+    integrator:Integrator:path
     integrator:maxdepth.integer = 10
     sampler:Sampler:lowdiscrepancy
     sampler:pixelsamples.integer = 512

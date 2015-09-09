@@ -25,8 +25,8 @@ if status ~= 0
     error('PBRT rendering failed\n  %s\n  %s\n', sceneFile, result);
 end
 
-% read output into memory
-multispectralImage = ReadDAT(output);
-
 % interpret output according to PBRT's spectral sampling
 S = getpref('PBRT', 'S');
+
+% read output into memory
+multispectralImage = ReadDAT(output, S(3));

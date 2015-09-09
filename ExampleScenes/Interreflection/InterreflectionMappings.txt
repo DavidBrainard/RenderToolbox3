@@ -19,11 +19,15 @@ Generic {
     BlueMaterial-material:diffuseReflectance.spectrum = 300:1 500:1 600:0 800:0
     WhiteMaterial-material:material:matte
     WhiteMaterial-material:diffuseReflectance.spectrum = 300:1 800:1
+
+    % explicit spectrum for the point light
+    Point-light:light:point
+    Point-light:intensity.spectrum = 300:1 800:1
 }
 
 PBRT {
     % make sure PBRT uses the path integrator
-    integrator:SurfaceIntegrator:path
+    integrator:Integrator:path
     integrator:maxdepth.integer = (PBRTLength)
 
     % up the sample count to prevent graininess
