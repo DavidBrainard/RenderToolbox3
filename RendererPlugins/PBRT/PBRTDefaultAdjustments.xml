@@ -6,14 +6,14 @@
 
     <SurfaceIntegrator id="integrator" type="directlighting"/>
 
-    <Sampler id="sampler" type="lowdiscrepancy">
-        <parameter name="pixelsamples" type="integer">8</parameter>
-    </Sampler>
-    
-    <PixelFilter id="filter" type="gaussian">
-        <parameter name="alpha" type="float">2</parameter>
-        <parameter name="xwidth" type="float">2</parameter>
-        <parameter name="ywidth" type="float">2</parameter>
-    </PixelFilter>
-    
+<!--    <Sampler id="sampler" type="lowdiscrepancy">-->
+<!--        <parameter name="pixelsamples" type="integer">8</parameter>-->
+<!--    </Sampler>-->
+
+<!--    <PixelFilter id="filter" type="gaussian">-->
+<!--        <parameter name="alpha" type="float">2</parameter>-->
+<!--        <parameter name="xwidth" type="float">2</parameter>-->
+<!--        <parameter name="ywidth" type="float">2</parameter>-->
+<!--    </PixelFilter>-->
+
 </pbrt_xml>
