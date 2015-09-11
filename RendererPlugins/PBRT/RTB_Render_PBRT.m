@@ -14,13 +14,13 @@
 %
 % Usage:
 %   [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
-function [status, result, multispectralImage, S] = RTB_Render_PBRT(scene, hints)
+function [status, result, multispectralImage, S, oi] = RTB_Render_PBRT(scene, hints, oiParams)
 
 % resolve the scene which should be located in the working folder
 sceneFile = GetWorkingAbsolutePath(scene.pbrtFile, hints);
 
 % invoke PBRT!
-[status, result, output] = RunPBRT(sceneFile, hints);
+[status, result, output, oi] = RunPBRT(sceneFile, hints, oiParams);
 if status ~= 0
     error('PBRT rendering failed\n  %s\n  %s\n', sceneFile, result);
 end

@@ -63,12 +63,13 @@
 %
 % @details
 % Usage:
-%   scenes = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
+%   [scenes oiParams] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
 %
 % @ingroup BatchRenderer
-function scenes = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
+function [scenes, oiParams] = MakeSceneFiles(colladaFile, conditionsFile, mappingsFile, hints)
 
 InitializeRenderToolbox();
+oiParams=struct([]);
 
 %% Parameters
 if nargin < 1 || isempty(colladaFile)
@@ -154,7 +155,7 @@ try
             end
             
             % make a the scene file for this condition
-            scenes{cc} = makeSceneForCondition( ...
+            [scenes{cc}, oiParams] = makeSceneForCondition( ...
                 colladaFile, mappingsFile, cc, ...
                 varNames, conditionVarValues, hints);
         end
@@ -200,10 +201,11 @@ end
 
 
 %% Create a renderer-native scene description for one condition.
-function scene = makeSceneForCondition(colladaFile, mappingsFile, ...
+function [scene, oiParams] = makeSceneForCondition(colladaFile, mappingsFile, ...
     conditionNumber, varNames, varValues, hints)
 
 scene = [];
+oiParams = struct;
 
 %% Choose parameter values from conditions file or hints.
 isMatch = strcmp('renderer', varNames);
@@ -310,7 +312,7 @@ if ~isempty(mappings)
                     
                 case rendererName
                     % scene targets to apply to adjustments
-                    objects = MappingsToObjects(blockMappings);
+                    objects = MappingsToObjects(blockMappings);        
                     adjustments = ...
                         feval(applyMappingsFunction, objects, adjustments);
                     
@@ -332,10 +334,18 @@ importColladaFunction = ...
 if isempty(importColladaFunction)
     return;
 end
-scene = feval( ...
-    importColladaFunction, colladaCopy, adjustments, imageName, hints);
-[scene.imageName] = deal(imageName);
 
+% importColladaFunction for PBRT has a second output of oiParameters, so we
+% have to check the renderer type
+if (strcmp(hints.renderer,'PBRT'))
+    [scene, oiParams] = feval( ...
+        importColladaFunction, colladaCopy, adjustments, imageName, hints);
+    [scene.imageName] = deal(imageName);
+else
+    scene = feval( ...
+        importColladaFunction, colladaCopy, adjustments, imageName, hints);
+    [scene.imageName] = deal(imageName);
+end
 % store Collada authoring info along with the scene description
 %   authoring info may have been set by a remodeler!
 [authoringTool, asset] = GetColladaAuthorInfo(colladaCopy);

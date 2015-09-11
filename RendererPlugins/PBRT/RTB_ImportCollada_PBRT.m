@@ -18,7 +18,10 @@
 % @details
 % Usage:
 %   scene = RTB_ImportCollada_PBRT(colladaFile, adjustments, imageName, hints)
-function scene = RTB_ImportCollada_PBRT(colladaFile, adjustments, imageName, hints)
+function [scene, oiParams] = RTB_ImportCollada_PBRT(colladaFile, adjustments, imageName, hints)
+
+% Create empty structure
+oiParams = struct;
 
 % choose new files to create
 scenesFolder = GetWorkingFolder('scenes', true, hints);
@@ -75,5 +78,11 @@ else
     WriteSceneDOM(adjustmentsFile, adjustments.docNode);
     
     % dump the PBRT-XML document into a .pbrt text file
-    WritePBRTFile(pbrtFile, pbrtXMLFile, hints);
+    oiParams = WritePBRTFile(pbrtFile, pbrtXMLFile, hints);
+    
+    % Write a separate PBRT file for the depth image (TL)
+    hints.depthPBRT = 1;
+    pbrtDepthFile = fullfile(scenesFolder, [imageName '_depth.pbrt']);
+    WritePBRTFile(pbrtDepthFile, pbrtXMLFile, hints);
+    
 end
