@@ -309,6 +309,9 @@ internalTransforms = getTransformations(cameraInternal);
 
 % orient the camera internally
 fprintf(fid, '# %s internal orientation\n', cameraID);
+if(size(internalTransforms,2) == 0)
+    internalTransforms = struct('type','LookAt','value','0 0 0 0 0 -1 0 1 0');
+end
 writeTransformations(fid, internalTransforms, false);
 
 % move the camera for the scene point of view
