@@ -38,45 +38,105 @@ effectID = effectID(effectID ~= '#');
 % declare an uber material
 SetType(stubIDMap, id, 'Material', 'uber');
 
-% look for material type "lambert" or "phong"
-commonPath = {effectID, ':profile_COMMON', ':technique|.sid=common'};
-phongPath = cat(2, commonPath, {':phong'});
-lambertPath = cat(2, commonPath, {':lambert'});
-if ~isempty(SearchScene(colladaIDMap, phongPath))
-    materialType = ':phong';
-    
-elseif ~isempty(SearchScene(colladaIDMap, lambertPath))
-    materialType = ':lambert';
+% look for "phong" effect
+phongPath = {effectID, ':profile_COMMON', ':technique|.sid=common', ':phong'};
+phong = SearchScene(colladaIDMap, phongPath);
+if isempty(phong)
+    % use default rgb values and refraction
+    AddParameter(stubIDMap, id, 'Kd', 'rgb', '1 1 1');
+    AddParameter(stubIDMap, id, 'Ks', 'rgb', '0 0 0');
+    AddParameter(stubIDMap, id, 'index', 'float', '1');
     
 else
-    materialType = '';
-end
-
-if isempty(materialType)
-    % use default color and refraction
-    diffuse = '1 1 1';
-    refractIndex = '1';
-else
-    % use phong or lambert
-    materialPath = cat(2, commonPath, materialType);
+    % diffuse (may be a texture)
+    [type, value] = extractPhongParameter(phong, 'diffuse', 'rgb', '1 1 1', []);
+    AddParameter(stubIDMap, id, 'Kd', type, value);
+    if strcmp('texture', type)
+        declareTexture(effectID, value, stubIDMap, colladaIDMap);
+    end
     
-    % get diffuse color and index of refraction
-    colladaPath = cat(2, materialPath, {':diffuse', ':color'});
-    diffuse = GetSceneValue(colladaIDMap, colladaPath);
-    if isempty(diffuse)
-        diffuse = '0.5 0.5 0.5';
+    % specular (may be a texture)
+    [type, value] = extractPhongParameter(phong, 'specular', 'rgb', '0 0 0', []);
+    AddParameter(stubIDMap, id, 'Ks', type, value);
+    if strcmp('texture', type)
+        declareTexture(effectID, value, stubIDMap, colladaIDMap);
     end
-    colladaPath = cat(2, materialPath, {':index_of_refraction', ':float'});
-    refractIndex = GetSceneValue(colladaIDMap, colladaPath);
-    if isempty(refractIndex)
-        refractIndex = '1.0';
+    
+    % index of refraction
+    [type, value] = extractPhongParameter(phong, 'index_of_refraction', 'float', '1', []);
+    AddParameter(stubIDMap, id, 'index', type, value);
+end
+
+% Extract parameter type and value from a phong
+function [type, value, semantic] = extractPhongParameter(phong, paramName, type, value, semantic)
+
+% named element(s) under a phong element
+params = GetElementChildren(phong, paramName);
+if isempty(params)
+    return;
+end
+param = params{1};
+
+[dataNodes, dataNames] = GetElementChildren(param);
+nDataNodes = numel(dataNodes);
+for ii = 1:nDataNodes
+    dataNode = dataNodes{ii};
+    dataName = dataNames{ii};
+    
+    switch dataName
+        case 'color'
+            type = 'rgb';
+            value = StringToVector(char(dataNode.getTextContent()));
+            value = value(1:3);
+            [attribute, attributeName, semantic] = GetElementAttributes(dataNode, 'sid');
+            return;
+            
+        case 'float'
+            type = 'float';
+            value = StringToVector(char(dataNode.getTextContent()));
+            [attribute, attributeName, semantic] = GetElementAttributes(dataNode, 'sid');
+            return;
+            
+        case 'texture'
+            type = 'texture';
+            [attribute, attributeName, value] = GetElementAttributes(dataNode, 'texture');
+            [attribute, attributeName, semantic] = GetElementAttributes(dataNode, 'texcoord');
+            return;
     end
 end
 
-% convert 4-element color to RGB
-diffuseNum = StringToVector(diffuse);
-diffuseRGB = diffuseNum(1:3);
+% Declare a new texture that was referenced by a phong parameter.
+function declareTexture(effectId, samplerId, stubIDMap, colladaIDMap)
+% follow sampler reference to 2D surface
+surfaceIdPath = {effectId, ':profile_COMMON', [':newparam|sid=' samplerId], ':sampler2D', ':source'};
+surfaceId = GetSceneValue(colladaIDMap, surfaceIdPath);
+if isempty(surfaceId)
+    return;
+end
 
-% create Kd and index parameters
-AddParameter(stubIDMap, id, 'Kd', 'rgb', diffuseRGB);
-AddParameter(stubIDMap, id, 'index', 'float', refractIndex);
+% follow surface reference to image
+imageIdPath = {effectId, ':profile_COMMON', [':newparam|sid=' surfaceId], ':surface', ':init_from'};
+imageId = GetSceneValue(colladaIDMap, imageIdPath);
+if isempty(imageId)
+    return;
+end
+
+% follow image reference to file name
+fileNamePath = {imageId, ':init_from'};
+fileName = GetSceneValue(colladaIDMap, fileNamePath);
+if isempty(fileName)
+    return;
+end
+
+% texture with file name and default params
+SetType(stubIDMap, samplerId, 'Texture', 'imagemap');
+AddParameter(stubIDMap, samplerId, 'dataType', 'string', 'spectrum');
+AddParameter(stubIDMap, samplerId, 'filename', 'string', fileName);
+AddParameter(stubIDMap, samplerId, 'gamma', 'float', '1');
+AddParameter(stubIDMap, samplerId, 'maxanisotropy', 'float', '20');
+AddParameter(stubIDMap, samplerId, 'trilinear', 'bool', 'false');
+AddParameter(stubIDMap, samplerId, 'udelta', 'float', '0.0');
+AddParameter(stubIDMap, samplerId, 'vdelta', 'float', '0.0');
+AddParameter(stubIDMap, samplerId, 'uscale', 'float', '1.0');
+AddParameter(stubIDMap, samplerId, 'vscale', 'float', '1.0');
+AddParameter(stubIDMap, samplerId, 'wrap', 'string', 'repeat');

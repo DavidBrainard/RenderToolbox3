@@ -254,11 +254,18 @@ end
 
 
 %% Copy the collada file and reduce to known characters and elements.
+
+% strip out non-ascii 7-bit characters
 tempFolder = GetWorkingFolder('temp', true, hints);
-colladaCopy = fullfile(tempFolder, [sceneBase '-' imageName sceneExt]);
-[isSuccess, result] = copyfile(colladaFile, colladaCopy);
-colladaCopy = WriteASCII7BitOnly(colladaCopy);
-colladaCopy = WriteReducedColladaScene(colladaCopy);
+collada7Bit = fullfile(tempFolder, [sceneBase '-' imageName '-7bit' sceneExt]);
+WriteASCII7BitOnly(colladaFile, collada7Bit);
+
+% clean up Collada elements and resource paths
+colladaDoc = ReadSceneDOM(collada7Bit);
+workingFolder = GetWorkingFolder('', false, hints);
+cleanDoc = CleanUpColladaDocument(colladaDoc, workingFolder);
+colladaCopy = fullfile(tempFolder, [sceneBase '-' imageName '-7bit-clean' sceneExt]);
+WriteSceneDOM(colladaCopy, cleanDoc);
 
 %% Initialize renderer-native adjustments to receive mappings data.
 applyMappingsFunction = ...

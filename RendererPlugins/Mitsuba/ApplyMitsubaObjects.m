@@ -79,7 +79,7 @@ for ii = 1:numel(objects)
         idMap.remove(materialID);
         
         % replace given material with a bump material
-        addDeclaration(idMap, materialID, 'bsdf', 'bump');
+        addDeclaration(idMap, materialID, 'bsdf', 'bumpmap');
         addConfiguration(idMap, ...
             materialID, 'texture', 'ref', scaledID);
         addConfiguration(idMap, ...

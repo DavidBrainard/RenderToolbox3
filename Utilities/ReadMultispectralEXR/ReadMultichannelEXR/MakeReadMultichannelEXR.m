@@ -41,7 +41,7 @@ output = '-output ReadMultichannelEXR';
 
 %% Choose library files to include and link with.
 INC = '-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR';
-LINC = '-L/usr/local/lib -L/usr/lib -L/opt/local/lib ';
+LINC = '-L/usr/local/lib -L/usr/lib -L/opt/local/lib';
 LIBS = '-lIlmImf -lz -lImath -lHalf -lIex -lIlmThread -lpthread';
 
 %% Build the function.
@@ -58,12 +58,4 @@ fprintf('If you see a figure with several images, MakeReadMultichannelEXR() is w
 
 % show each image layer
 close all;
-nSlices = numel(sliceInfo);
-rows = round(sqrt(nSlices));
-cols = ceil(nSlices/rows);
-for ii = 1:nSlices
-    subplot(rows,cols,ii)
-    imshow(255*data(:,:,ii))
-    title(sliceInfo(ii).name)
-    xlabel(sliceInfo(ii).pixelType)
-end
+PlotSlices(sliceInfo, data);

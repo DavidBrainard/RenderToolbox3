@@ -53,13 +53,17 @@ for ii = 1:numel(stubIDs)
             isConverted = ConvertLight(id, stubIDMap, colladaIDMap, hints);
             
         case 'material'
-            % looks at Collada "effect" as well
+            % looks at Collada "effect" and "image" as well
             isConverted = ConvertMaterial(id, stubIDMap, colladaIDMap, hints);
             
         case 'geometry'
             isConverted = ConvertGeometry(id, stubIDMap, colladaIDMap, hints);
             
         case 'effect'
+            % remove from the output (handled in material case)
+            isConverted = false;
+            
+        case 'image'
             % remove from the output (handled in material case)
             isConverted = false;
             

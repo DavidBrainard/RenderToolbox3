@@ -42,9 +42,11 @@ if idMap.isKey(id)
     node = idMap(id);
     
 else
-    warning('Scene has no node with id "%s".', id);
-    node = [];
-    return;
+    % create the new node on demand, at the top of the document
+    doc = idMap('document');
+    root = doc.getDocumentElement();
+    node = CreateElementChild(root, 'element', id);
+    idMap(id) = node;
 end
 
 
@@ -63,7 +65,7 @@ for ii = 2:nParts
                     doc = node.getOwnerDocument();
                     attribute = doc.createAttribute(name);
                     node.setAttributeNode(attribute);
-
+                    
                 else
                     % path does not exist
                     node = [];
