@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.76.0 commit date:2015-09-23, commit time:14:02, hash:e24ea81</authoring_tool>
     </contributor>
-    <created>2015-09-29T18:53:47</created>
-    <modified>2015-09-29T18:53:47</modified>
+    <created>2015-10-02T16:25:59</created>
+    <modified>2015-10-02T16:25:59</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -102,21 +102,24 @@
     </light>
   </library_lights>
   <library_images>
-    <image id="stone-wall_jpg" name="stone-wall_jpg">
-      <init_from>stone-wall.jpg</init_from>
+    <image id="stone-wall_exr" name="stone-wall_exr">
+      <init_from>stone-wall.exr</init_from>
+    </image>
+    <image id="earthbump1k-stretch-rgb_exr" name="earthbump1k-stretch-rgb_exr">
+      <init_from>earthbump1k-stretch-rgb.exr</init_from>
     </image>
   </library_images>
   <library_effects>
     <effect id="Stone-effect">
       <profile_COMMON>
-        <newparam sid="stone-wall_jpg-surface">
+        <newparam sid="stone-wall_exr-surface">
           <surface type="2D">
-            <init_from>stone-wall_jpg</init_from>
+            <init_from>stone-wall_exr</init_from>
           </surface>
         </newparam>
-        <newparam sid="stone-wall_jpg-sampler">
+        <newparam sid="stone-wall_exr-sampler">
           <sampler2D>
-            <source>stone-wall_jpg-surface</source>
+            <source>stone-wall_exr-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -128,7 +131,43 @@
               <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="stone-wall_jpg-sampler" texcoord="UVMap"/>
+              <texture texture="stone-wall_exr-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.5 0.5 0.5 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">50</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="World-effect">
+      <profile_COMMON>
+        <newparam sid="earthbump1k-stretch-rgb_exr-surface">
+          <surface type="2D">
+            <init_from>earthbump1k-stretch-rgb_exr</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="earthbump1k-stretch-rgb_exr-sampler">
+          <sampler2D>
+            <source>earthbump1k-stretch-rgb_exr-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="earthbump1k-stretch-rgb_exr-sampler" texcoord="UVMap"/>
             </diffuse>
             <specular>
               <color sid="specular">0.5 0.5 0.5 1</color>
@@ -147,6 +186,9 @@
   <library_materials>
     <material id="Stone-material" name="Stone">
       <instance_effect url="#Stone-effect"/>
+    </material>
+    <material id="World-material" name="World">
+      <instance_effect url="#World-effect"/>
     </material>
   </library_materials>
   <library_geometries>
@@ -173,7 +215,7 @@
           </technique_common>
         </source>
         <source id="Cube-mesh-map-0">
-          <float_array id="Cube-mesh-map-0-array" count="72">0.6667438 0.8097164 0.3334874 0.8097165 0.3334873 0.4764601 0.3334873 0.4762291 0.3334873 0.1429727 0.6667435 0.1429726 0.6667438 0.476229 0.6667435 0.1429726 0.9999998 0.1429725 2.31067e-4 0.8097164 2.30965e-4 0.4764601 0.3334873 0.4764601 2.30965e-4 0.1429728 0.3334873 0.1429727 0.3334873 0.4762291 0.6667438 0.8097164 0.6667437 0.4764602 0.9999999 0.47646 0.6667437 0.4764602 0.6667438 0.8097164 0.3334873 0.4764601 0.6667438 0.476229 0.3334873 0.4762291 0.6667435 0.1429726 1 0.4762289 0.6667438 0.476229 0.9999998 0.1429725 0.3334874 0.8097165 2.31067e-4 0.8097164 0.3334873 0.4764601 2.31067e-4 0.4762292 2.30965e-4 0.1429728 0.3334873 0.4762291 0.9999999 0.8097164 0.6667438 0.8097164 0.9999999 0.47646</float_array>
+          <float_array id="Cube-mesh-map-0-array" count="72">0.6667438 0.8040021 0.3334874 0.8040022 0.3334873 0.4707458 0.3334873 0.4705148 0.3334873 0.1372585 0.6667435 0.1372584 0.6667438 0.4705147 0.6667435 0.1372584 0.9999998 0.1372583 2.31086e-4 0.8040021 2.30983e-4 0.4707458 0.3334873 0.4707458 2.30983e-4 0.1372585 0.3334873 0.1372585 0.3334873 0.4705148 0.6667438 0.8040021 0.6667437 0.4707459 0.9999999 0.4707458 0.6667437 0.4707459 0.6667438 0.8040021 0.3334873 0.4707458 0.6667438 0.4705147 0.3334873 0.4705148 0.6667435 0.1372584 1 0.4705146 0.6667438 0.4705147 0.9999998 0.1372583 0.3334874 0.8040022 2.31086e-4 0.8040021 0.3334873 0.4707458 2.31086e-4 0.4705149 2.30983e-4 0.1372585 0.3334873 0.4705148 0.9999999 0.8040021 0.6667438 0.8040021 0.9999999 0.4707458</float_array>
           <technique_common>
             <accessor source="#Cube-mesh-map-0-array" count="36" stride="2">
               <param name="S" type="float"/>
@@ -193,6 +235,49 @@
         </polylist>
       </mesh>
     </geometry>
+    <geometry id="Plane-mesh" name="Plane">
+      <mesh>
+        <source id="Plane-mesh-positions">
+          <float_array id="Plane-mesh-positions-array" count="12">-10.61483 -4.052798 0.04958641 9.385169 -4.052798 0.04958641 -10.61483 5.947202 0.04958641 9.385169 5.947202 0.04958641</float_array>
+          <technique_common>
+            <accessor source="#Plane-mesh-positions-array" count="4" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Plane-mesh-normals">
+          <float_array id="Plane-mesh-normals-array" count="3">0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Plane-mesh-normals-array" count="1" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Plane-mesh-map-0">
+          <float_array id="Plane-mesh-map-0-array" count="12">1 0.3520708 1 0.8520001 1.41434e-4 0.8520001 1.41396e-4 0.3520707 1 0.3520708 1.41434e-4 0.8520001</float_array>
+          <technique_common>
+            <accessor source="#Plane-mesh-map-0-array" count="6" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Plane-mesh-vertices">
+          <input semantic="POSITION" source="#Plane-mesh-positions"/>
+        </vertices>
+        <polylist material="World-material" count="2">
+          <input semantic="VERTEX" source="#Plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Plane-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 </vcount>
+          <p>1 0 0 3 0 1 2 0 2 0 0 3 1 0 4 2 0 5</p>
+        </polylist>
+      </mesh>
+    </geometry>
   </library_geometries>
   <library_controllers/>
   <library_visual_scenes>
@@ -206,7 +291,7 @@
         <instance_camera url="#Camera-camera"/>
       </node>
       <node id="Lamp" name="Lamp" type="NODE">
-        <translate sid="location">4.076245 1.005454 5.903862</translate>
+        <translate sid="location">4.06446 -2.610344 4.645367</translate>
         <rotate sid="rotationZ">0 0 1 106.9363</rotate>
         <rotate sid="rotationY">0 1 0 3.163707</rotate>
         <rotate sid="rotationX">1 0 0 37.26105</rotate>
@@ -223,6 +308,22 @@
           <bind_material>
             <technique_common>
               <instance_material symbol="Stone-material" target="#Stone-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="Plane" name="Plane" type="NODE">
+        <translate sid="location">-3 0 -1</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Plane-mesh" name="Plane">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="World-material" target="#World-material">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>
