@@ -95,22 +95,20 @@ end
 
 %% Scan the Collada file by element id.
 
-% reduce the Collada file to known characters and elements.
+% reduce the Collada file to known characters.
 collada7Bit = WriteASCII7BitOnly(colladaFile);
-colladaReduced = WriteReducedColladaScene(collada7Bit);
 
-% read the Collada document
-[docNode, idMap] = ReadSceneDOM(colladaReduced);
-
-% delete intermediate files
-ids = idMap.keys();
-nElements = numel(ids);
-
-% delete intermediate files
+% read the document into memory and delete temp file
+colladaDoc = ReadSceneDOM(collada7Bit);
 delete(collada7Bit);
-delete(colladaReduced);
+
+% clean up elements and resource paths
+cleanDoc = CleanUpColladaDocument(colladaDoc);
+idMap = GenerateSceneIDMap(cleanDoc);
 
 % choose a specrtum for each material or light
+ids = idMap.keys();
+nElements = numel(ids);
 elementInfo = struct( ...
     'id', ids, ...
     'category', [], ...

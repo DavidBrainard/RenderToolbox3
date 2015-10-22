@@ -103,7 +103,16 @@ for mm = 1:numel(mappings)
             map.right.value = fileInfo.resolvedPath;
             
             if ~fileInfo.isRootFolderMatch
-                disp(['Using absolute resource path: ' fileInfo.resolvedPath])
+                %disp(['Using absolute resource path: ' fileInfo.resolvedPath])
+ 
+                % Copy absolute resources over to recipe folder
+                resources = GetWorkingFolder('resources', true, hints);
+                copyfile(fileInfo.resolvedPath,resources);
+                fprintf('Copied %s to %s \n',fileInfo.resolvedPath,resources);
+                
+                % Rename path to be written in generated PBRT file
+                outputLoc = fullfile(resources,fileInfo.verbatimName);
+                map.right.value = outputLoc
             end
         end
     end

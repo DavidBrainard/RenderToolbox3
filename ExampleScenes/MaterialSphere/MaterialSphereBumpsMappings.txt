@@ -3,6 +3,12 @@ Collada {
     Camera:scale|sid=scale = -1 1 1
 }
 
+Generic {
+    % explicit spectrum for the point light
+    Point-light:light:point
+    Point-light:intensity.spectrum = 300:1 800:1
+}
+
 % specify generic scene elements under the "matteGroup" condition
 Generic matteGroup {
     % generic matte sphere material

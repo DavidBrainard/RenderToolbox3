@@ -65,7 +65,7 @@
 %   outFiles = BatchRender(scenes, hints)
 %
 % @ingroup BatchRenderer
-function [outFiles, oiFiles] = BatchRender(scenes, hints, oiParams)
+function outFiles = BatchRender(scenes, hints)
 
 InitializeRenderToolbox();
 
@@ -87,7 +87,6 @@ versionInfo = GetRenderToolbox3VersionInfo();
 % render with local "for" or distributed "parfor" loop
 nScenes = numel(scenes);
 outFiles = cell(size(scenes));
-oiFiles = cell(size(scenes));
 fprintf('\nBatchRender started with isParallel=%d at %s.\n\n', ...
     hints.isParallel, datestr(now(), 0));
 renderTick = tic();
@@ -96,8 +95,8 @@ try
     if hints.isParallel
         % distributed "parfor" loop, don't time individual iterations
         parfor ii = 1:nScenes
-            [outFiles{ii}, oiFiles{ii}] = ...
-                renderScene(scenes{ii}, versionInfo, hints,oiParams);
+            outFiles{ii} = ...
+                renderScene(scenes{ii}, versionInfo, hints);
         end
     else
         % local "for" loop, makes sense to time each iteration
@@ -105,8 +104,8 @@ try
             fprintf('\nStarting scene %d of %d at %s (%.1fs elapsed).\n\n', ...
                 ii, nScenes, datestr(now(), 0), toc(renderTick));
             
-            [outFiles{ii},oiFiles{ii}] = ...
-                renderScene(scenes{ii}, versionInfo, hints,oiParams);
+            outFiles{ii} = ...
+                renderScene(scenes{ii}, versionInfo, hints);
             
             fprintf('\nFinished scene %d of %d at %s (%.1fs elapsed).\n\n', ...
                 ii, nScenes, datestr(now(), 0), toc(renderTick));
@@ -125,7 +124,7 @@ if ~isempty(err)
 end
 
 % Render a scene and save a .mat data file.
-function [outFile, oi] = renderScene(scene, versionInfo, hints, oiParams)
+function outFile = renderScene(scene, versionInfo, hints)
 
 outFile = '';
 
@@ -151,13 +150,8 @@ end
 
 % renderer plugin need not preview results
 hints.isPlot = false;
-if(strcmp(hints.renderer,'PBRT'))
-    [status, commandResult, multispectralImage, S, oi] = ...
-        feval(renderFunction, scene, hints, oiParams);
-else
-    [status, commandResult, multispectralImage, S, oi] = ...
-        feval(renderFunction, scene, hints);
-end
+[status, commandResult, multispectralImage, S] = ...
+    feval(renderFunction, scene, hints);
 if 0 ~= status
     return
 end
@@ -176,5 +170,3 @@ outPath = GetWorkingFolder('renderings', true, hints);
 outFile = fullfile(outPath, [scene(1).imageName '.mat']);
 save(outFile, 'multispectralImage', 'S', 'radiometricScaleFactor', ...
     'hints', 'scene', 'versionInfo', 'commandResult');
-outFile_oi = fullfile(outPath, [scene(1).imageName '_oi.mat']);
-save(outFile_oi,'oi');

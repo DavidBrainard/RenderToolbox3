@@ -19,6 +19,10 @@ Generic {
     BlueMaterial-material:diffuseReflectance.spectrum = 300:1 500:1 600:0 800:0
     WhiteMaterial-material:material:matte
     WhiteMaterial-material:diffuseReflectance.spectrum = 300:1 800:1
+
+    % explicit spectrum for the point light
+    Point-light:light:point
+    Point-light:intensity.spectrum = 300:1 800:1
 }
 
 PBRT {

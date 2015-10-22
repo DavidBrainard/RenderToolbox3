@@ -23,10 +23,10 @@
 %
 % @details
 % Usage:
-%   oiParams = WritePBRTFile(PBRTFile, PBRTXMLFile, hints)
+%   WritePBRTFile(PBRTFile, PBRTXMLFile, hints)
 %
 % @ingroup ColladaToPBRT
-function oiParams = WritePBRTFile(PBRTFile, PBRTXMLFile, hints)
+function WritePBRTFile(PBRTFile, PBRTXMLFile, hints)
 
 %% Parameters
 % scan the PBRT-XML document
@@ -58,29 +58,19 @@ else
     writeIntegrator(pbrtFID, idMap, integreatorNodeID{1}, hints);
 end
 
-% If we are writing the PBRT for the depth map, we want to add the
-% parameters needed to generate the correct depth maps. We do this here.
-% (TL)
 samplerNodeID = getNodesByIdentifier(idMap, 'Sampler');
 if isempty(samplerNodeID)
     warning('Scene does not specify a sampler!');
 else
-    if(isfield(hints,'depthPBRT'))
-        if(hints.depthPBRT == 1) 
-            writeDepthSampler(pbrtFID)
-        end
-    else
-        writeSampler(pbrtFID, idMap, samplerNodeID{1}, hints); 
-    end
+    writeSampler(pbrtFID, idMap, samplerNodeID{1}, hints);
 end
 
-% (TL)
-% filterNodeID = getNodesByIdentifier(idMap, 'PixelFilter');
-% if isempty(filterNodeID)
-%     warning('Scene does not specify a pixel filter!');
-% else
-%     writeFilter(pbrtFID, idMap, filterNodeID{1}, hints);
-% end
+filterNodeID = getNodesByIdentifier(idMap, 'PixelFilter');
+if isempty(filterNodeID)
+    warning('Scene does not specify a pixel filter!');
+else
+    writeFilter(pbrtFID, idMap, filterNodeID{1}, hints);
+end
 
 % find the camera node with transforms and params
 cameraNodeIDs = getNodesByIdentifier(idMap, 'CameraNode');
@@ -88,7 +78,7 @@ if isempty(cameraNodeIDs)
     warning('Scene does not specify a camera!');
 else
     cameraNodeID = cameraNodeIDs{1};
-    oiParams = writeCamera(pbrtFID, idMap, cameraNodeID, hints);
+    writeCamera(pbrtFID, idMap, cameraNodeID, hints);
 end
 
 %% World-level PBRT objects
@@ -287,27 +277,6 @@ fprintf(fid, '# Sampler\n');
 PrintPBRTStatement(fid, identifier, type, params);
 fprintf(fid, '\n');
 
-% These are the parameters needed to generate the depth map.
-function writeDepthSampler(fid)
-identifier = 'Sampler';
-type = 'stratified';
-
-fprintf(fid, '# Sampler\n');
-
-params(1).name = 'jitter';
-params(1).type = 'bool';
-params(1).value = 'false';
-
-params(2).name = 'xsamples';
-params(2).type = 'integer';
-params(2).value = '1';
-
-params(3).name = 'ysamples';
-params(3).type = 'integer';
-params(3).value = '1';
-PrintPBRTStatement(fid, identifier, type, params);
-fprintf(fid, '\n');
-
 
 function writeFilter(fid, idMap, filterNodeID, hints)
 % scan the filter document node
@@ -320,7 +289,7 @@ PrintPBRTStatement(fid, identifier, type, params);
 fprintf(fid, '\n');
 
 
-function oiParams = writeCamera(fid, idMap, cameraNodeID, hints)
+function writeCamera(fid, idMap, cameraNodeID, hints)
 % get the node around the camera
 cameraNode = idMap(cameraNodeID);
 nodeTransforms = getTransformations(cameraNode);
@@ -340,9 +309,6 @@ internalTransforms = getTransformations(cameraInternal);
 
 % orient the camera internally
 fprintf(fid, '# %s internal orientation\n', cameraID);
-if(size(internalTransforms,2) == 0)
-    internalTransforms = struct('type','LookAt','value','0 0 0 0 0 -1 0 1 0');
-end
 writeTransformations(fid, internalTransforms, false);
 
 % move the camera for the scene point of view
@@ -353,15 +319,6 @@ writeTransformations(fid, nodeTransforms, false);
 fprintf(fid, '# %s\n', cameraID);
 PrintPBRTStatement(fid, identifier, type, internalParams);
 fprintf(fid, '\n');
-
-% We want to save the parameters we need to create the oi image later
-[oiParams, success] = RTB_FindOIParams(internalParams,type);
-if (success ~= 1)
-    fprintf('WARNING: Parameters needed for OI were not found.')
-end
-                    
-fprintf(fid, '\n');
-
 
 
 function writeTexture(fid, idMap, textureNodeID, hints)

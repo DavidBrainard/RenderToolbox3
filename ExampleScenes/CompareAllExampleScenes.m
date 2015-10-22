@@ -171,10 +171,30 @@ matchInfo = struct( ...
 nMatches = numel(matchInfo);
 if nMatches > 0
     fprintf('Found %d matched pairs of data files.\n', nMatches);
+    fprintf('Some of these might not contain images and would be skipped.\n');
 else
     fprintf('Found no matched pairs.\n');
     return;
 end
+fprintf('\n')
+
+nUnmatchedA = numel(unmatchedA);
+if nUnmatchedA > 0
+    fprintf('%d data files in set A had no match in set B:\n', nUnmatchedA);
+    for ii = 1:nUnmatchedA
+        fprintf('  %s\n', unmatchedA{ii});
+    end
+end
+fprintf('\n')
+
+nUnmatchedB = numel(unmatchedB);
+if nUnmatchedB > 0
+    fprintf('%d data files in set B had no match in set A:\n', nUnmatchedB);
+    for ii = 1:nUnmatchedB
+        fprintf('  %s\n', unmatchedB{ii});
+    end
+end
+fprintf('\n')
 
 % compare matched images!
 hints.recipeName = mfilename();
@@ -182,60 +202,92 @@ comparisonFolder = GetWorkingFolder('images', false, hints);
 for ii = 1:nMatches
     fprintf('%d of %d: %s\n', ii, nMatches, matchInfo(ii).relativeA);
     
-    % load rendering A
+    % load data
     dataA = load(matchInfo(ii).fileA);
-    if ~isfield(dataA, 'multispectralImage')
-        matchInfo(ii).error = ...
-            sprintf('No multispectral image found in %s', ...
-            matchInfo(ii).fileA);
-        continue;
+    dataB = load(matchInfo(ii).fileB);
+    
+    % do we have images?
+    hasImageA = isfield(dataA, 'multispectralImage');
+    hasImageB = isfield(dataB, 'multispectralImage');
+    if hasImageA
+        if hasImageB
+            % each has an image -- proceed
+        else
+            matchInfo(ii).error = ...
+                'Data file A has a multispectralImage but B does not!';
+            disp(matchInfo(ii).error);
+            continue;
+        end
+    else
+        if hasImageB
+            matchInfo(ii).error = ...
+                'Data file B has a multispectralImage but A does not!';
+            disp(matchInfo(ii).error);
+            continue;
+        else
+            matchInfo(ii).error = ...
+                'Neither data file A nor B has a multispectralImage -- skipping.';
+            continue;
+        end
     end
     multispectralA = dataA.multispectralImage;
-    
-    % load rendering B
-    dataB = load(matchInfo(ii).fileB);
-    if ~isfield(dataB, 'multispectralImage')
-        matchInfo(ii).error = ...
-            spritnf('No multispectral image found in %s', ...
-            matchInfo(ii).fileB);
-        continue;
-    end
     multispectralB = dataB.multispectralImage;
     
-    % check multispectral image dimensions
-    if ~isequal(size(multispectralA), size(multispectralB))
+    % do image dimensions agree?
+    if ~isequal(size(multispectralA, 1), size(multispectralB, 1)) ...
+            || ~isequal(size(multispectralA, 2), size(multispectralB, 2))
         matchInfo(ii).error = ...
             sprintf('Image A[%s] is not the same size as image B[%s].', ...
             num2str(size(multispectralA)), num2str(size(multispectralB)));
+        disp(matchInfo(ii).error);
         continue;
     end
     
-    % check spectral sampling
-    if ~isfield(dataA, 'S')
-        matchInfo(ii).error = ...
-            sprintf('Data file A has no spectral sampling variable ''S''.');
-        continue;
+    % do we have spectral sampling?
+    hasSamplingA = isfield(dataA, 'S');
+    hasSamplingB = isfield(dataB, 'S');
+    if hasSamplingA
+        if hasSamplingB
+            % each has a sampling "S" -- proceed
+        else
+            matchInfo(ii).error = ...
+                'Data file A has a spectral sampling "S" but B does not!';
+            disp(matchInfo(ii).error);
+            continue;
+        end
+    else
+        if hasSamplingB
+            matchInfo(ii).error = ...
+                'Data file B has a spectral sampling "S" but A does not!';
+            disp(matchInfo(ii).error);
+            continue;
+        else
+            matchInfo(ii).error = ...
+                'Neither data file A nor B has spectral sampling "S" -- skipping.';
+            continue;
+        end
     end
     matchInfo(ii).samplingA = dataA.S;
-    if ~isfield(dataB, 'S')
-        matchInfo(ii).error = ...
-            sprintf('Data file B has no spectral sampling variable ''S''.');
-        continue;
-    end
     matchInfo(ii).samplingB = dataB.S;
+    
+    % do spectral samplings agree?
     if ~isequal(dataA.S, dataB.S)
         matchInfo(ii).error = ...
             sprintf('Spectral sampling A[%s] is not the same as B[%s].', ...
             num2str(dataA.S), num2str(dataB.S));
-        continue;
+        disp(matchInfo(ii).error);
+        % proceed with comparison, despite sampling mismatch
     end
+    
+    % tolerate different sectral sampling depths
+    [A, B] = truncatePlanes(multispectralA, multispectralB, dataA.S, dataB.S);
     
     % comparison passes all sanity checks
     matchInfo(ii).isGoodComparison = true;
     
     % compute per-pixel component difference stats
-    normA = multispectralA / max(multispectralA(:));
-    normB = multispectralB / max(multispectralB(:));
+    normA = A / max(A(:));
+    normB = B / max(B(:));
     normDiff = normA - normB;
     absNormDiff = abs(normDiff);
     relNormDiff = absNormDiff ./ normA;
@@ -243,8 +295,8 @@ for ii = 1:nMatches
     relNormDiff(normA < cutoff) = nan;
     
     % summarize differnece stats
-    matchInfo(ii).subpixelsA = summarizeData(multispectralA);
-    matchInfo(ii).subpixelsB = summarizeData(multispectralB);
+    matchInfo(ii).subpixelsA = summarizeData(A);
+    matchInfo(ii).subpixelsB = summarizeData(B);
     matchInfo(ii).normA = summarizeData(normA);
     matchInfo(ii).normB = summarizeData(normB);
     matchInfo(ii).normDiff = summarizeData(normDiff);
@@ -252,13 +304,12 @@ for ii = 1:nMatches
     matchInfo(ii).relNormDiff = summarizeData(relNormDiff);
     
     % compute correlation among pixel components
-    r = corrcoef(multispectralA(:), multispectralB(:));
+    r = corrcoef(A(:), B(:));
     matchInfo(ii).corrcoef = r(1, 2);
     
     % plot difference image?
     if visualize > 1
-        f = showDifferenceImage( ...
-            matchInfo(ii), multispectralA, multispectralB);
+        f = showDifferenceImage(matchInfo(ii), A, B);
         matchInfo(ii).detailFigure = f;
         
         % save detail figure to disk
@@ -276,6 +327,11 @@ for ii = 1:nMatches
         close(f);
     end
 end
+
+nComparisons = sum([matchInfo.isGoodComparison]);
+nSkipped = nMatches - nComparisons;
+fprintf('Compared %d pairs of data files.\n', nComparisons);
+fprintf('Skipped %d pairs of data files, which is not necessarily a problem.\n', nSkipped);
 
 % plot a grand summary?
 if visualize > 0
@@ -350,7 +406,7 @@ info = struct( ...
 function f = showDifferenceImage(info, A, B)
 
 % make SRGB images
-S = info.samplingA;
+[A, B, S] = truncatePlanes(A, B, info.samplingA, info.samplingB);
 isScale = true;
 toneMapFactor = 0;
 imageA = MultispectralToSRGB(A, S, toneMapFactor, isScale);
@@ -379,22 +435,27 @@ imshow(uint8(imageBA), 'Parent', ax);
 title(ax, 'Difference: B - A');
 
 
+% Truncate spectral planes if one image has more planes.
+function [truncA, truncB, truncSampling] = truncatePlanes(A, B, samplingA, samplingB)
+nPlanes = min(samplingA(3), samplingB(3));
+truncSampling = [samplingA(1:2) nPlanes];
+truncA = A(:,:,1:nPlanes);
+truncB = B(:,:,1:nPlanes);
+
 % Show a summary of all difference images.
 function f = showDifferenceSummary(info)
 figureName = sprintf('A: %s vs B: %s', ...
     info(1).workingFolderA, info(1).workingFolderB);
 f = figure('Name', figureName, 'NumberTitle', 'off');
 
+% summarize only fair comparisions
+goodInfo = info([info.isGoodComparison]);
+
 % sort the summary by size of error
-diffSummary = [info.relNormDiff];
+diffSummary = [goodInfo.relNormDiff];
 errorStat = [diffSummary.max];
 [sorted, order] = sort(errorStat);
-info = info(order);
-
-% summarize good comparisons
-info = info([info.isGoodComparison]);
-names = {info.relativeA};
-nLines = numel(names);
+goodInfo = goodInfo(order);
 
 % summarize data correlation coefficients
 minCorr = 0.85;
@@ -402,9 +463,11 @@ peggedCorr = 0.8;
 corrTicks = [peggedCorr minCorr:0.05:1];
 corrTickLabels = num2cell(corrTicks);
 corrTickLabels{1} = sprintf('<%.2f', minCorr);
-
-corr = [info.corrcoef];
+corr = [goodInfo.corrcoef];
 corr(corr < minCorr) = peggedCorr;
+
+names = {goodInfo.relativeA};
+nLines = numel(names);
 ax(1) = subplot(1, 2, 1, ...
     'Parent', f, ...
     'YTick', 1:nLines, ...
@@ -428,7 +491,7 @@ diffTicks = [0:0.5:maxDiff peggedDiff];
 diffTickLabels = num2cell(diffTicks);
 diffTickLabels{end} = sprintf('>%.2f', maxDiff);
 
-diffSummary = [info.relNormDiff];
+diffSummary = [goodInfo.relNormDiff];
 maxes = [diffSummary.max];
 means = [diffSummary.mean];
 maxes(maxes > maxDiff) = peggedDiff;
@@ -455,7 +518,7 @@ line(means, 1:nLines, ...
 legend(ax(2), 'max', 'mean', 'Location', 'northeast');
 title(ax(2), 'extreme pixel components');
 label = sprintf('relative diff |A-B|/A, where A/max(A) > %.1f', ...
-    info(1).denominatorThreshold);
+    goodInfo(1).denominatorThreshold);
 xlabel(ax(2), label);
 
 % let the user scroll both axes at the same time

@@ -32,7 +32,7 @@
 %   [status, result, output] = RunPBRT(sceneFile, hints)
 %
 % @ingroup Utilities
-function [status, result, output, oi] = RunPBRT(sceneFile, hints, oiParams, pbrt)
+function [status, result, output] = RunPBRT(sceneFile, hints, pbrt)
 
 if nargin < 2 || isempty(hints)
     hints = GetDefaultHints();
@@ -40,7 +40,7 @@ else
     hints = GetDefaultHints(hints);
 end
 
-if nargin < 4 || isempty(pbrt)
+if nargin < 3 || isempty(pbrt)
     pbrt = getpref('PBRT');
 end
 
@@ -56,97 +56,74 @@ else
         'hints.workingFolder is missing, using pwd() instead');
     copyDir = pwd();
 end
-
-% Copy normal PBRT file to the sceneCopy folder
 [scenePath, sceneBase, sceneExt] = fileparts(sceneFile);
 sceneCopy = fullfile(copyDir, [sceneBase, sceneExt]);
 fprintf('PBRT needs to copy %s \n  to %s\n', sceneFile, sceneCopy);
 [isSuccess, message] = copyfile(sceneFile, sceneCopy, 'f');
 
-% Copy depth PBRT file to the sceneCopy folder
-sceneCopyDepth = fullfile(copyDir, [sceneBase '_depth' sceneExt]);
-[d,n,e] = fileparts(sceneFile);
-sceneFileDepth = fullfile(d,[n '_depth' e]);
-fprintf('PBRT needs to copy %s \n  to %s\n', sceneFileDepth, sceneCopyDepth);
-[isSuccess, message] = copyfile(sceneFileDepth, sceneCopyDepth, 'f');
-
 renderings = GetWorkingFolder('renderings', true, hints);
 output = fullfile(renderings, [sceneBase '.dat']);
 
-% Create a separate output folder for the depth. We need this so the output
-% from the first render pass isn't overwritten during the second render
-% pass. This folder is only temporary and gets cleared every run.
-tempDepthDir = fullfile(renderings,'depthTemp');
-if exist(tempDepthDir) % Clear the folder first (I encountered some bugs when overwriting files)
-    rmdir(tempDepthDir,'s');
-end
-mkdir(tempDepthDir);
-% ".dat" output in the depth folder, which is given to PBRT as the output
-outputTempDir = fullfile(tempDepthDir, [sceneBase '.dat']);
-
 %% Invoke PBRT.
+if(hints.dockerFlag == 1)
+    % We assume docker is installed on this system and we execute the
+    % function in a docker container
+    s = system('which docker');
+    if s
+        warning('Docker not found! \n (OSX) Are you sure you''re running MATLAB in a Docker Quickstart Terminal? ');
+        % TODO: add in option to run on local if docker is not found
+    else
+        % Initialize the docker container
+        dHub = 'vistalab/pbrt';  % Docker container at dockerhub
+        fprintf('Checking for most recent docker container\n');
+        system(sprintf('docker pull %s',dHub));
+        
+        % Start the docker container that runs pbrt
+        dCommand = 'pbrt';       % Command run in the dockers
+        [~,n,e] = fileparts(sceneCopy); % Get name of pbrt input file
+        [~,outstem,outext] = fileparts(output); % Get name of output file
+        
+        % We need this line because RTB wants to place the output in
+        % renderings and not just the recipe folder
+        outputFile = fullfile('renderings','PBRT',[outstem outext]);
+        
+        % rm = clears the container when it is finished running
+        % -t = terminal to grab tty output
+        % -i = interactive (not sure it's needed)
+        cmd = sprintf('docker run -t -i --rm -v %s:/data %s %s /data/%s --outfile /data/%s',copyDir,dHub,dCommand,[n,e],outputFile);
+
+        % Execute the docker call
+        [status,result] = system(cmd);
+        if status, error('Docker execution failure %s\n',result);
+        else disp('Docker appears to have run succesfully')
+        end
+        % disp(r);
+
+        % Tell the user where the result iss
+        fprintf('Wrote: %s\n',outputFile);
+    end
+else
+    % Use local PBRT
+    % set the dynamic library search path
+    [newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
     
-% set the dynamic library search path
-[newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
-
-renderCommand = sprintf('%s --outfile %s %s', pbrt.executable, output, sceneCopy);
-fprintf('%s\n', renderCommand);
-[status, result] = RunCommand(renderCommand, hints);
-if status ~= 0
-    warning(result)
-    warning('Could not render scene "%s".', sceneBase)
+    % find the PBRT executable
+    renderCommand = sprintf('%s --outfile %s %s', pbrt.executable, output, sceneCopy);
+    fprintf('%s\n', renderCommand);
+    [status, result] = RunCommand(renderCommand, hints);
+    
+    % restore the library search path
+    setenv(libPathName, originalLibPath);
 end
-
-%% Run PBRT a second time to get depth maps
-
-renderCommand = sprintf('%s --outfile %s %s', pbrt.executable, outputTempDir, sceneCopyDepth);
-fprintf('%s\n', renderCommand);
-[status, result] = RunCommand(renderCommand, hints);
-
 %% Show a warning or figure?
 if status ~= 0
     warning(result)
     warning('Could not render scene "%s".', sceneBase)
     
 elseif hints.isPlot
-    multispectral = ReadDAT(output);
+    multispectral = ReadDAT(output, pbrt.S(3));
     toneMapFactor = 10;
     isScale = true;
     sRGB = MultispectralToSRGB(multispectral, pbrt.S, toneMapFactor, isScale);
     ShowXYZAndSRGB([], sRGB, sceneBase);
 end
-
-%% Copy files and create oi
-
-% Create oi object
-oi = RTB_pbrt2oi(output,oiParams,hints);
-oi = oiSet(oi,'name',sceneBase);
-
-% Copy depth files to original directory
-outputDepth = fullfile(tempDepthDir, [sceneBase '_DM.dat']); % The *_DM.dat output specifically
-copyfile(outputDepth,renderings);
-fprintf('Depth image was copied from: \n %s \n to \n %s \n',outputDepth, renderings);
-
-% Read depth map
-dMapFile = fullfile(renderings, [sceneBase '_DM.dat']);
-depthMap = RTB_ReadDepthMapFile(dMapFile, [hints.imageHeight hints.imageWidth]);
-
-% Save depth map as an image
-imageDir = fullfile(hints.workingFolder,hints.recipeName,'images',hints.renderer);
-if ~exist(imageDir)
-    mkdir(imageDir)
-end
-imageFile = fullfile(imageDir,[sceneBase '_depth.png']);
-figure(10);
-imagesc(depthMap); colorbar; colormap(flipud(gray));
-axis image;
-title(sceneBase);
-print(imageFile,'-dpng')
-
-% Set depth in oi
-oi = oiSet(oi, 'depthmap', depthMap);
-
-% restore the library search path
-setenv(libPathName, originalLibPath);
-
-
