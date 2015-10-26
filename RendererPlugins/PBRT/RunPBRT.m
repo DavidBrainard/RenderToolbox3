@@ -65,6 +65,12 @@ renderings = GetWorkingFolder('renderings', true, hints);
 output = fullfile(renderings, [sceneBase '.dat']);
 
 %% Invoke PBRT.
+
+% if (~isfield(hints,'dockerFlag'))
+%     % Field does not exist. By default we set it to 0.
+%     hints.dockerFlag = 0;
+% end
+
 if(hints.dockerFlag == 1)
     % We assume docker is installed on this system and we execute the
     % function in a docker container

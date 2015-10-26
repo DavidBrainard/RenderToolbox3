@@ -100,19 +100,24 @@ for mm = 1:numel(mappings)
     if ~isempty(regexp(map.right.value, '\.\S*$', 'once'))
         fileInfo = ResolveFilePath(map.right.value, workingFolder);
         if ~isempty(fileInfo) && ~isempty(fileInfo.resolvedPath)
-            map.right.value = fileInfo.resolvedPath;
             
             if ~fileInfo.isRootFolderMatch
-                %disp(['Using absolute resource path: ' fileInfo.resolvedPath])
- 
-                % Copy absolute resources over to recipe folder
-                resources = GetWorkingFolder('resources', true, hints);
-                copyfile(fileInfo.resolvedPath,resources);
-                fprintf('Copied %s to %s \n',fileInfo.resolvedPath,resources);
+                if(hints.dockerFlag == 0)
+                    disp(['Using absolute resource path: ' fileInfo.resolvedPath])
+                else
+                    % Copy absolute resources over to recipe folder
+                    resources = GetWorkingFolder('resources', true, hints);
+                    copyfile(fileInfo.resolvedPath,resources);
+                    fprintf('Copied %s to %s \n',fileInfo.resolvedPath,resources);
+                    
+                    % Rename path to be written in generated PBRT file. We
+                    % specify with respect to the recipe root folder.
+                    outputLoc = fullfile('resources',hints.renderer,fileInfo.verbatimName);
+                    map.right.value = outputLoc;
+                end
                 
-                % Rename path to be written in generated PBRT file
-                outputLoc = fullfile(resources,fileInfo.verbatimName);
-                map.right.value = outputLoc
+            else
+                map.right.value = fileInfo.resolvedPath;
             end
         end
     end
