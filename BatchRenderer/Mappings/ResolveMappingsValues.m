@@ -100,9 +100,10 @@ for mm = 1:numel(mappings)
     if ~isempty(regexp(map.right.value, '\.\S*$', 'once'))
         fileInfo = ResolveFilePath(map.right.value, workingFolder);
         if ~isempty(fileInfo) && ~isempty(fileInfo.resolvedPath)
+            map.right.value = fileInfo.resolvedPath;
             
             if ~fileInfo.isRootFolderMatch
-                if(hints.dockerFlag == 0)
+                if(hints.dockerFlag == 0 || strcmp(hints.renderer,'Mitsuba'))
                     disp(['Using absolute resource path: ' fileInfo.resolvedPath])
                 else
                     % Copy absolute resources over to recipe folder
@@ -115,9 +116,6 @@ for mm = 1:numel(mappings)
                     outputLoc = fullfile('resources',hints.renderer,fileInfo.verbatimName);
                     map.right.value = outputLoc;
                 end
-                
-            else
-                map.right.value = fileInfo.resolvedPath;
             end
         end
     end
