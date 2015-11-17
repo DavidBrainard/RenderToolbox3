@@ -26,7 +26,7 @@ copyfile(earthImage, GetWorkingFolder('', false, hints));
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;
 isScale = true;
-for renderer = {'PBRT'}
+for renderer = {'Mitsuba', 'PBRT'}
     hints.renderer = renderer{1};
     
     nativeSceneFiles = MakeSceneFiles(parentSceneFile, '', '', hints);

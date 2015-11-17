@@ -40,9 +40,8 @@ source = 'ReadMultichannelEXR.cpp';
 output = '-output ReadMultichannelEXR';
 
 %% Choose library files to include and link with.
-INC = '-I/usr/local/include/OpenEXR'; %-I/usr/include/OpenEXR -I/opt/local/include/OpenEXR';
-%LINC = '-L/usr/local/lib'; %-L/usr/lib  -L/opt/local/lib ';
-LINC = '-L/usr/local/Cellar/openexr/2.1.0/lib/';
+INC = '-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR';
+LINC = '-L/usr/local/lib -L/usr/lib -L/opt/local/lib';
 LIBS = '-lIlmImf -lz -lImath -lHalf -lIex -lIlmThread -lpthread';
 
 %% Build the function.
