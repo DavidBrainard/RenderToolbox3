@@ -3,11 +3,6 @@ Collada {
     Camera:scale|sid=scale = -1 1 1
 }
 
-PBRT {
-    sampler:Sampler:lowdiscrepancy
-    sampler:pixelsamples.integer = 256
-}
-
 % specify wall, floor, and lights for all conditions, all renderers
 Generic {
     % make area lights with daylight spectrum
