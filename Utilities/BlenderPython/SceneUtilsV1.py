@@ -270,7 +270,9 @@ class sceneManager:
         theCameraType = bpy.data.cameras.new('CAMERA');
         # configure the camera type
         theCameraType.type        = 'PERSP' ;               # perspective camera
-        theCameraType.angle       =  params['fieldOfViewInDegrees']/180*math.pi;
+        theCameraType.angle_x     =  params['fieldOfViewInDegrees']/180*math.pi;
+        if 'widthToHeightAspectRatio' in params:
+            theCameraType.angle_y = theCameraType.angle_x / params['widthToHeightAspectRatio'];
         theCameraType.clip_start  =  params['clipRange'][0];
         theCameraType.clip_end    =  params['clipRange'][1];
         theCameraType.draw_size   =  params['drawSize'];     # apparent size of Camera object in 3D View
