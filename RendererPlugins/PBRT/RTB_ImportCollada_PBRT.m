@@ -55,15 +55,17 @@ else
     [pbrtDoc, pbrtIDMap] = CreateStubDOM(colladaIDMap, 'pbrt_xml');
     PopulateStubDOM(pbrtIDMap, colladaIDMap, hints);
     
-    % add a film node to the to the adjustments document
+    % make sure the adjustments document has a film node
     filmNodeID = 'film';
-    filmPBRTIdentifier = 'Film';
-    adjustRoot = adjustments.docNode.getDocumentElement();
-    filmNode = CreateElementChild(adjustRoot, filmPBRTIdentifier, filmNodeID);
-    adjustments.idMap(filmNodeID) = filmNode;
+    if ~adjustments.idMap.isKey(filmNodeID)
+        filmPBRTIdentifier = 'Film';
+        adjustRoot = adjustments.docNode.getDocumentElement();
+        filmNode = CreateElementChild(adjustRoot, filmPBRTIdentifier, filmNodeID);
+        adjustments.idMap(filmNodeID) = filmNode;
+        SetType(adjustments.idMap, filmNodeID, filmPBRTIdentifier, hints.filmType);
+    end
     
     % fill in the film parameters
-    SetType(adjustments.idMap, filmNodeID, filmPBRTIdentifier, hints.filmType);
     AddParameter(adjustments.idMap, filmNodeID, ...
         'xresolution', 'integer', hints.imageWidth);
     AddParameter(adjustments.idMap, filmNodeID, ...
