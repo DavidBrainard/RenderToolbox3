@@ -270,7 +270,15 @@ class sceneManager:
         theCameraType = bpy.data.cameras.new('CAMERA');
         # configure the camera type
         theCameraType.type        = 'PERSP' ;               # perspective camera
-        theCameraType.angle       =  params['fieldOfViewInDegrees']/180*math.pi;
+        theCameraType.angle_x     =  params['fieldOfViewInDegrees']/180*math.pi;
+        if 'widthToHeightAspectRatio' in params:
+        	print('before camera sensor: {} x {}; image resolution: {} x {}; horiz FOV = {}'.format(theCameraType.sensor_width, theCameraType.sensor_height, bpy.data.scenes[0].render.resolution_x, bpy.data.scenes[0].render.resolution_y, theCameraType.angle_x));
+        	aspectRatio = theCameraType.sensor_width / theCameraType.sensor_height;
+        	theCameraType.sensor_height = theCameraType.sensor_width / params['widthToHeightAspectRatio'];
+        	bpy.data.scenes[0].render.resolution_x = params['pixelSamplesAlongWidth'];
+        	bpy.data.scenes[0].render.resolution_y = bpy.data.scenes[0].render.resolution_x / params['widthToHeightAspectRatio'];
+        	print('after camera sensor: {} x {}; image resolution: {} x {}; horiz FOV = {}'.format(theCameraType.sensor_width, theCameraType.sensor_height, bpy.data.scenes[0].render.resolution_x, bpy.data.scenes[0].render.resolution_y, theCameraType.angle_x));
+
         theCameraType.clip_start  =  params['clipRange'][0];
         theCameraType.clip_end    =  params['clipRange'][1];
         theCameraType.draw_size   =  params['drawSize'];     # apparent size of Camera object in 3D View

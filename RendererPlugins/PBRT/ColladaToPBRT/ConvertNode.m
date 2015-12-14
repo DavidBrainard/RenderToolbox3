@@ -57,6 +57,11 @@ for ii = 1:numel(children)
         case 'matrix'
             value = getConvertedMatrix(colladaIDMap, childPath);
             AddTransform(stubIDMap, id, childSid, 'ConcatTransform', value);
+            
+        case 'lookat'
+            value = GetSceneValue(colladaIDMap, childPath);
+            AddTransform(stubIDMap, id, childSid, 'LookAt', value);
+            
     end
 end
 
