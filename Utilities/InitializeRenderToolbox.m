@@ -74,6 +74,7 @@ defaultConfig.isReuseSceneFiles = false;
 defaultConfig.isParallel = false;
 defaultConfig.isPlot = true;
 defaultConfig.isCaptureCommandResults = true;
+defaultConfig.dockerFlag = 0;
 
 % default dynamic library path names and default values
 %   these are applied automatically, via SetRenderToolboxLibraryPath()

@@ -65,17 +65,57 @@ renderings = GetWorkingFolder('renderings', true, hints);
 output = fullfile(renderings, [sceneBase '.dat']);
 
 %% Invoke PBRT.
-% set the dynamic library search path
-[newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
 
-% find the PBRT executable
-renderCommand = sprintf('%s --outfile %s %s', pbrt.executable, output, sceneCopy);
-fprintf('%s\n', renderCommand);
-[status, result] = RunCommand(renderCommand, hints);
+if(hints.dockerFlag == 1)
+    % We assume docker is installed on this system and we execute the
+    % function in a docker container
+    s = system('which docker');
+    if s
+        warning('Docker not found! \n (OSX) Are you sure you''re running MATLAB in a Docker Quickstart Terminal? ');
+        % TODO: add in option to run on local if docker is not found
+    else
+        % Initialize the docker container
+        dHub = 'vistalab/pbrt';  % Docker container at dockerhub
+        fprintf('Checking for most recent docker container\n');
+        system(sprintf('docker pull %s',dHub));
+        
+        % Start the docker container that runs pbrt
+        dCommand = 'pbrt';       % Command run in the dockers
+        [~,n,e] = fileparts(sceneCopy); % Get name of pbrt input file
+        [~,outstem,outext] = fileparts(output); % Get name of output file
+        
+        % We need this line because RTB wants to place the output in
+        % renderings and not just the recipe folder
+        outputFile = fullfile('renderings','PBRT',[outstem outext]);
+        
+        % rm = clears the container when it is finished running
+        % -t = terminal to grab tty output
+        % -i = interactive (not sure it's needed)
+        cmd = sprintf('docker run -t -i --rm -v %s:/data %s %s /data/%s --outfile /data/%s',copyDir,dHub,dCommand,[n,e],outputFile);
 
-% restore the library search path
-setenv(libPathName, originalLibPath);
+        % Execute the docker call
+        [status,result] = system(cmd);
+        if status, error('Docker execution failure %s\n',result);
+        else disp('Docker appears to have run succesfully')
+        end
+        % disp(r);
 
+        % Tell the user where the result iss
+        fprintf('Wrote: %s\n',outputFile);
+    end
+else
+    % Use local PBRT
+    % set the dynamic library search path
+    [newLibPath, originalLibPath, libPathName] = SetRenderToolboxLibraryPath();
+    
+    % find the PBRT executable
+    renderCommand = sprintf('%s --outfile %s %s', pbrt.executable, output, sceneCopy);
+    fprintf('%s\n', renderCommand);
+    [status, result] = RunCommand(renderCommand, hints);
+    
+    % restore the library search path
+    setenv(libPathName, originalLibPath);
+end
 %% Show a warning or figure?
 if status ~= 0
     warning(result)
