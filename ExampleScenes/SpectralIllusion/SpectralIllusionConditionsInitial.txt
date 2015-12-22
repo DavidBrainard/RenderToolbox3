@@ -1,2 +1,0 @@
-imageName	targetColor				destinationColor
-initial		resources/SpectralIllusionTarget.spd	mccBabel-4.spd

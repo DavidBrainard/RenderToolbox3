@@ -1,8 +1,0 @@
-imageName	dragonColor	
-GradedDragon-1	GradedSpectrum-1.spd	
-GradedDragon-2	GradedSpectrum-2.spd	
-GradedDragon-3	GradedSpectrum-3.spd	
-GradedDragon-4	GradedSpectrum-4.spd	
-GradedDragon-5	GradedSpectrum-5.spd	
-GradedDragon-6	GradedSpectrum-6.spd	
-
