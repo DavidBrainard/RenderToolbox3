@@ -1,6 +1,8 @@
 Moved
 =====
-Thank you for visiting RenderToolbox3.  We've moved!  Please visit our new repo: [RenderToolbox3/RenderToolbox3](https://github.com/RenderToolbox3/RenderToolbox3).
+RenderToolbox3 is now deprecated in favor of RenderToolbox4.  Please consider migrating to [RenderToolbox4](https://github.com/RenderToolbox/RenderToolbox4/wiki/RenderToolbox4).
+
+This RenderToolbox3 repository will be here for reference.  Thanks!
 
 Have a nice Day.
 
